@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Struktur Data — Fondasi Struktur Data</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#F0F7FF;
+  --panel:#FFFFFF;
+  --panel2:#EFF6FF;
+  --text:#172554;
+  --muted:#64748B;
+  --accent:#3B82F6;
+  --accent2:#8B5CF6;
+  --gold:#FBBF24;
+  --danger:#F472B6;
+  --success:#22C55E;
+  --pink:#F472B6;
+  --purple:#8B5CF6;
+  --border:rgba(37,99,235,.14);
+  --shadow:0 18px 50px rgba(37,99,235,.12)
+}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#F0F7FF 0%,#FDFBFF 52%,#FFF7FC 100%);color:var(--text);overflow:hidden}
+button{font:inherit}
+.app{height:100vh;display:grid;grid-template-columns:270px 1fr;grid-template-rows:64px 1fr 70px}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 22px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);box-shadow:0 4px 18px rgba(37,99,235,.07);z-index:5}
+.brand{font-weight:800;white-space:nowrap}.brand span{color:var(--accent2)}
+.progress-wrap{flex:1;height:8px;background:#DBEAFE;border-radius:99px;overflow:hidden}
+.progress{height:100%;width:6.25%;background:linear-gradient(90deg,#3B82F6,#8B5CF6,#F472B6);border-radius:99px;transition:.3s}
+.counter{font-size:13px;color:var(--muted);white-space:nowrap}
+.sidebar{background:rgba(255,255,255,.92);border-right:1px solid var(--border);box-shadow:4px 0 18px rgba(37,99,235,.06);padding:18px 12px;overflow:auto}
+.sidebar-title{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);padding:0 10px 12px}
+.nav{display:flex;flex-direction:column;gap:5px}
+.nav button{border:1px solid transparent;background:transparent;color:#475569;text-align:left;padding:10px 11px;border-radius:10px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:13px}
+.nav button:hover{background:#EFF6FF;color:#172554}
+.nav button.active{background:linear-gradient(90deg,#DBEAFE,#F3E8FF);border-color:rgba(139,92,246,.24);color:#172554}
+.num{width:25px;height:25px;border-radius:8px;background:#E0E7FF;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.nav button.active .num{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#FFFFFF}
+.stage{position:relative;min-width:0;min-height:0;padding:24px;background:
+ radial-gradient(circle at 85% 10%,rgba(59,130,246,.16),transparent 30%),
+ radial-gradient(circle at 15% 90%,rgba(244,114,182,.12),transparent 28%),
+ radial-gradient(circle at 55% 95%,rgba(139,92,246,.08),transparent 25%)}
+.slide{height:100%;width:100%;max-width:1180px;margin:auto;background:linear-gradient(145deg,#FFFFFF,#F8FBFF);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);overflow:auto}
+.slide-inner{min-height:100%;padding:46px 56px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{color:var(--accent);font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(34px,5vw,64px);line-height:1.03;margin:0 0 18px;letter-spacing:-2px}
+h2{font-size:clamp(28px,4vw,44px);margin:0 0 18px;letter-spacing:-1px}
+h3{margin:0 0 8px;font-size:19px}
+p{font-size:17px;line-height:1.7;color:#475569;margin:8px 0}
+.lead{font-size:20px;max-width:800px;color:#475569}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:35px;align-items:center}
+.hero-art{min-height:330px;border-radius:24px;background:linear-gradient(145deg,#DBEAFE,#F3E8FF 52%,#FCE7F3);border:1px solid var(--border);box-shadow:inset 0 0 40px rgba(255,255,255,.55);display:grid;place-items:center;position:relative;overflow:hidden}
+.hero-art:before,.hero-art:after{content:"";position:absolute;border-radius:50%;filter:blur(2px)}
+.hero-art:before{width:190px;height:190px;background:rgba(59,130,246,.18);top:-60px;right:-40px}
+.hero-art:after{width:160px;height:160px;background:rgba(244,114,182,.18);bottom:-50px;left:-30px}
+.tree-art{position:relative;width:270px;height:230px}
+.dot{position:absolute;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#FFFFFF;border:3px solid var(--accent);color:#172554;box-shadow:0 8px 18px rgba(59,130,246,.16);font-weight:800;z-index:2}
+.line{position:absolute;height:3px;background:#93C5FD;transform-origin:left center;z-index:1}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.card{background:#FFFFFF;border:1px solid var(--border);box-shadow:0 8px 24px rgba(37,99,235,.08);border-radius:16px;padding:20px}
+.card .icon{font-size:28px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.list{padding-left:20px;color:#475569;line-height:1.9;font-size:16px}
+.highlight{border-left:4px solid var(--accent);background:#ECFDF5;padding:15px 18px;border-radius:0 12px 12px 0;margin:15px 0}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#EEF6FF;border:1px solid #BFDBFE;padding:18px;border-radius:14px;color:#1D4ED8;box-shadow:inset 0 2px 8px rgba(59,130,246,.04);font-size:18px}
+.center{text-align:center}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:99px;background:#F3E8FF;color:#5B21B6;border:1px solid #DDD6FE;font-size:12px;margin:3px}
+.term{color:var(--accent);font-weight:800}
+.footer{grid-column:1/-1;background:rgba(255,255,255,.96);border-top:1px solid var(--border);box-shadow:0 -4px 18px rgba(37,99,235,.06);display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:5}
+.footer-info{font-size:13px;color:var(--muted)}
+.controls{display:flex;gap:9px}
+.btn{border:1px solid var(--border);background:#FFFFFF;color:#172554;border-color:#BFDBFE;padding:11px 17px;border-radius:11px;cursor:pointer;font-weight:700}
+.btn:hover{background:#DBEAFE}
+.btn.primary{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#FFFFFF;border-color:transparent}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.quiz-box{background:#FFFFFF;border:1px solid #BFDBFE;box-shadow:0 10px 28px rgba(37,99,235,.08);border-radius:18px;padding:24px;margin-top:16px}
+.question{font-size:20px;font-weight:750;line-height:1.45;margin-bottom:16px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option{padding:14px;border:1px solid #2a3854;background:#F8FAFC;color:#172554;border-color:#CBD5E1;border-radius:12px;text-align:left;cursor:pointer}
+.option:hover{border-color:#60A5FA}
+.data-card{cursor:grab}
+.data-card:active{cursor:grabbing}
+.drop-zone{transition:.2s;border:2px dashed #93C5FD}
+.drop-zone.over{border-color:#3B82F6;background:#EFF6FF;transform:translateY(-2px)}
+.drop-items .data-card{padding:7px 10px;font-size:12px;cursor:default}
+.activity-note{font-size:13px;color:var(--muted)}
+
+.option.correct{border-color:#3B82F6;background:rgba(59,130,246,.18)}
+.option.wrong{border-color:var(--danger);background:rgba(251,113,133,.10)}
+.feedback{min-height:25px;margin-top:14px;font-weight:700}
+.array{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0}
+.array-item{width:72px;height:72px;background:#FFFFFF;border:2px solid #BFDBFE;box-shadow:0 6px 16px rgba(37,99,235,.08);border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.array-item .idx{font-size:10px;color:var(--muted)}.array-item .val{font-weight:800;font-size:20px}
+.node-board{position:relative;height:290px;border-radius:18px;background:linear-gradient(135deg,#EFF6FF,#FDF4FF);border:1px solid #BFDBFE;margin-top:18px;overflow:hidden}
+.node{position:absolute;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:#FFFFFF;border:3px solid #8B5CF6;color:#312E81;box-shadow:0 7px 18px rgba(139,92,246,.15);font-weight:800;cursor:pointer;user-select:none}
+.node.selected{border-color:var(--gold);box-shadow:0 0 0 5px rgba(251,191,36,.18),0 8px 20px rgba(251,191,36,.18)}
+.node.connected{border-color:#3B82F6}
+.svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.edge{stroke:#94A3B8;stroke-width:3}
+.mode{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.result{font-size:25px;font-weight:850;color:var(--accent);margin-top:12px}
+.big-check{font-size:80px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{padding:11px;border-bottom:1px solid var(--border);text-align:left;color:#475569}
+th{color:var(--accent)}
+@media(max-width:850px){
+ .app{grid-template-columns:1fr;grid-template-rows:58px 1fr 66px}
+ .sidebar{display:none}.topbar{padding:0 13px}.brand{font-size:13px}
+ .stage{padding:10px}.slide{border-radius:16px}.slide-inner{padding:28px 22px}
+ .hero,.two-col,.grid2{grid-template-columns:1fr}.cards,.grid3{grid-template-columns:1fr}
+ .options{grid-template-columns:1fr}.footer{padding:0 12px}.footer-info{display:none}
+}
+
+/* Fun Learning visual layer */
+.slide-inner > .eyebrow{
+  display:inline-flex;
+  width:max-content;
+  padding:7px 12px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#DBEAFE,#F3E8FF);
+  color:#4C1D95;
+  box-shadow:0 4px 12px rgba(139,92,246,.08);
+}
+.card{
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(37,99,235,.12);
+  border-color:#93C5FD;
+}
+.btn{
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(37,99,235,.12);
+}
+.btn.primary{
+  background:linear-gradient(135deg,#3B82F6,#8B5CF6);
+  box-shadow:0 7px 18px rgba(59,130,246,.22);
+}
+.highlight{
+  border-left:5px solid #FBBF24;
+  background:linear-gradient(90deg,#FFFBEB,#FFF7ED);
+  box-shadow:0 6px 18px rgba(251,191,36,.08);
+}
+.question{color:#172554}
+.result{color:#16A34A}
+.term{color:#7C3AED}
+
+/* Peta konsep (slide Rangkuman) */
+.cm-wrap{overflow-x:auto;margin:4px -6px 0;padding:0 6px}
+.cm-svg{display:block;width:100%;min-width:760px;height:auto}
+.cm-node{opacity:0;transform:translateY(8px);animation:cmIn .5s ease forwards;animation-delay:var(--d,0s)}
+.cm-line{fill:none;stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;animation:cmDraw .6s ease forwards;animation-delay:var(--d,0s)}
+@keyframes cmIn{to{opacity:1;transform:none}}
+@keyframes cmDraw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.cm-node{animation:none;opacity:1;transform:none}.cm-line{animation:none;stroke-dashoffset:0}}
+
+/* Buka/tutup menu samping & bar atas */
+.sidebar{grid-column:1;grid-row:2;min-width:0;transition:opacity .2s ease}
+.stage{grid-column:2;grid-row:2}
+.topbar{grid-row:1;min-height:0;overflow:hidden;transition:opacity .2s ease}
+.footer{grid-row:3}
+.app{transition:grid-template-columns .28s ease,grid-template-rows .28s ease}
+.app.no-sidebar{grid-template-columns:0px 1fr}
+.app.no-top{grid-template-rows:0px 1fr 70px}
+.app.no-sidebar .sidebar{opacity:0;visibility:hidden;padding-left:0;padding-right:0;border-right-width:0;box-shadow:none;overflow:hidden;transition:opacity .15s ease,visibility 0s linear .28s}
+.app.no-top .topbar{opacity:0;visibility:hidden;border-bottom-width:0;box-shadow:none;transition:opacity .15s ease,visibility 0s linear .28s}
+.footer-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.footer-info{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:6px}
+.btn.sm{padding:8px 12px;font-size:13px;white-space:nowrap;flex:none}
+.btn.toggle[aria-pressed="true"]{background:#EDE9FE;border-color:#C4B5FD;color:#4C1D95}
+.btn:focus-visible{outline:3px solid #93C5FD;outline-offset:2px}
+@media(max-width:850px){
+ .stage{grid-column:1}
+ .app.no-sidebar{grid-template-columns:1fr}
+ .app.no-top{grid-template-rows:0px 1fr 66px}
+ #toggleSidebar{display:none}
+ .toggle .tl{display:none}
+ .btn.sm{padding:9px 12px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">🚀 Petualangan <span>Struktur Data</span></div>
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+  <div class="counter" id="counter">1 / 16</div>
+</header>
+
+<aside class="sidebar">
+  <div class="sidebar-title">Pertemuan 1 · Fondasi</div>
+  <div class="nav" id="nav"></div>
+</aside>
+
+<main class="stage">
+  <div class="slide" id="slide"></div>
+</main>
+
+<footer class="footer">
+  <div class="footer-left">
+    <button class="btn sm toggle" id="toggleSidebar" aria-pressed="false" aria-label="Sembunyikan atau tampilkan menu samping"><span class="ti">☰</span> <span class="tl">Sembunyikan menu</span></button>
+    <button class="btn sm toggle" id="toggleTop" aria-pressed="false" aria-label="Sembunyikan atau tampilkan bar atas"><span class="ti">⬆</span> <span class="tl">Sembunyikan bar atas</span></button>
+    <div class="footer-info" id="footerInfo">Gunakan menu atau tombol untuk berpindah slide.</div>
+  </div>
+  <div class="controls">
+    <button class="btn" id="prev">← Sebelumnya</button>
+    <button class="btn primary" id="next">Berikutnya →</button>
+  </div>
+</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+function conceptMapSVG(){
+  const C={
+    blue:  {stroke:"#3B82F6",fill:"#DBEAFE",panel:"#F1F7FF",text:"#1E3A8A"},
+    purple:{stroke:"#8B5CF6",fill:"#EDE9FE",panel:"#F5F3FF",text:"#4C1D95"},
+    green: {stroke:"#22C55E",fill:"#DCFCE7",panel:"#F3FCF6",text:"#14532D"},
+    pink:  {stroke:"#F472B6",fill:"#FCE7F3",panel:"#FEF3F9",text:"#831843"}
+  };
+  const head=(cx,y,w,h,icon,title,sub,c,d)=>`<g class="cm-node" style="--d:${d}s">
+    <rect x="${cx-w/2}" y="${y}" width="${w}" height="${h}" rx="16" fill="${c.fill}" stroke="${c.stroke}" stroke-width="2" filter="url(#cmShadow)"/>
+    <text x="${cx}" y="${y+h/2-2}" text-anchor="middle" font-size="17" font-weight="800" fill="${c.text}">${icon} ${title}</text>
+    <text x="${cx}" y="${y+h/2+16}" text-anchor="middle" font-size="12.5" fill="#475569">${sub}</text></g>`;
+  const chip=(x,y,w,icon,name,sub,c,d)=>`<g class="cm-node" style="--d:${d}s">
+    <rect x="${x}" y="${y}" width="${w}" height="56" rx="12" fill="#FFFFFF" stroke="${c.stroke}" stroke-width="1.6" filter="url(#cmShadow)"/>
+    <text x="${x+w/2}" y="${y+24}" text-anchor="middle" font-size="15" font-weight="800" fill="${c.text}">${icon} ${name}</text>
+    <text x="${x+w/2}" y="${y+43}" text-anchor="middle" font-size="12" fill="#64748B">${sub}</text></g>`;
+  const panel=(x,c,d)=>`<rect class="cm-node" style="--d:${d}s" x="${x}" y="308" width="296" height="150" rx="18" fill="${c.panel}" stroke="${c.stroke}" stroke-opacity=".55" stroke-width="1.5" stroke-dasharray="6 5"/>`;
+  const curve=(x1,y1,x2,y2,col,d)=>{const m=(y1+y2)/2;return `<path class="cm-line" pathLength="1" style="--d:${d}s" d="M${x1} ${y1} C${x1} ${m} ${x2} ${m} ${x2} ${y2}" stroke="${col}"/>`};
+  const label=(cx,cy,text,c,d)=>{const w=Math.round(text.length*6.9+22);return `<g class="cm-node" style="--d:${d}s">
+    <rect x="${cx-w/2}" y="${cy-10}" width="${w}" height="20" rx="10" fill="#FFFFFF" stroke="${c.stroke}" stroke-width="1.3"/>
+    <text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="12" font-weight="700" fill="${c.text}">${text}</text></g>`};
+  // grid 2 kolom di dalam panel
+  const grid=(px,items,c,d0)=>items.map((it,i)=>chip(px+14+(i%2)*139,322+Math.floor(i/2)*66,129,it[0],it[1],it[2],c,(d0+i*0.07).toFixed(2))).join("");
+
+  const PX=[4,352,700];               // x panel: Jenis Data, Linear, Non-Linear
+  return `<svg class="cm-svg" viewBox="0 0 1000 470" role="img" aria-label="Peta konsep: Data memiliki jenis data dan diorganisasi dalam struktur data yang terbagi menjadi linear dan non-linear">
+  <defs>
+    <linearGradient id="cmRoot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B82F6"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+    <filter id="cmShadow" x="-20%" y="-25%" width="140%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#2563EB" flood-opacity=".14"/></filter>
+  </defs>
+
+  <!-- garis penghubung -->
+  ${curve(413,62,152,108,C.blue.stroke,0.25)}
+  ${curve(413,62,674,108,C.purple.stroke,0.25)}
+  ${curve(674,164,500,208,C.green.stroke,0.55)}
+  ${curve(674,164,848,208,C.pink.stroke,0.55)}
+  ${curve(152,164,152,308,C.blue.stroke,0.5)}
+  ${curve(500,260,500,308,C.green.stroke,0.85)}
+  ${curve(848,260,848,308,C.pink.stroke,0.85)}
+
+  <!-- panel contoh -->
+  ${panel(PX[0],C.blue,0.8)}${panel(PX[1],C.green,0.95)}${panel(PX[2],C.pink,0.95)}
+
+  <!-- simpul utama -->
+  <g class="cm-node" style="--d:0s">
+    <rect x="303" y="6" width="220" height="56" rx="18" fill="url(#cmRoot)" filter="url(#cmShadow)"/>
+    <text x="413" y="32" text-anchor="middle" font-size="20" font-weight="800" fill="#FFFFFF">📊 DATA</text>
+    <text x="413" y="50" text-anchor="middle" font-size="12.5" fill="#EEF2FF">fakta / informasi</text>
+  </g>
+  ${head(152,108,250,56,"🔤","Jenis Data","bentuk / nilai data",C.blue,0.3)}
+  ${head(674,108,270,56,"🧩","Struktur Data","cara mengorganisasi data",C.purple,0.3)}
+  ${head(500,208,230,52,"📏","Linear","tersusun satu jalur / urutan",C.green,0.6)}
+  ${head(848,208,230,52,"🕸️","Non-Linear","bercabang / banyak hubungan",C.pink,0.6)}
+
+  <!-- isi panel -->
+  ${grid(PX[0],[["🔤","String","teks"],["🔢","Integer","bilangan bulat"],["📐","Float","bilangan desimal"],["✅","Boolean","True / False"]],C.blue,0.9)}
+  ${grid(PX[1],[["📦","Array","berurutan + indeks"],["🔗","Linked List","node berantai"],["📚","Stack","LIFO · tumpukan"],["🚶","Queue","FIFO · antrean"]],C.green,1.05)}
+  ${chip(PX[2]+14,322,129,"🌳","Tree","bertingkat",C.pink,1.05)}
+  ${chip(PX[2]+153,322,129,"🕸️","Graph","hubungan bebas",C.pink,1.12)}
+  ${chip(PX[2]+14,388,268,"🔵","Node + garis hubungan","penyusun Tree dan Graph",C.pink,1.19)}
+
+  <!-- label hubungan -->
+  ${label(282,85,"memiliki",C.blue,0.4)}
+  ${label(544,85,"diorganisasi dalam",C.purple,0.4)}
+  ${label(587,186,"dapat berupa",C.green,0.7)}
+  ${label(761,186,"dapat berupa",C.pink,0.7)}
+  ${label(152,236,"yaitu",C.blue,0.65)}
+  ${label(500,284,"contoh",C.green,0.9)}
+  ${label(848,284,"contoh",C.pink,0.9)}
+</svg>`;
+}
+
+const slides = [
+{
+ title:"Pembuka", short:"Pembuka", render:()=>`
+ <div class="hero">
+   <div>
+     <div class="eyebrow">Pertemuan 1 · Informatika SMP</div>
+     <h1>Petualangan<br>Struktur Data</h1>
+     <p class="lead">Fondasi memahami bagaimana data disimpan, disusun, dan dihubungkan sebelum kita menjelajahi <b>Tree</b> dan <b>Graph</b>.</p>
+     <div style="margin-top:22px">
+       <span class="pill">💡 Belajar konsep</span><span class="pill">🎮 Bermain</span><span class="pill">🧩 Memecahkan kasus</span>
+     </div>
+   </div>
+   <div class="hero-art">
+     <div class="tree-art">
+       <div class="dot" style="left:108px;top:5px">A</div>
+       <div class="dot" style="left:35px;top:95px">B</div>
+       <div class="dot" style="left:181px;top:95px">C</div>
+       <div class="dot" style="left:0;top:180px">D</div>
+       <div class="dot" style="left:108px;top:180px">E</div>
+       <div class="line" style="left:134px;top:54px;width:82px;transform:rotate(126deg)"></div>
+       <div class="line" style="left:138px;top:54px;width:82px;transform:rotate(54deg)"></div>
+       <div class="line" style="left:65px;top:143px;width:84px;transform:rotate(42deg)"></div>
+       <div class="line" style="left:94px;top:143px;width:82px;transform:rotate(0deg)"></div>
+     </div>
+   </div>
+ </div>`
+},
+{
+ title:"Apa Itu Data?", short:"Apa Itu Data?", render:()=>`
+ <div class="eyebrow">02 · Konsep Dasar</div><h2>Data ada di mana-mana!</h2>
+ <p><b>Data</b> adalah fakta atau informasi yang dapat disimpan dan diolah.</p>
+ <div class="grid3" style="margin-top:22px">
+   <div class="card"><div class="icon">👤</div><h3>Nama</h3><p>Contoh: Ahmad, Budi, Siti.</p></div>
+   <div class="card"><div class="icon">🔢</div><h3>Nilai</h3><p>Contoh: 80, 75, 92.</p></div>
+   <div class="card"><div class="icon">🏫</div><h3>Kelas</h3><p>Contoh: VIII-A, VIII-B.</p></div>
+ </div>
+ <div class="highlight">❓ Pertanyaan: Jika data siswa disimpan secara acak, apakah kita akan mudah mencari nama, kelas, atau nilainya?</div>
+ <p class="center"><b>Data yang banyak membutuhkan cara pengorganisasian.</b></p>`
+},
+{
+ title:"Mengapa Data Perlu Diatur?", short:"Mengapa Data?", render:()=>`
+ <div class="eyebrow">03 · Masalah Nyata</div><h2>🧩 Mengapa Data Perlu Diatur?</h2>
+ <p class="lead">Bayangkan kamu punya banyak foto, tugas, atau nilai siswa tetapi semuanya tercampur. Mencari satu data akan menjadi sulit.</p>
+ <div class="cards">
+  <div class="card"><h3>🔎 Mudah Dicari</h3><p>Data yang tersusun rapi lebih mudah ditemukan.</p></div>
+  <div class="card"><h3>⚡ Mudah Diproses</h3><p>Program dapat membaca dan mengolah data dengan lebih teratur.</p></div>
+  <div class="card"><h3>🔗 Mudah Dihubungkan</h3><p>Data tertentu dapat memiliki hubungan dengan data lainnya.</p></div>
+ </div>
+ <div class="highlight">💡 Karena itu kita membutuhkan cara untuk <b>mengorganisasi data</b>. Inilah salah satu alasan kita mempelajari Struktur Data.</div>
+`
+},
+{
+ title:"Jenis Data", short:"🔤 Jenis Data", render:()=>`
+ <div class="eyebrow">04 · Konsep Dasar</div><h2>🔤 Mengenal 4 Jenis Data</h2>
+ <p>Sebelum mengatur data, kita perlu mengenali <b>jenis data</b> yang sedang kita gunakan.</p>
+ <div class="grid2" style="margin-top:18px">
+  <div class="card"><h3>🔤 String</h3><p>Data berupa teks atau kumpulan karakter.</p><div class="code">"Ahmad"<br>"Informatika"<br>"SMP Negeri 49"</div></div>
+  <div class="card"><h3>🔢 Integer</h3><p>Bilangan bulat tanpa angka di belakang koma.</p><div class="code">10<br>75<br>2026</div></div>
+  <div class="card"><h3>📐 Float</h3><p>Bilangan yang memiliki nilai pecahan/desimal.</p><div class="code">3.14<br>75.5<br>98.25</div></div>
+  <div class="card"><h3>✅ Boolean</h3><p>Data yang hanya memiliki dua nilai: benar atau salah.</p><div class="code">True<br>False</div></div>
+ </div>
+ <div class="highlight">💡 Contoh data siswa: <b>"Ahmad"</b> adalah String, <b>15</b> adalah Integer, <b>87.5</b> adalah Float, sedangkan <b>True</b> dapat menunjukkan "sudah mengumpulkan tugas".</div>`
+},
+{
+ title:"Aktivitas: Bedakan 4 Jenis Data", short:"🎮 Bedakan Jenis Data", render:()=>`
+ <div class="eyebrow">05 · Aktivitas 1</div><h2>🎮 Bedakan 4 Jenis Data</h2>
+ <p>Seret setiap kartu ke kelompok <b>String</b>, <b>Integer</b>, <b>Float</b>, atau <b>Boolean</b>.</p>
+ <div class="quiz-box">
+   <div id="dataCards" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+    ${[
+      ["Andi","string"],["85","integer"],["True","boolean"],["Surabaya","string"],
+      ["72.5","float"],["False","boolean"],["2026","integer"],["3.14","float"]
+    ].map(x=>`<button class="btn data-card" draggable="true" data-type="${x[1]}">${x[0]}</button>`).join("")}
+   </div>
+   <div class="grid2">
+    ${[
+      ["string","🔤 String"],["integer","🔢 Integer"],["float","📐 Float"],["boolean","✅ Boolean"]
+    ].map(x=>`<div class="card drop-zone" data-drop="${x[0]}" style="min-height:125px"><h3>${x[1]}</h3><div class="drop-items" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>`).join("")}
+   </div>
+   <div class="feedback" id="groupFb">💡 Petunjuk: klik-tahan kartu, lalu seret ke kotak yang sesuai.</div>
+ </div>`
+},
+{
+ title:"Apa Itu Struktur Data?", short:"🧩 Apa Itu Struktur Data?", render:()=>`
+ <div class="eyebrow">06 · Konsep Utama</div><h2>🏗️ Apa Itu Struktur Data?</h2>
+ <p class="lead"><b>Struktur data</b> adalah cara mengorganisasi, menyimpan, dan mengatur data agar data dapat digunakan dan diolah dengan lebih teratur.</p>
+ <div class="cards">
+  <div class="card"><h3>📦 Mengatur</h3><p>Data disusun dengan pola tertentu sehingga tidak berantakan.</p></div>
+  <div class="card"><h3>🔎 Mengakses</h3><p>Data dapat ditemukan atau diambil dengan cara yang sesuai.</p></div>
+  <div class="card"><h3>⚡ Mengolah</h3><p>Program dapat bekerja dengan data secara lebih terstruktur.</p></div>
+ </div>
+ <div class="card center" style="margin-top:18px"><div class="code">DATA → DIORGANISASI → MUDAH DIGUNAKAN</div></div>
+ <div class="highlight">💡 Jadi, struktur data bukan sekadar "jenis data". <b>Jenis data</b> menjelaskan bentuk/nilai data, sedangkan <b>struktur data</b> menjelaskan bagaimana data diorganisasi.</div>`
+},
+{
+ title:"Jenis Struktur Data", short:"🧩 Jenis Struktur Data", render:()=>`
+ <div class="eyebrow">07 · Jenis Struktur Data</div><h2>🧩 Jenis-Jenis Struktur Data</h2>
+ <p>Struktur data dapat memiliki cara penyusunan dan hubungan yang berbeda. Kita kenali gambaran umumnya terlebih dahulu.</p>
+ <div class="grid2">
+  <div class="card"><h3>📦 Array</h3><p>Kumpulan data yang tersusun berurutan dan dapat diakses berdasarkan posisi/indeks.</p><div class="code">[A] [B] [C] [D]</div></div>
+  <div class="card"><h3>🔵 Node</h3><p>Simpul atau bagian yang mewakili sebuah data/objek. Node dapat memiliki hubungan dengan node lain.</p><div class="code">[A] ─ [B]</div></div>
+  <div class="card"><h3>📏 Linear</h3><p>Data tersusun seperti satu jalur atau urutan.</p><div class="code">A → B → C → D</div></div>
+  <div class="card"><h3>🕸️ Non-Linear</h3><p>Data dapat memiliki percabangan atau banyak hubungan.</p><div class="code">A ─ B ─ C<br>│ &nbsp;&nbsp;└ D</div></div>
+  <div class="card"><h3>🔗 Linked List</h3><p>Kumpulan node yang saling terhubung secara berurutan.</p><div class="code">A → B → C</div></div>
+  <div class="card"><h3>📚 Stack</h3><p>Data seperti tumpukan. Yang terakhir masuk menjadi yang pertama keluar (LIFO).</p><div class="code">A → B → C<br>keluar: C</div></div>
+  <div class="card"><h3>🚶 Queue</h3><p>Data seperti antrean. Yang pertama masuk menjadi yang pertama keluar (FIFO).</p><div class="code">A → B → C<br>keluar: A</div></div>
+  <div class="card"><h3>🌳🕸️ Tree & Graph</h3><p>Keduanya termasuk non-linear dan digunakan untuk menggambarkan hubungan antardata. Detailnya kita pelajari pada pertemuan berikutnya.</p></div>
+ </div>`
+},
+{
+ title:"Array dan Indeks", short:"📦 Array & Indeks", render:()=>`
+ <div class="eyebrow">08 · Struktur Linear</div><h2>📦 Array dan Indeks</h2>
+ <p>Array menyimpan data secara berurutan. Setiap posisi memiliki <b>indeks</b> yang dapat digunakan untuk mengenali letak data.</p>
+ <div class="code">Nilai = [80, 75, 90, 85, 70]</div>
+ <div class="array">
+   ${[80,75,90,85,70].map((v,i)=>`<div class="array-item"><div class="idx">indeks ${i}</div><div class="val">${v}</div></div>`).join("")}
+ </div>
+ <div class="highlight">💡 Dalam banyak bahasa pemrograman, indeks dimulai dari <b>0</b>. Jadi nilai <b>90</b> berada pada indeks <b>2</b>.</div>
+ <p>Contoh: daftar nama siswa, daftar harga, daftar nilai, atau daftar jumlah barang.</p>`
+},
+{
+ title:"Game: Susun Array", short:"🎮 Susun Array", render:()=>`
+ <div class="eyebrow">09 · Aktivitas 2</div><h2>🎮 Temukan Indeks</h2>
+ <p>Klik kotak yang berisi nilai pada <b>indeks 3</b>.</p>
+ <div class="array" id="arrayGame">
+   ${[72,88,95,81,76].map((v,i)=>`<button class="array-item" data-index="${i}"><div class="idx">indeks ${i}</div><div class="val">${v}</div></button>`).join("")}
+ </div>
+ <div class="quiz-box center">
+   <div class="question">Nilai pada indeks 3 adalah <span id="arrayAnswer">?</span></div>
+   <div class="feedback" id="arrayFb">Pilih salah satu kotak.</div>
+ </div>`
+},
+{
+ title:"Data Saling Terhubung", short:"Hubungan Data", render:()=>`
+ <div class="eyebrow">10 · Jembatan Konsep</div><h2>🔗 Data Bisa Saling Terhubung</h2>
+ <p class="lead">Tidak semua data hanya berupa daftar. Kadang-kadang satu data memiliki hubungan dengan data lainnya.</p>
+ <div class="grid2">
+  <div class="card"><h3>👥 Pertemanan</h3><p>Siswa A berteman dengan B dan C.</p><div class="code">A ─ B<br>│<br>C</div></div>
+  <div class="card"><h3>📁 Folder</h3><p>Sebuah folder dapat memiliki subfolder dan file.</p><div class="code">Dokumen<br>└─ Sekolah<br>&nbsp;&nbsp;└─ Tugas</div></div>
+ </div>
+ <div class="highlight">🌉 Untuk menggambarkan hubungan seperti ini, kita perlu mengenal <b>Node</b> dan hubungan antar-node.</div>
+`
+},
+{
+ title:"Node dan Hubungan Data", short:"Node & Hubungan", render:()=>`
+ <div class="eyebrow">11 · Jembatan Menuju Tree & Graph</div><h2>🔗 Node dan Hubungan Data</h2>
+ <div class="two-col">
+  <div>
+   <p><b>Node (simpul)</b> adalah bagian atau objek yang mewakili sebuah data.</p>
+   <p>Contoh: siswa, kota, komputer, produk, atau folder dapat direpresentasikan sebagai node.</p>
+   <div class="code center">[Ahmad] ───── [Budi]</div>
+   <p>Garis menunjukkan adanya <b>hubungan</b> antardata.</p>
+  </div>
+  <div class="card">
+   <h3>Contoh jaringan pertemanan</h3>
+   <div class="node-board" style="height:240px">
+     <svg class="svg"><line class="edge" x1="31%" y1="30%" x2="69%" y2="30%"/><line class="edge" x1="31%" y1="30%" x2="50%" y2="72%"/><line class="edge" x1="69%" y1="30%" x2="50%" y2="72%"/></svg>
+     <div class="node" style="left:18%;top:14%">A</div><div class="node" style="left:62%;top:14%">B</div><div class="node" style="left:41%;top:57%">C</div>
+   </div>
+  </div>
+ </div>
+ <div class="highlight">🌉 Inilah ide penting: data tidak selalu berdiri sendiri. Data bisa memiliki hubungan dengan data lainnya.</div>`
+},
+{
+ title:"Game: Hubungkan Node", short:"🎮 Hubungkan Node", render:()=>`
+ <div class="eyebrow">12 · Mini Game</div><h2>🎮 Buat Hubungan</h2>
+ <p>Klik dua node secara bergantian untuk menghubungkannya. Hubungkan <b>A–B</b>, <b>B–C</b>, dan <b>C–D</b>.</p>
+ <div class="node-board" id="nodeGame">
+   <svg class="svg" id="nodeSvg"></svg>
+   <button class="node" data-node="A" style="left:15%;top:35%">A</button>
+   <button class="node" data-node="B" style="left:38%;top:15%">B</button>
+   <button class="node" data-node="C" style="left:61%;top:35%">C</button>
+   <button class="node" data-node="D" style="left:82%;top:62%">D</button>
+ </div>
+ <div class="mode"><button class="btn" id="resetNodes">↻ Reset</button><span class="pill" id="nodeStatus">Terhubung: 0 / 3</span></div>`
+},
+{
+ title:"Linear vs Non-Linear", short:"Linear vs Non-Linear", render:()=>`
+ <div class="eyebrow">13 · Jenis Struktur</div><h2>↔️ Linear vs Non-Linear</h2>
+ <div class="grid2">
+  <div class="card">
+   <h3>📏 Linear</h3><p>Data tersusun seperti satu jalur atau urutan.</p>
+   <div class="code">A → B → C → D</div>
+   <p>Contoh: <b>Array, Linked List, Stack, Queue</b>.</p>
+  </div>
+  <div class="card">
+   <h3>🕸️ Non-Linear</h3><p>Data dapat memiliki banyak hubungan atau percabangan.</p>
+   <div class="code">A ─ B ─ C<br>│ &nbsp;&nbsp;└ D</div>
+   <p>Contoh: <b>Tree dan Graph</b>.</p>
+  </div>
+ </div>
+ <div class="highlight">🎯 Untuk bab ini, kita akan bergerak dari fondasi struktur linear menuju struktur non-linear: <b>Tree dan Graph</b>.</div>`
+},
+{
+ title:"Stack dan Queue", short:"Stack & Queue", render:()=>`
+ <div class="eyebrow">14 · Struktur Linear</div><h2>📚 Stack dan Queue</h2>
+ <div class="grid2">
+  <div class="card">
+   <div style="font-size:52px">📚</div><h3>Stack — LIFO</h3>
+   <p><b>Last In, First Out</b> — yang terakhir masuk keluar lebih dahulu.</p>
+   <p>Bayangkan tumpukan buku. Buku paling atas diambil terlebih dahulu.</p>
+   <div class="code center">Masuk: A → B → C<br>Keluar: C → B → A</div>
+  </div>
+  <div class="card">
+   <div style="font-size:52px">🚶</div><h3>Queue — FIFO</h3>
+   <p><b>First In, First Out</b> — yang pertama masuk keluar lebih dahulu.</p>
+   <p>Bayangkan antrean di kantin atau loket.</p>
+   <div class="code center">Masuk: A → B → C<br>Keluar: A → B → C</div>
+  </div>
+ </div>
+ <p style="margin-top:20px">Kita cukup memahami konsepnya terlebih dahulu; implementasi pemrograman akan dipelajari pada tahap berikutnya.</p>`
+},
+{
+ title:"Gambaran Tree & Graph", short:"🌳🕸️ Tree & Graph", render:()=>`
+ <div class="eyebrow">15 · Pengantar Pertemuan Berikutnya</div><h2>🌳🕸️ Tree dan Graph</h2>
+ <p>Untuk pertemuan ini, cukup pahami gambaran umumnya. Pembahasan istilah dan penerapannya akan dilakukan lebih mendalam pada pertemuan selanjutnya.</p>
+ <div class="grid2" style="margin-top:20px">
+  <div class="card">
+   <div style="font-size:60px">🌳</div>
+   <h3>Tree</h3>
+   <p>Struktur data non-linear yang menggambarkan hubungan <b>bertingkat atau hierarkis</b>.</p>
+   <div class="highlight">Contoh: struktur folder, struktur organisasi, menu bertingkat.</div>
+  </div>
+  <div class="card">
+   <div style="font-size:60px">🕸️</div>
+   <h3>Graph</h3>
+   <p>Struktur data non-linear yang menggambarkan <b>hubungan antardata</b> secara lebih bebas.</p>
+   <div class="highlight">Contoh: jaringan pertemanan, jaringan jalan, jaringan komputer.</div>
+  </div>
+ </div>
+ <div class="highlight">🎯 Kesimpulan hari ini: <b>Tree dan Graph sama-sama digunakan untuk merepresentasikan hubungan data</b>, tetapi cara hubungan tersebut disusun dapat berbeda.</div>`
+},
+{
+ title:"Aktivitas: Pilih Struktur", short:"🧩 Pilih Struktur", render:()=>`
+ <div class="eyebrow">16 · Aktivitas 3</div><h2>🧩 Cocokkan Kasus dengan Struktur</h2>
+ <p>Klik struktur yang paling sesuai untuk setiap kasus.</p>
+ <div class="grid3">
+  <div class="card case-card" data-answer="array"><h3>📋 Kasus A</h3><p>Daftar 30 nilai siswa yang disimpan berurutan.</p><div class="options" style="grid-template-columns:1fr"><button class="option case-option" data-value="array">Array</button><button class="option case-option" data-value="tree">Tree</button><button class="option case-option" data-value="graph">Graph</button></div><div class="feedback case-feedback"></div></div>
+  <div class="card case-card" data-answer="tree"><h3>📁 Kasus B</h3><p>Folder utama memiliki subfolder dan file secara bertingkat.</p><div class="options" style="grid-template-columns:1fr"><button class="option case-option" data-value="array">Array</button><button class="option case-option" data-value="tree">Tree</button><button class="option case-option" data-value="graph">Graph</button></div><div class="feedback case-feedback"></div></div>
+  <div class="card case-card" data-answer="graph"><h3>👥 Kasus C</h3><p>Jaringan pertemanan: satu siswa dapat terhubung dengan banyak siswa.</p><div class="options" style="grid-template-columns:1fr"><button class="option case-option" data-value="array">Array</button><button class="option case-option" data-value="tree">Tree</button><button class="option case-option" data-value="graph">Graph</button></div><div class="feedback case-feedback"></div></div>
+ </div>`
+},
+{
+ title:"Tantangan Akhir", short:"🏆 Tantangan Akhir", render:()=>`
+ <div class="eyebrow">17 · Boss Challenge</div><h2>🏆 Tantangan Akhir</h2>
+ <p>Gunakan semua konsep yang sudah dipelajari.</p>
+ <div class="quiz-box">
+  <div class="question">Sebuah sekolah ingin menggambarkan <b>hubungan pertemanan antarsiswa</b>. Ada siswa yang memiliki banyak teman dan satu siswa dapat terhubung dengan banyak siswa lain. Struktur yang paling sesuai adalah...</div>
+  <div class="options" id="q5">
+   <button class="option" data-correct="false">📦 Array</button>
+   <button class="option" data-correct="false">📚 Stack</button>
+   <button class="option" data-correct="true">🕸️ Graph</button>
+   <button class="option" data-correct="false">🚶 Queue</button>
+  </div>
+  <div class="feedback" id="fb5"></div>
+ </div>
+ <div class="quiz-box">
+  <div class="question">Dalam struktur folder <b>Dokumen → Sekolah → Tugas</b>, hubungan bertingkat seperti ini paling mirip dengan...</div>
+  <div class="options" id="q6">
+   <button class="option" data-correct="true">🌳 Tree</button>
+   <button class="option" data-correct="false">🕸️ Graph</button>
+   <button class="option" data-correct="false">📦 Array</button>
+   <button class="option" data-correct="false">📚 Stack</button>
+  </div>
+  <div class="feedback" id="fb6"></div>
+ </div>`
+},
+{
+ title:"Rangkuman", short:"📌 Rangkuman", render:()=>`
+ <div style="margin:-20px 0">
+ <div class="eyebrow" style="margin-bottom:8px;display:inline-flex;width:max-content;padding:7px 12px;border-radius:999px;background:linear-gradient(90deg,#DBEAFE,#F3E8FF);color:#4C1D95;box-shadow:0 4px 12px rgba(139,92,246,.08)">18 · Rekap</div><h2 style="margin-bottom:4px;font-size:clamp(26px,3.4vw,36px)">📌 Peta Konsep Kita</h2>
+ <div class="cm-wrap">${conceptMapSVG()}</div>
+ <div class="highlight" style="margin:10px 0 0;font-size:15px;padding:10px 16px">⭐ <b>Jenis data</b> menjelaskan bentuk/nilai data; <b>struktur data</b> menjelaskan cara data diorganisasi.</div>
+ </div>`
+},
+{
+ title:"Hasil Belajar", short:"🎉 Selesai", render:()=>`
+ <div class="center">
+  <div class="big-check">🎉</div>
+  <div class="eyebrow">19 · Kamu Berhasil!</div>
+  <h2>Fondasi Struktur Data Selesai</h2>
+  <p class="lead" style="margin:auto">Kamu sudah mengenal data, struktur data, array, node, struktur linear, serta konsep dasar Tree dan Graph.</p>
+  <div class="cards" style="text-align:left">
+   <div class="card"><h3>✅ Saya memahami data</h3><p>Data adalah fakta/informasi yang dapat disimpan dan diolah.</p></div>
+   <div class="card"><h3>✅ Saya memahami struktur</h3><p>Struktur data membantu mengorganisasi data.</p></div>
+   <div class="card"><h3>🚀 Siap lanjut</h3><p>Pertemuan berikutnya: kita akan lebih dalam mempelajari Tree.</p></div>
+  </div>
+  <button class="btn primary" id="restart" style="margin-top:22px">↻ Mulai Lagi</button>
+ </div>`
+}
+];
+
+let current=0;
+const nav=document.getElementById("nav");
+const slide=document.getElementById("slide");
+const progress=document.getElementById("progress");
+const counter=document.getElementById("counter");
+const prev=document.getElementById("prev");
+const next=document.getElementById("next");
+const footerInfo=document.getElementById("footerInfo");
+const app=document.querySelector(".app");
+let redrawNodes=null;
+
+function bindToggle(btn,cls,hideLabel,showLabel,hideIcon,showIcon){
+ const lab=btn.querySelector(".tl"), ico=btn.querySelector(".ti");
+ btn.onclick=()=>{
+  const hidden=app.classList.toggle(cls);
+  btn.setAttribute("aria-pressed",String(hidden));
+  lab.textContent=hidden?showLabel:hideLabel;
+  ico.textContent=hidden?showIcon:hideIcon;
+ };
+}
+bindToggle(document.getElementById("toggleSidebar"),"no-sidebar","Sembunyikan menu","Tampilkan menu","☰","☰");
+bindToggle(document.getElementById("toggleTop"),"no-top","Sembunyikan bar atas","Tampilkan bar atas","⬆","⬇");
+if(window.ResizeObserver){new ResizeObserver(()=>{if(redrawNodes)redrawNodes()}).observe(slide);}
+
+function renderNav(){
+ nav.innerHTML=slides.map((s,i)=>`
+  <button class="${i===current?'active':''}" data-go="${i}">
+   <span class="num">${String(i+1).padStart(2,"0")}</span><span>${s.short}</span>
+  </button>`).join("");
+ nav.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>goTo(Number(b.dataset.go)));
+}
+function render(){
+ slide.innerHTML='<div class="slide-inner">'+slides[current].render()+'</div>';
+ progress.style.width=((current+1)/slides.length*100)+"%";
+ counter.textContent=(current+1)+" / "+slides.length;
+ footerInfo.textContent=slides[current].title;
+ prev.disabled=current===0;
+ next.disabled=current===slides.length-1;
+ next.textContent=current===slides.length-1?"Selesai":"Berikutnya →";
+ renderNav();
+ bindInteractions();
+ slide.scrollTop=0;
+}
+function goTo(i){
+ if(i<0||i>=slides.length)return;
+ current=i;render();
+}
+prev.onclick=()=>goTo(current-1);
+next.onclick=()=>goTo(current+1);
+
+function bindQuiz(id,feedbackId){
+ const box=document.getElementById(id), fb=document.getElementById(feedbackId);
+ if(!box)return;
+ box.querySelectorAll(".option").forEach(btn=>{
+  btn.onclick=()=>{
+   box.querySelectorAll(".option").forEach(x=>x.disabled=true);
+   if(btn.dataset.correct==="true"){
+    btn.classList.add("correct");fb.textContent="✅ Benar! Jawabanmu tepat.";
+    fb.style.color="var(--accent)";
+   }else{
+    btn.classList.add("wrong");fb.textContent="❌ Belum tepat. Coba perhatikan kembali konsepnya.";
+    fb.style.color="var(--danger)";
+    const correct=box.querySelector('[data-correct="true"]');
+    if(correct)correct.classList.add("correct");
+   }
+  };
+ });
+}
+function bindInteractions(){
+ redrawNodes=null;
+ [["q1","fb1"],["q2","fb2"],["q3","fb3"],["q4","fb4"],["q5","fb5"],["q6","fb6"]].forEach(x=>bindQuiz(x[0],x[1]));
+
+ const dataCards=document.querySelectorAll("#dataCards .data-card");
+ const zones=document.querySelectorAll(".drop-zone");
+ let dragged=null;
+ dataCards.forEach(card=>{
+   card.addEventListener("dragstart",()=>{dragged=card;});
+   card.addEventListener("dragend",()=>{dragged=null; zones.forEach(z=>z.classList.remove("over"));});
+ });
+ zones.forEach(zone=>{
+   zone.addEventListener("dragover",e=>{e.preventDefault();zone.classList.add("over");});
+   zone.addEventListener("dragleave",()=>zone.classList.remove("over"));
+   zone.addEventListener("drop",e=>{
+     e.preventDefault(); zone.classList.remove("over");
+     if(!dragged)return;
+     const fb=document.getElementById("groupFb");
+     if(dragged.dataset.type===zone.dataset.drop){
+       zone.querySelector(".drop-items").appendChild(dragged);
+       dragged.draggable=false;
+       dragged.classList.add("correct");
+       const remaining=document.querySelectorAll("#dataCards .data-card").length;
+       if(remaining===0){
+         fb.textContent="🎉 Hebat! Semua data sudah dikelompokkan dengan benar.";
+         fb.style.color="var(--accent)";
+       }else{
+         fb.textContent="✅ Benar! Lanjutkan mengelompokkan kartu lainnya.";
+         fb.style.color="var(--accent)";
+       }
+     }else{
+       fb.textContent="❌ Belum tepat. Perhatikan bentuk/arti datanya.";
+       fb.style.color="var(--danger)";
+     }
+   });
+ });
+
+ document.querySelectorAll(".case-card").forEach(card=>{
+   card.querySelectorAll(".case-option").forEach(btn=>{
+     btn.onclick=()=>{
+       const fb=card.querySelector(".case-feedback");
+       card.querySelectorAll(".case-option").forEach(b=>b.disabled=true);
+       if(btn.dataset.value===card.dataset.answer){
+         btn.classList.add("correct");
+         fb.textContent="✅ Tepat!";
+         fb.style.color="var(--accent)";
+       }else{
+         btn.classList.add("wrong");
+         const right=card.querySelector('[data-value="'+card.dataset.answer+'"]');
+         if(right)right.classList.add("correct");
+         fb.textContent="❌ Coba lagi pada konsep berikutnya.";
+         fb.style.color="var(--danger)";
+       }
+     };
+   });
+ });
+
+ const ag=document.getElementById("arrayGame");
+ if(ag){
+  ag.querySelectorAll(".array-item").forEach(b=>b.onclick=()=>{
+   const ans=document.getElementById("arrayAnswer"),fb=document.getElementById("arrayFb");
+   if(b.dataset.index==="3"){
+    ans.textContent="81";fb.textContent="🎉 Benar! Indeks 3 berisi nilai 81.";fb.style.color="var(--accent)";b.classList.add("correct");
+   }else{
+    fb.textContent="❌ Belum. Ingat, indeks dimulai dari 0.";fb.style.color="var(--danger)";
+   }
+  });
+ }
+
+ const board=document.getElementById("nodeGame");
+ if(board){
+  let selected=null;
+  let edges=[];
+  const svg=document.getElementById("nodeSvg");
+  const status=document.getElementById("nodeStatus");
+  const nodes=[...board.querySelectorAll(".node")];
+  function pos(el){
+   const r=board.getBoundingClientRect(),n=el.getBoundingClientRect();
+   return {x:n.left-r.left+n.width/2,y:n.top-r.top+n.height/2};
+  }
+  function draw(){
+   svg.innerHTML="";
+   edges.forEach(([a,b])=>{
+    const pa=pos(board.querySelector('[data-node="'+a+'"]')),pb=pos(board.querySelector('[data-node="'+b+'"]'));
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("class","edge");l.setAttribute("x1",pa.x);l.setAttribute("y1",pa.y);l.setAttribute("x2",pb.x);l.setAttribute("y2",pb.y);svg.appendChild(l);
+   });
+   status.textContent="Terhubung: "+edges.length+" / 3";
+   if(edges.length===3){
+    status.textContent="🎉 Lengkap! A–B, B–C, C–D sudah terhubung.";
+    status.style.color="var(--accent)";
+   }
+  }
+  function norm(a,b){return a<b?a+"-"+b:b+"-"+a}
+  nodes.forEach(n=>n.onclick=()=>{
+   if(!selected){selected=n.dataset.node;n.classList.add("selected");return}
+   const a=selected,b=n.dataset.node;
+   if(a!==b&&!edges.some(e=>norm(e[0],e[1])===norm(a,b))){
+    edges.push([a,b]);
+   }
+   nodes.forEach(x=>x.classList.remove("selected"));selected=null;draw();
+  });
+  redrawNodes=draw;
+  const reset=document.getElementById("resetNodes");
+  if(reset)reset.onclick=()=>{edges=[];selected=null;nodes.forEach(x=>x.classList.remove("selected"));status.style.color="";draw()};
+  draw();
+ }
+
+ const restart=document.getElementById("restart");
+ if(restart)restart.onclick=()=>goTo(0);
+}
+
+render();
+})();
+</script>
+
+<script>
+/* Safe fallback renderer: prevents a broken optional interaction from making
+   the presentation blank. It uses the existing `slides` data and DOM. */
+(function () {
+  function findContainer() {
+    return document.querySelector('#slides') ||
+           document.querySelector('.slides') ||
+           document.querySelector('[data-slides]') ||
+           document.querySelector('main .content') ||
+           document.querySelector('main');
+  }
+
+  function getSlideContainer() {
+    const el = findContainer();
+    if (!el) return null;
+    return el;
+  }
+
+  function renderFallback() {
+    try {
+      if (!Array.isArray(window.slides) && typeof slides === 'undefined') return;
+      const data = Array.isArray(window.slides) ? window.slides : slides;
+      if (!Array.isArray(data) || !data.length) return;
+
+      const container = getSlideContainer();
+      if (!container) return;
+
+      // If an existing renderer has already produced visible slide content,
+      // leave it alone.
+      const existing = container.querySelector('.slide, .slide-card, [data-slide]');
+      if (existing && existing.textContent.trim()) return;
+
+      const escapeHtml = (value) => String(value ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      container.innerHTML = data.map((s, idx) => {
+        const title = escapeHtml(s.title || ('Slide ' + (idx + 1)));
+        const body = s.content ?? s.html ?? s.body ?? '';
+        const bodyHtml = typeof body === 'string' ? body : escapeHtml(body);
+        return `<section class="slide fallback-slide" data-slide="${idx}">
+          <div class="card">
+            <div class="eyebrow">SLIDE ${idx + 1}</div>
+            <h1>${title}</h1>
+            <div class="slide-content">${bodyHtml}</div>
+          </div>
+        </section>`;
+      }).join('');
+
+      const all = [...container.querySelectorAll('.fallback-slide')];
+      all.forEach((el, idx) => {
+        el.style.display = idx === 0 ? '' : 'none';
+      });
+    } catch (e) {
+      console.error('Fallback renderer:', e);
+    }
+  }
+
+  // Do not interfere with the existing application unless it fails.
+  window.addEventListener('error', function (e) {
+    console.error('Presentation JavaScript error:', e.error || e.message);
+    setTimeout(renderFallback, 50);
+  });
+
+  window.addEventListener('DOMContentLoaded', function () {
+    setTimeout(renderFallback, 100);
+  });
+})();
+</script>
+
+</body>
+</html>
