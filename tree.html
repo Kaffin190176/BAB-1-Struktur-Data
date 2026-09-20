@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Struktur Data — Pertemuan 2: Tree</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#F0F7FF;
+  --panel:#FFFFFF;
+  --panel2:#EFF6FF;
+  --text:#172554;
+  --muted:#64748B;
+  --accent:#3B82F6;
+  --accent2:#8B5CF6;
+  --gold:#FBBF24;
+  --danger:#F472B6;
+  --success:#22C55E;
+  --pink:#F472B6;
+  --purple:#8B5CF6;
+  --border:rgba(37,99,235,.14);
+  --shadow:0 18px 50px rgba(37,99,235,.12)
+}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#F0F7FF 0%,#FDFBFF 52%,#FFF7FC 100%);color:var(--text);overflow:hidden}
+button{font:inherit}
+.app{height:100vh;height:100dvh;display:grid;grid-template-columns:270px 1fr;grid-template-rows:64px 1fr 70px}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 22px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);box-shadow:0 4px 18px rgba(37,99,235,.07);z-index:5}
+.brand{font-weight:800;white-space:nowrap}.brand span{color:var(--accent2)}
+.progress-wrap{flex:1;height:8px;background:#DBEAFE;border-radius:99px;overflow:hidden}
+.progress{height:100%;width:6.25%;background:linear-gradient(90deg,#3B82F6,#8B5CF6,#F472B6);border-radius:99px;transition:.3s}
+.counter{font-size:13px;color:var(--muted);white-space:nowrap}
+.sidebar{background:rgba(255,255,255,.92);border-right:1px solid var(--border);box-shadow:4px 0 18px rgba(37,99,235,.06);padding:18px 12px;overflow:auto}
+.sidebar-title{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);padding:0 10px 12px}
+.nav{display:flex;flex-direction:column;gap:5px}
+.nav button{border:1px solid transparent;background:transparent;color:#475569;text-align:left;padding:10px 11px;border-radius:10px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:13px}
+.nav button:hover{background:#EFF6FF;color:#172554}
+.nav button.active{background:linear-gradient(90deg,#DBEAFE,#F3E8FF);border-color:rgba(139,92,246,.24);color:#172554}
+.num{width:25px;height:25px;border-radius:8px;background:#E0E7FF;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.nav button.active .num{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#FFFFFF}
+.stage{position:relative;min-width:0;min-height:0;padding:24px;background:
+ radial-gradient(circle at 85% 10%,rgba(59,130,246,.16),transparent 30%),
+ radial-gradient(circle at 15% 90%,rgba(244,114,182,.12),transparent 28%),
+ radial-gradient(circle at 55% 95%,rgba(139,92,246,.08),transparent 25%)}
+.slide{height:100%;width:100%;max-width:1180px;margin:auto;background:linear-gradient(145deg,#FFFFFF,#F8FBFF);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);overflow:auto}
+.slide-inner{min-height:100%;padding:46px 56px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{color:var(--accent);font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(34px,5vw,64px);line-height:1.03;margin:0 0 18px;letter-spacing:-2px}
+h2{font-size:clamp(28px,4vw,44px);margin:0 0 18px;letter-spacing:-1px}
+h3{margin:0 0 8px;font-size:19px}
+p{font-size:17px;line-height:1.7;color:#475569;margin:8px 0}
+.lead{font-size:20px;max-width:800px;color:#475569}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:35px;align-items:center}
+.hero-art{min-height:330px;border-radius:24px;background:linear-gradient(145deg,#DBEAFE,#F3E8FF 52%,#FCE7F3);border:1px solid var(--border);box-shadow:inset 0 0 40px rgba(255,255,255,.55);display:grid;place-items:center;position:relative;overflow:hidden}
+.hero-art:before,.hero-art:after{content:"";position:absolute;border-radius:50%;filter:blur(2px)}
+.hero-art:before{width:190px;height:190px;background:rgba(59,130,246,.18);top:-60px;right:-40px}
+.hero-art:after{width:160px;height:160px;background:rgba(244,114,182,.18);bottom:-50px;left:-30px}
+.tree-art{position:relative;width:270px;height:230px}
+.dot{position:absolute;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#FFFFFF;border:3px solid var(--accent);color:#172554;box-shadow:0 8px 18px rgba(59,130,246,.16);font-weight:800;z-index:2}
+.line{position:absolute;height:3px;background:#93C5FD;transform-origin:left center;z-index:1}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.card{background:#FFFFFF;border:1px solid var(--border);box-shadow:0 8px 24px rgba(37,99,235,.08);border-radius:16px;padding:20px}
+.card .icon{font-size:28px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.list{padding-left:20px;color:#475569;line-height:1.9;font-size:16px}
+.highlight{border-left:4px solid var(--accent);background:#ECFDF5;padding:15px 18px;border-radius:0 12px 12px 0;margin:15px 0}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#EEF6FF;border:1px solid #BFDBFE;padding:18px;border-radius:14px;color:#1D4ED8;box-shadow:inset 0 2px 8px rgba(59,130,246,.04);font-size:18px}
+.center{text-align:center}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:99px;background:#F3E8FF;color:#5B21B6;border:1px solid #DDD6FE;font-size:12px;margin:3px}
+.term{color:var(--accent);font-weight:800}
+.footer{grid-column:1/-1;background:rgba(255,255,255,.96);border-top:1px solid var(--border);box-shadow:0 -4px 18px rgba(37,99,235,.06);display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:5}
+.footer-info{font-size:13px;color:var(--muted)}
+.controls{display:flex;gap:9px}
+.btn{border:1px solid var(--border);background:#FFFFFF;color:#172554;border-color:#BFDBFE;padding:11px 17px;border-radius:11px;cursor:pointer;font-weight:700}
+.btn:hover{background:#DBEAFE}
+.btn.primary{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#FFFFFF;border-color:transparent}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.quiz-box{background:#FFFFFF;border:1px solid #BFDBFE;box-shadow:0 10px 28px rgba(37,99,235,.08);border-radius:18px;padding:24px;margin-top:16px}
+.question{font-size:20px;font-weight:750;line-height:1.45;margin-bottom:16px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option{padding:14px;border:1px solid #2a3854;background:#F8FAFC;color:#172554;border-color:#CBD5E1;border-radius:12px;text-align:left;cursor:pointer}
+.option:hover{border-color:#60A5FA}
+.data-card{cursor:grab}
+.data-card:active{cursor:grabbing}
+.drop-zone{transition:.2s;border:2px dashed #93C5FD}
+.drop-zone.over{border-color:#3B82F6;background:#EFF6FF;transform:translateY(-2px)}
+.drop-items .data-card{padding:7px 10px;font-size:12px;cursor:default}
+.activity-note{font-size:13px;color:var(--muted)}
+
+.option.correct{border-color:#3B82F6;background:rgba(59,130,246,.18)}
+.option.wrong{border-color:var(--danger);background:rgba(251,113,133,.10)}
+.feedback{min-height:25px;margin-top:14px;font-weight:700}
+.array{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0}
+.array-item{width:72px;height:72px;background:#FFFFFF;border:2px solid #BFDBFE;box-shadow:0 6px 16px rgba(37,99,235,.08);border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.array-item .idx{font-size:10px;color:var(--muted)}.array-item .val{font-weight:800;font-size:20px}
+.node-board{position:relative;height:290px;border-radius:18px;background:linear-gradient(135deg,#EFF6FF,#FDF4FF);border:1px solid #BFDBFE;margin-top:18px;overflow:hidden}
+.node{position:absolute;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:#FFFFFF;border:3px solid #8B5CF6;color:#312E81;box-shadow:0 7px 18px rgba(139,92,246,.15);font-weight:800;cursor:pointer;user-select:none}
+.node.selected{border-color:var(--gold);box-shadow:0 0 0 5px rgba(251,191,36,.18),0 8px 20px rgba(251,191,36,.18)}
+.node.connected{border-color:#3B82F6}
+.svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.edge{stroke:#94A3B8;stroke-width:3}
+.mode{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.result{font-size:25px;font-weight:850;color:var(--accent);margin-top:12px}
+.big-check{font-size:80px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{padding:11px;border-bottom:1px solid var(--border);text-align:left;color:#475569}
+th{color:var(--accent)}
+@media(max-width:850px){
+ .app{grid-template-columns:1fr;grid-template-rows:58px 1fr 66px}
+ .sidebar{display:none}.topbar{padding:0 13px}.brand{font-size:13px}
+ .stage{padding:10px}.slide{border-radius:16px}.slide-inner{padding:28px 22px}
+ .hero,.two-col,.grid2{grid-template-columns:1fr}.cards,.grid3{grid-template-columns:1fr}
+ .options{grid-template-columns:1fr}.footer{padding:0 12px}.footer-info{display:none}
+}
+
+/* Fun Learning visual layer */
+.slide-inner > .eyebrow{
+  display:inline-flex;
+  width:max-content;
+  padding:7px 12px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#DBEAFE,#F3E8FF);
+  color:#4C1D95;
+  box-shadow:0 4px 12px rgba(139,92,246,.08);
+}
+.card{
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(37,99,235,.12);
+  border-color:#93C5FD;
+}
+.btn{
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(37,99,235,.12);
+}
+.btn.primary{
+  background:linear-gradient(135deg,#3B82F6,#8B5CF6);
+  box-shadow:0 7px 18px rgba(59,130,246,.22);
+}
+.highlight{
+  border-left:5px solid #FBBF24;
+  background:linear-gradient(90deg,#FFFBEB,#FFF7ED);
+  box-shadow:0 6px 18px rgba(251,191,36,.08);
+}
+.question{color:#172554}
+.result{color:#16A34A}
+.term{color:#7C3AED}
+
+/* Peta konsep (slide Rangkuman) */
+.cm-wrap{overflow-x:auto;margin:4px -6px 0;padding:0 6px}
+.cm-svg{display:block;width:100%;min-width:760px;height:auto}
+.cm-node{opacity:0;transform:translateY(8px);animation:cmIn .5s ease forwards;animation-delay:var(--d,0s)}
+.cm-line{fill:none;stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;animation:cmDraw .6s ease forwards;animation-delay:var(--d,0s)}
+@keyframes cmIn{to{opacity:1;transform:none}}
+@keyframes cmDraw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.cm-node{animation:none;opacity:1;transform:none}.cm-line{animation:none;stroke-dashoffset:0}}
+
+/* Buka/tutup menu samping & bar atas */
+.sidebar{grid-column:1;grid-row:2;min-width:0;transition:opacity .2s ease}
+.stage{grid-column:2;grid-row:2}
+.topbar{grid-row:1;min-height:0;overflow:hidden;transition:opacity .2s ease}
+.footer{grid-row:3}
+.app{transition:grid-template-columns .28s ease,grid-template-rows .28s ease}
+.app.no-sidebar{grid-template-columns:0px 1fr}
+.app.no-top{grid-template-rows:0px 1fr 70px}
+.app.no-sidebar .sidebar{opacity:0;visibility:hidden;padding-left:0;padding-right:0;border-right-width:0;box-shadow:none;overflow:hidden;transition:opacity .15s ease,visibility 0s linear .28s}
+.app.no-top .topbar{opacity:0;visibility:hidden;border-bottom-width:0;box-shadow:none;transition:opacity .15s ease,visibility 0s linear .28s}
+.footer-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.footer-info{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:6px}
+.btn.sm{padding:8px 12px;font-size:13px;white-space:nowrap;flex:none}
+.btn.toggle[aria-pressed="true"]{background:#EDE9FE;border-color:#C4B5FD;color:#4C1D95}
+.btn:focus-visible{outline:3px solid #93C5FD;outline-offset:2px}
+@media(max-width:850px){
+ .stage{grid-column:1}
+ .app.no-sidebar{grid-template-columns:1fr}
+ .app.no-top{grid-template-rows:0px 1fr 66px}
+ #toggleSidebar{display:none}
+ .toggle .tl{display:none}
+ .btn.sm{padding:9px 12px}
+}
+
+/* ===== Tampilan HP: menu geser (drawer), peta konsep vertikal, perbaikan layout ===== */
+.sidebar-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.drawer-close{display:none;flex:none;width:40px;height:40px;margin:-6px -4px 0 0;border:1px solid #BFDBFE;background:#fff;color:#172554;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;place-items:center}
+.scrim{display:none}
+.cmm{display:none}
+.cmm{max-width:560px;margin:8px auto 0}
+.cmm-root{border-radius:18px;padding:10px 14px;text-align:center;color:#fff;font-weight:800;font-size:20px;line-height:1.15;background:linear-gradient(135deg,#3B82F6,#8B5CF6);box-shadow:0 6px 18px rgba(59,130,246,.22)}
+.cmm-root small{display:block;font-size:12px;font-weight:500;opacity:.92}
+.cmm-kids{margin-left:20px;padding:14px 0 0 14px}
+.cmm-branch{position:relative;--c:#3B82F6;--f:#DBEAFE;--p:#F1F7FF;--t:#1E3A8A}
+.cmm-branch+.cmm-branch{margin-top:14px}
+.cmm-branch:before{content:"";position:absolute;left:-14px;top:51px;width:14px;height:3px;border-radius:3px;background:var(--c)}
+.cmm-branch:after{content:"";position:absolute;left:-14px;top:-14px;width:3px;height:calc(100% + 14px);border-radius:3px;background:var(--c)}
+.cmm-branch:last-child:after{height:65px}
+.b-blue{--c:#3B82F6;--f:#DBEAFE;--p:#F1F7FF;--t:#1E3A8A}
+.b-purple{--c:#8B5CF6;--f:#EDE9FE;--p:#F5F3FF;--t:#4C1D95}
+.b-green{--c:#22C55E;--f:#DCFCE7;--p:#F3FCF6;--t:#14532D}
+.b-pink{--c:#F472B6;--f:#FCE7F3;--p:#FEF3F9;--t:#831843}
+.cmm-link{display:block;width:max-content;max-width:100%;height:20px;line-height:17px;margin-bottom:5px;padding:0 10px;border-radius:999px;background:#fff;border:1.3px solid var(--c);color:var(--t);font-size:11.5px;font-weight:700}
+.cmm-head{min-height:52px;box-sizing:border-box;padding:6px 12px;border-radius:16px;background:var(--f);border:2px solid var(--c);color:var(--t);display:flex;flex-direction:column;justify-content:center;font-weight:800;font-size:16px;line-height:1.2;box-shadow:0 4px 12px rgba(37,99,235,.10)}
+.cmm-head small{font-size:12px;font-weight:500;color:#475569}
+.cmm-panel{margin-top:8px;padding:10px;border-radius:16px;border:1.5px dashed var(--c);background:var(--p);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmm-chip{background:#fff;border:1.5px solid var(--c);border-radius:12px;padding:8px 6px;text-align:center;color:var(--t);font-weight:800;font-size:13.5px;line-height:1.2;display:flex;flex-direction:column;justify-content:center;box-shadow:0 3px 10px rgba(37,99,235,.10)}
+.cmm-chip small{display:block;margin-top:2px;font-size:11.5px;font-weight:500;color:#64748B}
+.cmm-chip.wide{grid-column:1/-1}
+.cm-slide{margin:-20px 0}
+
+@media(max-width:850px){
+ /* menu geser */
+ .sidebar{display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;width:min(84vw,320px);z-index:40;padding:14px 12px;background:#fff;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-102%);visibility:hidden;box-shadow:none;transition:transform .28s ease,visibility 0s linear .28s}
+ .app.no-sidebar .sidebar{opacity:1;padding-left:12px;padding-right:12px;border-right-width:1px}
+ .app.drawer-open .sidebar{transform:none;visibility:visible;box-shadow:8px 0 40px rgba(15,23,42,.28);transition:transform .28s ease,visibility 0s}
+ .scrim{display:block;position:fixed;inset:0;z-index:35;background:rgba(15,23,42,.45);opacity:0;pointer-events:none;transition:opacity .25s ease}
+ .app.drawer-open .scrim{opacity:1;pointer-events:auto}
+ .drawer-close{display:grid}
+ .nav button{padding:13px 12px;font-size:15px;gap:12px}
+ .num{width:28px;height:28px}
+ /* tombol footer: ikon saja, mudah disentuh */
+ #toggleSidebar{display:inline-flex}
+ .btn.sm{min-width:44px;min-height:44px;padding:0 12px;align-items:center;justify-content:center;font-size:16px}
+ .footer .controls{gap:6px}
+ .footer .controls .btn{min-height:44px;padding:0 11px;font-size:13.5px;white-space:nowrap}
+ .footer-left{flex:none}
+ /* peta konsep: versi vertikal */
+ .cm-wrap{display:none}
+ .cmm{display:block}
+ .cm-slide{margin:0}
+ /* label kecil tidak keluar dari kartu */
+ .slide-inner > .eyebrow{width:fit-content;max-width:100%;line-height:1.35;white-space:normal}
+ /* game hubungkan node: posisi node muat di layar sempit */
+ #nodeGame .node[data-node="A"]{left:5%!important;top:40%!important}
+ #nodeGame .node[data-node="B"]{left:30%!important;top:8%!important}
+ #nodeGame .node[data-node="C"]{left:56%!important;top:40%!important}
+ #nodeGame .node[data-node="D"]{left:calc(95% - 62px)!important;top:66%!important}
+ .app{grid-template-rows:58px 1fr 66px}
+ .app.no-top{grid-template-rows:0px 1fr 66px}
+}
+/* HP kecil (<= 380px) */
+@media(max-width:380px){
+ .btn.sm{min-width:40px}
+ .footer{padding:0 8px}
+ .footer-left{gap:6px}
+ .footer .controls{gap:5px}
+ .footer .controls .btn{padding:0 8px;font-size:12.5px}
+}
+@media(max-width:380px){.topbar{gap:10px}.brand{font-size:12px}.progress-wrap{min-width:36px}}
+@media(max-width:340px){#toggleTop{display:none}}
+/* HP mode landscape (layar pendek) */
+@media(max-width:850px) and (max-height:480px){
+ .app{grid-template-rows:44px 1fr 56px}
+ .app.no-top{grid-template-rows:0px 1fr 56px}
+ .stage{padding:6px}
+ .slide-inner{padding:18px 22px}
+ .btn.sm{min-height:40px}.footer .controls .btn{min-height:40px}
+}
+
+/* ================= PERTEMUAN 2 : komponen baru ================= */
+.xp{font-size:13px;font-weight:800;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;padding:5px 11px;border-radius:99px;white-space:nowrap;transition:transform .2s}
+.xp.pop{transform:scale(1.2)}
+.toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,18px);background:#172554;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:80;box-shadow:0 10px 30px rgba(15,23,42,.3);max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.burst{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+.burst span{position:absolute;top:-30px;animation:fall 2.1s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(360deg);opacity:.9}}
+.grad{background:linear-gradient(90deg,#3B82F6,#8B5CF6,#F472B6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.split{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:26px;align-items:start}
+.split.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.panel{background:#fff;border:1px solid #BFDBFE;border-radius:18px;padding:16px;box-shadow:0 10px 28px rgba(37,99,235,.08)}
+.panel.soft{background:linear-gradient(135deg,#EFF6FF,#FDF4FF)}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.row.mt{margin-top:12px}
+.btn.big{padding:14px 22px;font-size:16px}
+.btn.ok{background:#16A34A;color:#fff;border-color:transparent}
+.btn.ghost{background:transparent}
+.tiny{font-size:13px;color:var(--muted);line-height:1.5;margin:6px 0}
+.pills{margin:8px -3px 4px}
+.slide h2{margin-bottom:10px}
+.lead2{font-size:18px;line-height:1.65;color:#475569;margin:0 0 10px}
+.feedback.good{color:#15803D}.feedback.bad{color:#BE185D}
+.feedback{font-size:15px;line-height:1.55}
+
+/* chip pilihan */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid #BFDBFE;background:#fff;color:#172554;padding:9px 14px;border-radius:99px;font-weight:800;font-size:14px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:#60A5FA;transform:translateY(-1px)}
+.chip.on{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(99,102,241,.28)}
+.chip.used{opacity:.35;pointer-events:none}
+.chip.ok{background:#DCFCE7;border-color:#22C55E;color:#14532D}
+.chip.bad{background:#FEE2E2;border-color:#F87171;color:#7F1D1D}
+.chip.dragging{opacity:.4}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.tab{border:2px solid #E0E7FF;background:#fff;color:#475569;padding:9px 14px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer}
+.tab.on{border-color:#8B5CF6;background:linear-gradient(90deg,#DBEAFE,#F3E8FF);color:#172554}
+.tab.done::after{content:" ✓";color:#16A34A}
+
+/* kanvas SVG */
+.gvwrap{overflow-x:auto;overflow-y:hidden;border-radius:14px;-webkit-overflow-scrolling:touch}
+.gv{display:block;margin:0 auto;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.gn .shape{fill:#fff;stroke:#3B82F6;stroke-width:3;transition:fill .2s,stroke .2s}
+.gn text{fill:#172554;font-weight:800;font-size:15px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.gv.clickable .gn{cursor:pointer}
+.gv.clickable .gn:hover .shape{stroke-width:4.5}
+.gn{transition:opacity .25s}
+.gn.root .shape{fill:#FEF3C7;stroke:#F59E0B}
+.gn.leaf .shape{fill:#DCFCE7;stroke:#22C55E}
+.gn.parent .shape{fill:#EDE9FE;stroke:#8B5CF6}
+.gn.child .shape{fill:#DBEAFE;stroke:#3B82F6}
+.gn.sib .shape{fill:#FCE7F3;stroke:#F472B6}
+.gn.hl .shape{fill:#DBEAFE;stroke:#2563EB;stroke-width:4.5}
+.gn.sel .shape{fill:#FFFBEB;stroke:#F59E0B;stroke-width:5}
+.gn.ok .shape{fill:#DCFCE7;stroke:#16A34A;stroke-width:4}
+.gn.bad .shape{fill:#FEE2E2;stroke:#EF4444;stroke-width:4}
+.gn.miss .shape{fill:#FEF9C3;stroke:#EAB308;stroke-width:4;stroke-dasharray:6 4}
+.gn.empty .shape{fill:#F8FAFC;stroke:#94A3B8;stroke-dasharray:6 5;stroke-width:2.5}
+.gn.empty text{fill:#94A3B8}
+.gn.filled .shape{fill:#EFF6FF;stroke:#3B82F6}
+.gn.dim{opacity:.28}
+.gn.over .shape{fill:#DBEAFE;stroke:#2563EB;stroke-width:4.5}
+.gn.pulse .shape{animation:gpulse 1s ease-in-out infinite}
+@keyframes gpulse{50%{stroke-width:7;stroke-opacity:.55}}
+.gn .in{transform-box:fill-box;transform-origin:center}
+.gn .in.intro{animation:gin .45s cubic-bezier(.3,1.5,.5,1) backwards}
+@keyframes gin{from{opacity:0;transform:scale(.3)}}
+.gn .in.shake{animation:gshake .4s}
+@keyframes gshake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.ge{stroke:#94A3B8;stroke-width:3;stroke-linecap:round;transition:stroke .2s,opacity .25s}
+.ge.hl{stroke:#3B82F6;stroke-width:5.5}
+.ge.ok{stroke:#16A34A;stroke-width:4.5}
+.ge.dim{opacity:.22}
+.ge.path{stroke:#F59E0B;stroke-width:6}
+.gband{fill:rgba(59,130,246,.06)}.gband.alt{fill:rgba(139,92,246,.07)}
+.gbandlbl{font-size:13px;font-weight:800;fill:#64748B;dominant-baseline:central}
+.gb rect{stroke-width:1.5}.gb text{font-size:11px;font-weight:800;text-anchor:middle;dominant-baseline:central}
+.gb-gold rect{fill:#FEF3C7;stroke:#F59E0B}.gb-gold text{fill:#92400E}
+.gb-purple rect{fill:#EDE9FE;stroke:#8B5CF6}.gb-purple text{fill:#5B21B6}
+.gb-blue rect{fill:#DBEAFE;stroke:#3B82F6}.gb-blue text{fill:#1E3A8A}
+.gb-pink rect{fill:#FCE7F3;stroke:#F472B6}.gb-pink text{fill:#9D174D}
+.gb-green rect{fill:#DCFCE7;stroke:#22C55E}.gb-green text{fill:#14532D}
+.gb-gray rect{fill:#F1F5F9;stroke:#94A3B8}.gb-gray text{fill:#334155}
+.gnum circle{fill:#F59E0B;stroke:#fff;stroke-width:2}.gnum text{fill:#fff;font-size:13px;font-weight:800;text-anchor:middle;dominant-baseline:central}
+
+/* info box & langkah */
+.infobox{background:#fff;border:2px solid #C7D2FE;border-radius:16px;padding:14px 16px;min-height:96px}
+.infobox h3{margin:0 0 6px;font-size:18px}
+.infobox p{margin:4px 0;font-size:15.5px;line-height:1.6}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#475569}
+.legend i{width:14px;height:14px;border-radius:50%;border:3px solid;display:inline-block}
+.dots{display:flex;gap:6px;margin:10px 0}
+.dots i{width:10px;height:10px;border-radius:50%;background:#DBEAFE;transition:.2s}
+.dots i.on{background:#3B82F6;transform:scale(1.25)}
+.dots i.done{background:#22C55E}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:15px;align-items:baseline}
+.kv b{color:#475569;font-weight:700}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:800;margin:1px 2px;border:1.5px solid}
+.tag.gold{background:#FEF3C7;border-color:#F59E0B;color:#92400E}.tag.green{background:#DCFCE7;border-color:#22C55E;color:#14532D}
+.tag.purple{background:#EDE9FE;border-color:#8B5CF6;color:#5B21B6}.tag.blue{background:#DBEAFE;border-color:#3B82F6;color:#1E3A8A}
+.tag.pink{background:#FCE7F3;border-color:#F472B6;color:#9D174D}.tag.gray{background:#F1F5F9;border-color:#94A3B8;color:#334155}
+
+/* kartu balik */
+.fc{perspective:900px;cursor:pointer;min-height:132px}
+.fc-in{position:relative;height:100%;min-height:132px;transition:transform .55s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-f,.fc-b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px solid #BFDBFE}
+.fc-f{background:linear-gradient(145deg,#fff,#EFF6FF);box-shadow:0 8px 22px rgba(37,99,235,.10)}
+.fc-f .e{font-size:30px}.fc-f b{font-size:17px;margin-top:4px}.fc-f small{color:#64748B;font-size:12px;margin-top:2px}
+.fc-b{background:linear-gradient(145deg,#F5F3FF,#FDF2F8);transform:rotateY(180deg);font-size:13.5px;line-height:1.45;color:#334155}
+.fc-b b{color:#5B21B6;font-size:15px;margin-bottom:3px}
+.fc.flipped .fc-f{visibility:hidden;transition:visibility 0s .25s}
+.grid3x{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.grid3x .fc{min-height:150px}.grid3x .fc-in{min-height:150px}
+
+/* deck Tree Hunt */
+.deck{max-width:560px;margin:8px auto}
+.hunt-card{background:#fff;border:2px solid #C7D2FE;border-radius:22px;padding:22px;text-align:center;box-shadow:0 14px 36px rgba(99,102,241,.14);min-height:200px;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}}
+.hunt-card .em{font-size:54px}.hunt-card h3{font-size:22px;margin:6px 0}
+.hunt-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.hunt-btns .btn{padding:15px;font-size:16px}
+
+/* lomba cari */
+.cells{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.cell{min-width:46px;text-align:center;padding:9px 6px;border-radius:10px;border:2px solid #BFDBFE;background:#fff;font-weight:800;font-size:14px;transition:.15s}
+.cell.scan{background:#FEF3C7;border-color:#F59E0B;transform:translateY(-3px)}
+.cell.found{background:#DCFCE7;border-color:#16A34A}
+.cell.skip{opacity:.5}
+.meter{font-size:22px;font-weight:900;color:#4C1D95}
+
+/* slot & bank */
+.bank{display:flex;gap:8px;flex-wrap:wrap;padding:12px;border:2px dashed #C7D2FE;border-radius:14px;background:#FAFAFF;min-height:56px}
+.slotrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px;border:1.5px solid #E0E7FF;border-radius:12px;background:#fff;margin:8px 0;transition:.15s}
+.slotrow.hot{border-color:#F59E0B;background:#FFFBEB}
+.slotrow.ok{border-color:#22C55E;background:#F0FDF4}.slotrow.bad{border-color:#F87171;background:#FEF2F2}
+.numbub{width:28px;height:28px;border-radius:50%;background:#F59E0B;color:#fff;font-weight:900;display:grid;place-items:center;font-size:14px}
+.slot{min-width:118px;min-height:42px;border:2px dashed #94A3B8;border-radius:11px;display:flex;align-items:center;justify-content:center;padding:4px 8px;cursor:pointer;background:#F8FAFC;color:#94A3B8;font-size:13px;font-weight:700}
+.slot.over{border-color:#3B82F6;background:#EFF6FF}
+.slot.has{border-style:solid;border-color:#3B82F6;background:#EFF6FF;color:#172554}
+
+/* game */
+.stars{font-size:26px;letter-spacing:4px}
+.hud{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.hud .pillx{background:#F3E8FF;color:#5B21B6;border:1px solid #DDD6FE;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:800}
+.story{background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1px solid #FDE68A;border-radius:14px;padding:12px 16px;font-size:15.5px;line-height:1.65;color:#78350F}
+.story b{color:#92400E}
+
+/* kuis */
+.qwrap{background:#fff;border:1px solid #BFDBFE;border-radius:18px;padding:18px;box-shadow:0 10px 28px rgba(37,99,235,.08)}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;font-weight:800;color:#64748B}
+.qbar{height:8px;background:#DBEAFE;border-radius:99px;overflow:hidden;margin-bottom:12px}.qbar i{display:block;height:100%;background:linear-gradient(90deg,#3B82F6,#8B5CF6);transition:.3s}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.qopt{padding:13px 14px;border:2px solid #CBD5E1;background:#F8FAFC;border-radius:12px;text-align:left;cursor:pointer;color:#172554;font-weight:650;font-size:15px}
+.qopt:hover{border-color:#60A5FA}.qopt.right{border-color:#16A34A;background:#DCFCE7}.qopt.wrong{border-color:#F87171;background:#FEE2E2}
+.qopt:disabled{cursor:default}
+.imgopts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.imgopt{border:2px solid #CBD5E1;border-radius:14px;padding:6px;background:#fff;cursor:pointer;text-align:center}
+.imgopt:hover{border-color:#60A5FA}.imgopt.right{border-color:#16A34A;background:#F0FDF4}.imgopt.wrong{border-color:#F87171;background:#FEF2F2}
+.imgopt b{display:block;margin:2px 0 4px;color:#475569;font-size:14px}
+.score-big{font-size:56px;font-weight:900;line-height:1}
+.bars{display:grid;gap:8px;margin:10px 0}
+.bars div{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;font-size:14px;font-weight:700}
+.bars i{display:block;height:12px;border-radius:99px;background:#E0E7FF;overflow:hidden}.bars i u{display:block;height:100%;background:linear-gradient(90deg,#22C55E,#3B82F6)}
+
+/* peta konsep tree */
+.cmt{max-width:1000px;margin:6px auto 0}
+.cmt-root{width:max-content;margin:0 auto;padding:10px 26px;border-radius:18px;color:#fff;font-weight:900;font-size:22px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);box-shadow:0 8px 22px rgba(99,102,241,.3);text-align:center;position:relative}
+.cmt-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding-top:26px;position:relative}
+.cmt-br{position:relative;border-radius:16px;padding:12px;border:2px solid var(--c);background:var(--p)}
+.cmt-br:before{content:"";position:absolute;left:50%;top:-26px;width:3px;height:26px;background:var(--c);transform:translateX(-50%)}
+.cmt-br:after{content:"";position:absolute;top:-26px;left:-8px;right:-8px;height:3px;background:var(--c)}
+.cmt-br:first-child:after{left:50%}.cmt-br:last-child:after{right:50%}
+.cmt-br h4{margin:0 0 8px;font-size:15px;color:var(--t)}
+.cmt-root:after{content:"";position:absolute;left:50%;bottom:-26px;width:3px;height:26px;background:#8B5CF6;transform:translateX(-50%)}
+.cmt-br .chips{gap:6px}.cmt-br .chip{padding:6px 10px;font-size:13px;border-color:var(--c)}
+.cmt-br .chip.on{background:var(--c);color:#fff}
+.cmt-info{margin-top:14px;background:#fff;border:2px solid #C7D2FE;border-radius:14px;padding:12px 16px;min-height:66px;font-size:15.5px;line-height:1.6}
+.br-blue{--c:#3B82F6;--p:#F1F7FF;--t:#1E3A8A}.br-purple{--c:#8B5CF6;--p:#F5F3FF;--t:#4C1D95}.br-green{--c:#22C55E;--p:#F3FCF6;--t:#14532D}.br-pink{--c:#F472B6;--p:#FEF3F9;--t:#831843}
+
+/* lencana */
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0}
+.bdg{border:2px dashed #CBD5E1;border-radius:16px;padding:12px;text-align:center;background:#F8FAFC;color:#94A3B8;filter:grayscale(1);transition:.3s;cursor:pointer}
+.bdg.got{border:2px solid #F59E0B;background:linear-gradient(145deg,#FFFBEB,#FEF3C7);color:#78350F;filter:none;box-shadow:0 10px 24px rgba(245,158,11,.2)}
+.bdg .e{font-size:34px}.bdg b{display:block;font-size:14px}.bdg small{font-size:12px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1.5px solid #E0E7FF;border-radius:12px;margin:6px 0;cursor:pointer;background:#fff;font-size:15px}
+.check.on{background:#F0FDF4;border-color:#22C55E}
+.check i{width:22px;height:22px;border-radius:7px;border:2px solid #A5B4FC;flex:none;display:grid;place-items:center;font-style:normal;font-size:14px;color:#fff}
+.check.on i{background:#22C55E;border-color:#22C55E}
+.nav button.done .num::after{content:"✓";position:absolute;font-size:9px;transform:translate(9px,-9px);background:#22C55E;color:#fff;border-radius:50%;width:13px;height:13px;display:grid;place-items:center}
+.nav button .num{position:relative}
+.hero-gv{filter:drop-shadow(0 10px 20px rgba(59,130,246,.15))}
+
+@media(max-width:850px){
+ .split,.split.even{grid-template-columns:minmax(0,1fr)}
+ .grid3x{grid-template-columns:repeat(2,1fr)}
+ .qopts{grid-template-columns:1fr}
+ .imgopts{grid-template-columns:1fr}
+ .badges{grid-template-columns:repeat(2,1fr)}
+ .bars div{grid-template-columns:90px 1fr auto}
+ .cmt-row{grid-template-columns:1fr;padding-top:0;padding-left:20px;margin-left:12px;border-left:3px solid #8B5CF6;gap:12px}
+ .cmt-root{margin-bottom:26px}
+ .cmt-br:before{left:-20px;top:24px;width:20px;height:3px;transform:none}
+ .cmt-br:after{display:none}
+ .cmt-root:after{left:24px;bottom:-26px}
+ .hunt-btns .btn{padding:14px 8px;font-size:15px}
+ .xp{font-size:12px;padding:4px 8px}
+ .toast{bottom:84px}
+}
+
+.split>*,.grid2>*,.panel,.infobox,.story,.qwrap{min-width:0}
+.chip{max-width:100%}
+@media(max-width:850px){.grid2{grid-template-columns:minmax(0,1fr)}.bank{min-width:0}}
+@media(max-width:480px){.slotrow{grid-template-columns:auto minmax(0,1fr)}.slotrow .slot{grid-column:1/-1}}
+
+@media(max-width:850px){.split.tf{gap:12px}.split.tf>div:first-child{display:contents}.split.tf>div:first-child>.tabs{order:0}}
+
+.scrollhint{text-align:center;margin:2px 0 0!important}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">🌳 Petualangan <span>Tree</span></div>
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+  <div class="xp" id="xp">⭐ 0 XP</div>
+  <div class="counter" id="counter">1 / 20</div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Daftar slide">
+  <div class="sidebar-head">
+    <div class="sidebar-title">Pertemuan 2 · Struktur Data Tree</div>
+    <button class="drawer-close" id="drawerClose" aria-label="Tutup menu">✕</button>
+  </div>
+  <div class="nav" id="nav"></div>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<main class="stage">
+  <div class="slide" id="slide"></div>
+</main>
+
+<footer class="footer">
+  <div class="footer-left">
+    <button class="btn sm toggle" id="toggleSidebar" aria-pressed="false" aria-label="Sembunyikan atau tampilkan menu samping"><span class="ti">☰</span> <span class="tl">Sembunyikan menu</span></button>
+    <button class="btn sm toggle" id="toggleTop" aria-pressed="false" aria-label="Sembunyikan atau tampilkan bar atas"><span class="ti">⬆</span> <span class="tl">Sembunyikan bar atas</span></button>
+    <div class="footer-info" id="footerInfo"></div>
+  </div>
+  <div class="controls">
+    <button class="btn" id="prev">← Sebelumnya</button>
+    <button class="btn primary" id="next">Berikutnya →</button>
+  </div>
+</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+/* ========== Utilitas ========== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const NS='http://www.w3.org/2000/svg';
+const svgEl=(n,a,p)=>{const e=document.createElementNS(NS,n);for(const k in (a||{}))e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+let timers=[];
+const later=(fn,ms)=>{const t=setTimeout(fn,ms);timers.push(t);return t};
+const clearTimers=()=>{timers.forEach(clearTimeout);timers=[]};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const setEq=(a,b)=>a.size===b.size&&[...a].every(x=>b.has(x));
+const slides=[];
+
+/* ========== Skor, XP, notifikasi ========== */
+const S={xp:0,done:{},best:{}};
+function refreshXP(pop){const e=$('#xp');e.textContent='⭐ '+S.xp+' XP';if(pop){e.classList.add('pop');setTimeout(()=>e.classList.remove('pop'),260)}}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2300)}
+function award(key,xp,msg){if(S.done[key])return false;S.done[key]=true;S.xp+=xp;refreshXP(true);toast('⭐ +'+xp+' XP · '+msg);if(typeof renderNav==='function')renderNav();return true}
+function burst(){const box=document.createElement('div');box.className='burst';const em=['🎉','⭐','🌳','✨','🍃','🎊'];
+  for(let i=0;i<22;i++){const s=document.createElement('span');s.textContent=em[i%em.length];s.style.left=(5+Math.random()*90)+'%';s.style.animationDelay=(Math.random()*.4)+'s';s.style.fontSize=(18+Math.random()*16)+'px';box.appendChild(s)}
+  document.body.appendChild(box);setTimeout(()=>box.remove(),2600)}
+function fb(el,ok,msg){el.className='feedback '+(ok===true?'good':ok===false?'bad':'');el.innerHTML=msg||''}
+
+/* ========== Struktur data pohon ========== */
+const T=(id,children,label)=>({id,label:label===undefined?id:label,children:children||[]});
+function indexTree(root){
+  const idx={},order=[];
+  (function w(n,p,d){idx[n.id]={id:n.id,label:n.label,parent:p,children:n.children.map(c=>c.id),depth:d};order.push(n.id);n.children.forEach(c=>w(c,n.id,d+1))})(root,null,0);
+  order.forEach(id=>{const r=idx[id];r.siblings=r.parent?idx[r.parent].children.filter(c=>c!==id):[];r.leaf=r.children.length===0});
+  const sub=id=>{const out=[id];(function w(i){idx[i].children.forEach(c=>{out.push(c);w(c)})})(id);return out};
+  const path=id=>{const p=[];let c=id;while(c){p.unshift(c);c=idx[c].parent}return p};
+  const edges=[];order.forEach(id=>{if(idx[id].parent)edges.push([idx[id].parent,id])});
+  return {idx,order,root:root.id,sub,path,edges,height:Math.max(...order.map(i=>idx[i].depth)),leaves:order.filter(i=>idx[i].leaf)};
+}
+const tlen=s=>[...String(s)].reduce((a,ch)=>a+(ch.codePointAt(0)>0x2E80?1.9:(/[A-Z]/.test(ch)?1.1:1)),0);
+function measure(label,shape){
+  const lines=String(label).split('\n');const len=Math.max(...lines.map(tlen));
+  if(shape==='circle'&&lines.length===1&&len<=2.3)return {shape:'circle',w:46,h:46,lines};
+  return {shape:'pill',w:Math.max(46,Math.round(len*8.3+28)),h:32+(lines.length-1)*17,lines};
+}
+/* Tata letak pohon: daun berurutan, induk di tengah anak-anaknya */
+function layoutTree(root,o){
+  o=o||{};const shape=o.shape||'circle';
+  const list=[],idx={};
+  (function w(n,p,d){const m=measure(n.label,shape);const r={id:n.id,label:n.label,lines:m.lines,shape:m.shape,w:m.w,h:m.h,depth:d,parent:p,kids:n.children.map(c=>c.id)};idx[n.id]=r;list.push(r);n.children.forEach(c=>w(c,n.id,d+1))})(root,null,0);
+  const levelH=o.levelH||(list.some(r=>r.lines.length>1)?96:82),gap=o.gap===undefined?14:o.gap,padX=o.padX||28,padY=o.padY||34,padL=(o.bands||o.reserveL)?76:0;
+  const leaves=list.filter(r=>!r.kids.length);
+  let unit=Math.max(...leaves.map(r=>r.w))+gap,tries=0,W,H,cw,x0,maxH,maxDepth;
+  const slotOf=()=>{let s=0;(function p(id){const r=idx[id];if(!r.kids.length){r.sx=s++}else{r.kids.forEach(p);r.sx=(idx[r.kids[0]].sx+idx[r.kids[r.kids.length-1]].sx)/2}})(root.id);return s};
+  const nLeaves=slotOf();
+  for(;;){
+    list.forEach(r=>r.x=r.sx*unit);
+    let bad=false;const byD={};list.forEach(r=>(byD[r.depth]=byD[r.depth]||[]).push(r));
+    for(const d in byD){const a=byD[d].sort((p,q)=>p.x-q.x);for(let i=1;i<a.length;i++){if(a[i].x-a[i-1].x<(a[i].w+a[i-1].w)/2+gap-.5)bad=true}}
+    if(!bad||tries++>14)break;unit*=1.1;
+  }
+  const minX=Math.min(...list.map(r=>r.x-r.w/2)),maxX=Math.max(...list.map(r=>r.x+r.w/2));
+  cw=maxX-minX;maxH=Math.max(...list.map(r=>r.h));maxDepth=Math.max(...list.map(r=>r.depth));
+  W=Math.max(o.minW||0,cw+2*padX+padL);H=padY*2+maxDepth*levelH+maxH;
+  if(o.fit){W=Math.max(W,o.fit.W);H=Math.max(H,o.fit.H)}
+  const ox=padL+(W-padL-cw)/2-minX;
+  const oy=o.fit?(H-(padY*2+maxDepth*levelH+maxH))/2:0;
+  list.forEach(r=>{r.x=Math.round((r.x+ox)*10)/10;const yy=oy+padY+maxH/2+r.depth*levelH;r.y=o.flip?H-yy:yy});
+  const nodes=list.map(r=>({id:r.id,label:r.label,lines:r.lines,shape:r.shape,w:r.w,h:r.h,x:r.x,y:r.y,from:r.parent,depth:r.depth}));
+  const edges=list.filter(r=>r.parent).map(r=>({a:r.parent,b:r.id,depth:r.depth}));
+  const bands=[];{for(let d=0;d<=maxDepth;d++){const cy=oy+padY+maxH/2+d*levelH;const c=o.flip?H-cy:cy;bands.push({y0:c-levelH/2,y1:c+levelH/2,label:'Level '+d,alt:d%2===1})}}
+  return {nodes,edges,W,H,bands,levelH};
+}
+
+/* ========== Kanvas SVG interaktif (bisa beranimasi) ========== */
+function GView(host,o){
+  o=o||{};
+  const wrap=document.createElement('div');wrap.className='gvwrap';host.appendChild(wrap);
+  const svg=svgEl('svg',{class:'gv',preserveAspectRatio:'xMidYMid meet'});wrap.appendChild(svg);
+  const gBack=svgEl('g',{},svg),gEdge=svgEl('g',{},svg),gNode=svgEl('g',{},svg),gFront=svgEl('g',{},svg);
+  const N=new Map(),E=new Map();let raf=0,W=400,H=300;
+  const api={svg,wrap,N,E,onNode:null,onBg:null};
+  api.setView=(w,h)=>{W=w;H=h;svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.style.maxWidth=Math.round(w*(o.scale||1.3))+'px';svg.style.minWidth=Math.round(w*(o.minRatio||.62))+'px';
+    setTimeout(()=>{if(!wrap.isConnected)return;const need=wrap.scrollWidth>wrap.clientWidth+4;if(need&&!api.hint){api.hint=document.createElement('div');api.hint.className='tiny scrollhint';api.hint.textContent='↔ Geser ke samping untuk melihat seluruh Tree';wrap.after(api.hint)}else if(!need&&api.hint){api.hint.remove();api.hint=null}},60)};
+  api.clickable=v=>svg.classList.toggle('clickable',!!v);
+  const clsAttr=n=>'gn '+[...n.cls].join(' ');
+  function mkNode(d,x,y){
+    const g=svgEl('g',{'data-id':d.id},gNode),inn=svgEl('g',{class:'in'},g);
+    d.shape==='circle'?svgEl('circle',{class:'shape',r:d.w/2},inn):svgEl('rect',{class:'shape',x:-d.w/2,y:-d.h/2,width:d.w,height:d.h,rx:Math.min(15,d.h/2)},inn);
+    const t=svgEl('text',{},inn);d.lines.forEach((ln,i)=>{const s=svgEl('tspan',{x:0,y:(i-(d.lines.length-1)/2)*17},t);s.textContent=ln});
+    const n={g,d,x,y,tx:x,ty:y,sx:x,sy:y,cls:new Set(),badge:null,num:null,sig:d.shape+'|'+d.lines.join('\n')+'|'+d.w};
+    return n;
+  }
+  function setCls(n,str){n.cls=new Set(String(str||'').split(' ').filter(Boolean));n.g.setAttribute('class',clsAttr(n))}
+  api.update=(nodes,edges,opt)=>{
+    opt=opt||{};const seen=new Set();
+    nodes.forEach(d=>{
+      if(!d.lines){const m=measure(d.label,d.shape||'circle');Object.assign(d,m)}
+      seen.add(d.id);let n=N.get(d.id);
+      const sig=d.shape+'|'+d.lines.join('\n')+'|'+d.w;
+      if(n&&n.sig!==sig){n.g.remove();if(n.badge)n.badge.remove();if(n.num)n.num.remove();N.delete(d.id);n=null}
+      if(!n){const fr=d.from&&N.get(d.from);n=mkNode(d,fr?fr.x:d.x,fr?fr.y:d.y);if(!opt.animate){n.x=d.x;n.y=d.y}N.set(d.id,n);setCls(n,d.cls||'');if(!opt.noIntro)n.g.firstChild.classList.add('intro')}
+      else n.d=d;
+      n.tx=d.x;n.ty=d.y;
+      if(d.cls!==undefined&&opt.applyCls)setCls(n,d.cls);
+    });
+    [...N.keys()].forEach(id=>{if(!seen.has(id)){const n=N.get(id);n.g.remove();if(n.badge)n.badge.remove();if(n.num)n.num.remove();N.delete(id)}});
+    const ekeys=new Set();
+    edges.forEach(e=>{const k=e.a+'>'+e.b;ekeys.add(k);if(!E.has(k)){const l=svgEl('line',{class:'ge'+(e.cls?' '+e.cls:'')},gEdge);E.set(k,{l,a:e.a,b:e.b,num:null})}});
+    [...E.keys()].forEach(k=>{if(!ekeys.has(k)){const e=E.get(k);e.l.remove();if(e.num)e.num.remove();E.delete(k)}});
+    if(opt.bands)api.bands(opt.bands);
+    api.go(!!opt.animate);
+  };
+  api.bands=list=>{gBack.textContent='';list.forEach(b=>{svgEl('rect',{class:'gband'+(b.alt?' alt':''),x:0,y:b.y0,width:W,height:b.y1-b.y0},gBack);const t=svgEl('text',{class:'gbandlbl',x:10,y:(b.y0+b.y1)/2},gBack);t.textContent=b.label})};
+  function sync(){
+    N.forEach(n=>{n.g.setAttribute('transform','translate('+n.x.toFixed(1)+' '+n.y.toFixed(1)+')');
+      if(n.badge)n.badge.setAttribute('transform','translate('+n.x.toFixed(1)+' '+(n.y+n.d.h/2+12).toFixed(1)+')');
+      if(n.num)n.num.setAttribute('transform','translate('+(n.x+n.d.w/2-3).toFixed(1)+' '+(n.y-n.d.h/2+3).toFixed(1)+')')});
+    E.forEach(e=>{const a=N.get(e.a),b=N.get(e.b);if(!a||!b)return;e.l.setAttribute('x1',a.x.toFixed(1));e.l.setAttribute('y1',a.y.toFixed(1));e.l.setAttribute('x2',b.x.toFixed(1));e.l.setAttribute('y2',b.y.toFixed(1));
+      if(e.num)e.num.setAttribute('transform','translate('+((a.x+b.x)/2).toFixed(1)+' '+((a.y+b.y)/2).toFixed(1)+')')});
+  }
+  api.go=animate=>{
+    cancelAnimationFrame(raf);
+    N.forEach(n=>{n.sx=n.x;n.sy=n.y});
+    if(!animate){N.forEach(n=>{n.x=n.tx;n.y=n.ty});sync();return}
+    const t0=performance.now(),D=o.dur||480;
+    const step=now=>{const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3);N.forEach(n=>{n.x=n.sx+(n.tx-n.sx)*e;n.y=n.sy+(n.ty-n.sy)*e});sync();if(k<1)raf=requestAnimationFrame(step)};
+    raf=requestAnimationFrame(step);
+  };
+  /* --- gaya --- */
+  api.mark=(id,cls,on)=>{const n=N.get(id);if(!n)return;on===false?n.cls.delete(cls):n.cls.add(cls);n.g.setAttribute('class',clsAttr(n))};
+  api.only=(cls,ids)=>{const s=new Set(ids);N.forEach((n,id)=>{s.has(id)?n.cls.add(cls):n.cls.delete(cls);n.g.setAttribute('class',clsAttr(n))})};
+  api.clearCls=(...cs)=>{N.forEach(n=>{cs.forEach(c=>n.cls.delete(c));n.g.setAttribute('class',clsAttr(n))})};
+  api.setCls=(id,str)=>{const n=N.get(id);if(n)setCls(n,str)};
+  api.hasCls=(id,c)=>{const n=N.get(id);return !!n&&n.cls.has(c)};
+  api.badge=(id,text,color)=>{const n=N.get(id);if(!n)return;if(n.badge){n.badge.remove();n.badge=null}if(!text)return;
+    const w=Math.round(tlen(text)*6.6+16),g=svgEl('g',{class:'gb gb-'+(color||'gray')},gFront);svgEl('rect',{x:-w/2,y:-9,width:w,height:18,rx:9},g);const t=svgEl('text',{x:0,y:1},g);t.textContent=text;n.badge=g;sync()};
+  api.clearBadges=()=>N.forEach(n=>{if(n.badge){n.badge.remove();n.badge=null}});
+  api.num=(id,text)=>{const n=N.get(id);if(!n)return;if(n.num){n.num.remove();n.num=null}if(!text)return;const g=svgEl('g',{class:'gnum'},gFront);svgEl('circle',{r:11},g);const t=svgEl('text',{x:0,y:1},g);t.textContent=text;n.num=g;sync()};
+  api.edgeNum=(a,b,text)=>{const e=E.get(a+'>'+b);if(!e)return;if(e.num){e.num.remove();e.num=null}if(!text)return;const g=svgEl('g',{class:'gnum'},gFront);svgEl('circle',{r:11},g);const t=svgEl('text',{x:0,y:1},g);t.textContent=text;e.num=g;sync()};
+  api.clearNums=()=>{N.forEach(n=>{if(n.num){n.num.remove();n.num=null}});E.forEach(e=>{if(e.num){e.num.remove();e.num=null}})};
+  api.edgeMark=(a,b,cls,on)=>{const e=E.get(a+'>'+b);if(e)e.l.classList.toggle(cls,on!==false)};
+  api.edgesOnly=(cls,pairs)=>{const s=new Set(pairs.map(p=>p[0]+'>'+p[1]));E.forEach((e,k)=>e.l.classList.toggle(cls,s.has(k)))};
+  api.clearEdges=(...cs)=>E.forEach(e=>cs.forEach(c=>e.l.classList.remove(c)));
+  api.shake=id=>{const n=N.get(id);if(!n)return;const i=n.g.firstChild;i.classList.remove('shake');void i.getBoundingClientRect();i.classList.add('shake')};
+  api.pos=id=>{const n=N.get(id);return n?{x:n.x,y:n.y}:null};
+  api.size=()=>({W,H});
+  svg.addEventListener('click',e=>{const g=e.target.closest('.gn');if(g&&api.onNode)api.onNode(g.dataset.id,e);else if(api.onBg)api.onBg(e)});
+  api.destroy=()=>{cancelAnimationFrame(raf);wrap.remove()};
+  return api;
+}
+/* pohon lengkap dalam satu panggilan */
+function TreeView(host,root,o){
+  o=o||{};const L=layoutTree(root,o),v=GView(host,o);
+  v.setView(L.W,L.H);v.update(L.nodes,L.edges,{animate:false,noIntro:o.noIntro,bands:o.bands?L.bands:null});
+  v.L=L;v.tree=indexTree(root);v.root=root;return v;
+}
+/* animasi "tumbuh" per level */
+function growTo(v,L,depth,animate){
+  const ns=L.nodes.filter(n=>n.depth<=depth),es=L.edges.filter(e=>e.depth<=depth);
+  v.update(ns.map(n=>Object.assign({},n)),es,{animate:animate!==false});
+}
+
+/* ========== Data pohon yang dipakai berulang ========== */
+const SAMPLE=T('A',[T('B',[T('E'),T('F',[T('H'),T('I')])]),T('C'),T('D',[T('G')])]);
+const SI=indexTree(SAMPLE);
+
+/* ---------- 1. Pembuka ---------- */
+slides.push({title:'Pembuka',short:'🌳 Pembuka',
+render:()=>`
+<div class="hero">
+ <div>
+  <div class="eyebrow">Pertemuan 2 · Informatika SMP</div>
+  <h1>Petualangan <span class="grad">Tree</span> 🌳</h1>
+  <p class="lead">Dari akar sampai daun: kenali Struktur Data <b>Tree</b>, belajar membaca strukturnya, lalu susun sendiri dari kasus nyata.</p>
+  <div class="pills"><span class="pill">🌱 Kenali Tree</span><span class="pill">🔍 Baca Struktur</span><span class="pill">🎮 Main Misi</span><span class="pill">🏆 Tantangan</span></div>
+  <div class="story" style="margin:14px 0">🎯 <b>Misi hari ini:</b> menjadi <b>Detektif Tree</b> — mengenali istilah Tree, membaca gambarnya, lalu menyusun Tree dari cerita. Kumpulkan <b>XP</b> dan <b>lencana</b> di setiap aktivitas!</div>
+  <button class="btn primary big" id="start">Mulai Petualangan →</button>
+ </div>
+ <div class="hero-art"><div id="heroTree" style="width:100%;position:relative;z-index:2"></div><div class="tiny" style="position:absolute;bottom:8px;z-index:2">👆 Ketuk node-nya!</div></div>
+</div>`,
+init:()=>{
+ $('#start').onclick=()=>goTo(1);
+ const root=T('A',[T('B',[T('D'),T('E')]),T('C',[T('F'),T('G')])]);
+ const L=layoutTree(root,{levelH:84}),v=GView($('#heroTree'),{scale:1.05});
+ v.setView(L.W,L.H);v.svg.classList.add('hero-gv');v.clickable(true);
+ growTo(v,L,0,false);
+ later(()=>growTo(v,L,1),700);later(()=>growTo(v,L,2),1500);
+ later(()=>{v.mark('A','root');['D','E','F','G'].forEach(i=>v.mark(i,'leaf'))},2300);
+ v.onNode=id=>{v.shake(id);v.mark(id,'sel');later(()=>v.mark(id,'sel',false),500)};
+}});
+
+/* ---------- 2. Ingat Kembali ---------- */
+slides.push({title:'Ingat Kembali Pertemuan 1',short:'🔁 Ingat Kembali',key:'warm',
+render:()=>`
+<div class="eyebrow">02 · Pemanasan</div>
+<h2>🔁 Ingat Kembali Pertemuan 1</h2>
+<p class="lead2">Ketuk kartu untuk membaliknya, lalu jawab cek cepat di bawah.</p>
+<div class="grid3x" style="grid-template-columns:repeat(3,1fr)">
+ ${[['🔵','Node','simpul','Node','Bagian atau objek yang menyimpan sebuah data.'],
+    ['🔗','Hubungan','edge','Hubungan (Edge)','Garis yang menghubungkan dua node.'],
+    ['🕸️','Non-Linear','bercabang','Non-Linear','Data tidak berbaris satu jalur, tetapi bisa bercabang. Contoh: <b>Tree</b> dan Graph.']]
+  .map(c=>`<div class="fc"><div class="fc-in"><div class="fc-f"><span class="e">${c[0]}</span><b>${c[1]}</b><small>${c[2]}</small></div><div class="fc-b"><b>${c[3]}</b>${c[4]}</div></div></div>`).join('')}
+</div>
+<div class="quiz-box">
+ <div class="question">Cek cepat: struktur data manakah yang <b>non-linear</b> dan bercabang seperti pohon?</div>
+ <div class="qopts" id="warmOpts">${['Array','Stack','Queue','Tree'].map(o=>`<button class="qopt" data-o="${o}">${o}</button>`).join('')}</div>
+ <div class="feedback" id="warmFb"></div>
+</div>`,
+init:()=>{
+ $$('.fc').forEach(c=>c.onclick=()=>c.classList.toggle('flipped'));
+ $$('#warmOpts .qopt').forEach(b=>b.onclick=()=>{
+  $$('#warmOpts .qopt').forEach(x=>x.disabled=true);
+  const ok=b.dataset.o==='Tree';b.classList.add(ok?'right':'wrong');
+  if(!ok)$$('#warmOpts .qopt').find(x=>x.dataset.o==='Tree').classList.add('right');
+  fb($('#warmFb'),ok,ok?'✅ Tepat! Tree bercabang, bukan berbaris satu jalur. Hari ini kita kupas Tree sampai tuntas.':'❌ Belum tepat. Array, Stack, dan Queue adalah struktur <b>linear</b>. Yang bercabang adalah <b>Tree</b>.');
+  if(ok)award('warm',5,'Pemanasan selesai');
+ });
+}});
+
+/* ---------- 3. Apa itu Tree? ---------- */
+slides.push({title:'Apa Itu Tree?',short:'🌱 Apa Itu Tree?',
+render:()=>`
+<div class="eyebrow">03 · Pengenalan Tree</div>
+<h2>🌱 Apa Itu Tree?</h2>
+<div class="split">
+ <div>
+  <p class="lead2"><b>Tree</b> adalah struktur data <b>non-linear</b> yang menyimpan data secara <b>berjenjang</b> (hierarki): ada satu node paling atas, lalu bercabang ke bawah.</p>
+  <div class="highlight">🌳 Tree itu seperti <b>pohon yang dibalik</b>: akar (Root) di atas, cabang tumbuh ke bawah.</div>
+  <div class="infobox" id="growCap"><h3>🌱 Ayo tumbuhkan Tree!</h3><p>Tekan tombol <b>Tumbuhkan</b> dan perhatikan tiap langkahnya.</p></div>
+ </div>
+ <div class="panel soft">
+  <div id="growView"></div>
+  <div class="row mt"><button class="btn primary" id="growBtn">🌱 Tumbuhkan</button><button class="btn" id="growReset">↺ Ulang</button><button class="btn" id="flipBtn">🔄 Pohon asli vs Tree</button></div>
+  <div class="dots" id="growDots"></div>
+ </div>
+</div>`,
+init:()=>{
+ const root=T('A',[T('B',[T('D'),T('E')]),T('C',[T('F')])]);
+ const Ln=layoutTree(root,{levelH:80}),Lf=layoutTree(root,{levelH:80,flip:true});
+ const v=GView($('#growView'),{scale:1.1});v.setView(Ln.W,Ln.H);
+ let step=0,flipped=false;
+ const depthOf=[-1,0,1,2,2];
+ const caps=[
+  ['🌱 Ayo tumbuhkan Tree!','Tekan tombol <b>Tumbuhkan</b> dan perhatikan tiap langkahnya.'],
+  ['1️⃣ Mulai dari satu node','Node paling atas disebut <b>Root</b> (akar). Semua node lain "tumbuh" dari sini.'],
+  ['2️⃣ Root punya cabang','Root terhubung ke node lain oleh garis. Node di bawahnya disebut <b>anak (child)</b>.'],
+  ['3️⃣ Cabang bisa bercabang lagi','Setiap node boleh punya anak sendiri, sehingga Tree makin berjenjang.'],
+  ['4️⃣ Ujung cabang = daun','Node yang sudah tidak punya anak disebut <b>Leaf</b> (daun). Root diberi warna emas, Leaf hijau.']];
+ const paint=()=>{
+  $('#growCap').innerHTML='<h3>'+caps[step][0]+'</h3><p>'+caps[step][1]+'</p>'+(flipped?'<p class="tiny">🔄 Pohon asli: akar di <b>bawah</b>. Di informatika gambarnya dibalik: Root di <b>atas</b>.</p>':'');
+  $('#growDots').innerHTML=[1,2,3,4].map(i=>`<i class="${i<step?'done':i===step?'on':''}"></i>`).join('');
+  $('#growBtn').textContent=step>=4?'✅ Selesai':'🌱 Tumbuhkan';
+  $('#growBtn').disabled=step>=4;
+ };
+ const draw=anim=>{
+  const L=flipped?Lf:Ln;growTo(v,L,depthOf[step],anim);
+  if(step>=4){v.mark('A','root');v.badge('A','Root','gold');['D','E','F'].forEach(i=>{v.mark(i,'leaf');v.badge(i,'Leaf','green')})}
+ };
+ $('#growBtn').onclick=()=>{if(step<4){step++;draw(true);paint()}};
+ $('#growReset').onclick=()=>{step=0;v.clearBadges();v.clearCls('root','leaf');growTo(v,flipped?Lf:Ln,-1,false);paint()};
+ $('#flipBtn').onclick=()=>{flipped=!flipped;if(step===0){step=4}draw(true);paint()};
+ paint();
+}});
+
+/* ---------- 4. Mengapa Tree? ---------- */
+const RS=T('S',[T('K7',[T('7A'),T('7B'),T('7C')],'Kelas 7'),T('K8',[T('8A'),T('8B'),T('8C')],'Kelas 8'),T('K9',[T('9A'),T('9B'),T('9C')],'Kelas 9')],'Sekolah');
+slides.push({title:'Mengapa Tree Digunakan?',short:'⚡ Mengapa Tree?',key:'why',
+render:()=>`
+<div class="eyebrow">04 · Pengenalan Tree</div>
+<h2>⚡ Mengapa Tree Digunakan?</h2>
+<div class="split">
+ <div>
+  <div class="card" style="margin-bottom:10px;padding:14px"><b>🧭 Data yang berjenjang</b><p style="margin:4px 0;font-size:15px">Cocok untuk data yang punya tingkatan: atasan–bawahan, folder–file, induk–anak.</p></div>
+  <div class="card" style="margin-bottom:10px;padding:14px"><b>⚡ Pencarian lebih terarah</b><p style="margin:4px 0;font-size:15px">Kita cukup mengikuti satu cabang, tidak perlu memeriksa semua data satu per satu.</p></div>
+  <div class="card" style="padding:14px"><b>🌿 Mudah dikembangkan</b><p style="margin:4px 0;font-size:15px">Ingin menambah data baru? Cukup tambah satu cabang di tempat yang tepat.</p></div>
+ </div>
+ <div class="panel">
+  <h3 style="margin-bottom:4px">🏁 Lomba Mencari: List vs Tree</h3>
+  <p class="tiny">1) Pilih kelas yang dicari. 2) Jalankan pencarian di List dan di Tree, lalu bandingkan jumlah langkahnya.</p>
+  <div class="chips" id="targets"></div>
+  <div style="margin-top:10px"><b style="font-size:14px">📋 List (diperiksa berurutan)</b><div class="cells" id="cells"></div>
+   <div class="row"><button class="btn" id="runList">▶ Cari di List</button><span>Langkah: <span class="meter" id="mList">–</span></span></div></div>
+  <div style="margin-top:12px"><b style="font-size:14px">🌳 Tree (ikuti cabang)</b><div id="raceTree"></div>
+   <div class="row"><button class="btn primary" id="runTree">▶ Cari di Tree</button><span>Langkah: <span class="meter" id="mTree">–</span></span></div></div>
+  <div class="feedback" id="raceFb" style="margin-top:8px"></div>
+ </div>
+</div>`,
+init:()=>{
+ const leaves=['7A','7B','7C','8A','8B','8C','9A','9B','9C'];let target='9C',doneL=0,doneT=0;
+ const v=TreeView($('#raceTree'),RS,{shape:'pill',gap:8,levelH:70,scale:1.1,minRatio:.75});
+ const draw=()=>{
+  $('#targets').innerHTML=leaves.map(l=>`<button class="chip ${l===target?'on':''}" data-t="${l}">${l}</button>`).join('');
+  $$('#targets .chip').forEach(c=>c.onclick=()=>{target=c.dataset.t;reset();draw()});
+  $('#cells').innerHTML=leaves.map(l=>`<div class="cell" data-l="${l}">${l}</div>`).join('');
+ };
+ const resetList=()=>{doneL=0;$('#mList').textContent='–';$$('.cell').forEach(c=>c.className='cell')};
+ const resetTree=()=>{doneT=0;$('#mTree').textContent='–';v.clearCls('hl','dim','ok');v.clearEdges('path')};
+ const reset=()=>{clearTimers();resetList();resetTree();fb($('#raceFb'),null,'')};
+ const verdict=()=>{if(doneL&&doneT){const idx=leaves.indexOf(target)+1;
+   fb($('#raceFb'),null,`Mencari <b>${target}</b>: List <b>${idx}</b> langkah, Tree <b>3</b> langkah. `+(idx>3?'🌳 Tree lebih hemat langkah — dan makin banyak data, makin terasa bedanya!':idx===3?'Sama banyak. Tapi jika datanya ribuan, Tree jauh lebih unggul.':'Untuk data di urutan awal, List bisa cepat. Namun rata-rata, Tree lebih hemat saat datanya banyak.'));
+   award('why',5,'Lomba mencari selesai')}};
+ let tL=[],tT=[];
+ const cancel=arr=>{arr.forEach(clearTimeout);arr.length=0};
+ const lt=(arr,fn,ms)=>arr.push(later(fn,ms));
+ $('#runList').onclick=()=>{cancel(tL);resetList();fb($('#raceFb'),null,'');const idx=leaves.indexOf(target),cells=$$('.cell');
+  cells.forEach((c,i)=>{if(i<=idx)lt(tL,()=>{cells.forEach(x=>x.classList.remove('scan'));c.classList.add(i===idx?'found':'scan');$('#mList').textContent=i+1;if(i===idx){doneL=1;verdict()}},i*260)})};
+ $('#runTree').onclick=()=>{cancel(tT);resetTree();fb($('#raceFb'),null,'');
+  const p=['S','K'+target[0],target];
+  p.forEach((id,i)=>lt(tT,()=>{v.mark(id,'hl');$('#mTree').textContent=i+1;if(i>0)v.edgeMark(p[i-1],id,'path');
+   if(i===2){v.mark(id,'ok');v.mark(id,'hl',false);v.N.forEach((n,k)=>{if(!p.includes(k))v.mark(k,'dim')});doneT=1;verdict()}},i*520))};
+ draw();
+}});
+
+/* ---------- 5. Tree di Sekitarmu (Tree Hunt) ---------- */
+const HUNT=[
+ ['🏫','Bagan struktur organisasi sekolah',true,'Kepala sekolah di atas, lalu wakil, guru, dan staf di bawahnya — atasan–bawahan berjenjang.'],
+ ['🛒','Daftar belanja',false,'Barang disusun berurutan dalam satu baris — itu struktur <b>linear</b> (list), bukan Tree.'],
+ ['📁','Folder dan file di komputer',true,'Folder berisi folder lain dan file: berjenjang dengan satu folder induk di puncak.'],
+ ['🚶','Antrean di kantin',false,'Satu jalur, siapa datang duluan dilayani duluan — itu <b>Queue</b>, bukan Tree.'],
+ ['👨‍👩‍👧','Silsilah keluarga',true,'Kakek/nenek di atas, lalu anak, lalu cucu: keturunan bercabang ke bawah.'],
+ ['🗺️','Peta jalan antarkota',false,'Jalan saling silang dan bisa berputar — itu <b>Graph</b>. Tree tidak boleh membentuk putaran.'],
+ ['📱','Menu bertingkat pada aplikasi',true,'Menu utama bercabang ke sub-menu, lalu ke sub-sub-menu: berjenjang seperti Tree.'],
+ ['🥞','Tumpukan piring',false,'Diambil dari paling atas — itu <b>Stack</b>, bukan Tree.']];
+slides.push({title:'Tree di Sekitarmu',short:'🔎 Tree di Sekitarmu',key:'hunt',
+render:()=>`
+<div class="eyebrow">05 · Contoh Sehari-hari</div>
+<h2>🔎 Tree di Sekitarmu</h2>
+<p class="lead2">Mana yang berbentuk <b>Tree</b>, mana yang bukan? Tentukan dengan cepat!</p>
+<div class="deck"><div id="huntBox"></div><div class="dots" id="huntDots" style="justify-content:center"></div></div>`,
+init:()=>{
+ let i=0,score=0,answered=false;const res=[];
+ const dots=()=>$('#huntDots').innerHTML=HUNT.map((_,k)=>`<i class="${res[k]===true?'done':res[k]===false?'':k===i?'on':''}" style="${res[k]===false?'background:#F472B6':''}"></i>`).join('');
+ const show=()=>{
+  answered=false;dots();
+  if(i>=HUNT.length){
+   const msg=score>=7?'🏆 Luar biasa! Kamu jeli menemukan Tree.':score>=5?'👍 Bagus! Sedikit lagi jadi ahli.':'🌱 Tetap semangat, coba ulangi ya!';
+   $('#huntBox').innerHTML=`<div class="hunt-card"><div class="em">🎯</div><h3>Skor: ${score} / ${HUNT.length}</h3><p>${msg}</p><div class="row" style="justify-content:center"><button class="btn primary" id="huntAgain">↺ Main Lagi</button><button class="btn" id="huntNext">Lanjut →</button></div></div>`;
+   $('#huntAgain').onclick=()=>{i=0;score=0;res.length=0;show()};$('#huntNext').onclick=()=>goTo(current+1);
+   if(score>0)award('hunt',score*2,'Tree Hunt selesai');return}
+  const h=HUNT[i];
+  $('#huntBox').innerHTML=`<div class="hunt-card"><div class="tiny">Kartu ${i+1} dari ${HUNT.length}</div><div class="em">${h[0]}</div><h3>${h[1]}</h3><div id="huntFb" class="feedback"></div>
+   <div class="hunt-btns" id="huntBtns"><button class="btn primary" data-a="1">🌳 Ini Tree</button><button class="btn" data-a="0">🚫 Bukan Tree</button></div></div>`;
+  $$('#huntBtns .btn').forEach(b=>b.onclick=()=>{
+   if(answered)return;answered=true;const ok=(b.dataset.a==='1')===h[2];if(ok)score++;res[i]=ok;dots();
+   fb($('#huntFb'),ok,(ok?'✅ Benar! ':'❌ Kurang tepat. ')+h[3]);
+   $('#huntBtns').innerHTML=`<button class="btn primary" id="huntGo" style="grid-column:1/-1">${i<HUNT.length-1?'Kartu berikutnya →':'Lihat skor 🎯'}</button>`;
+   $('#huntGo').onclick=()=>{i++;show()};
+  });
+ };
+ show();
+}});
+
+/* helper: gaya relasi pada pohon SAMPLE */
+function relPaint(v,I,id){
+ v.clearCls('sel','parent','child','sib','dim');v.clearBadges();
+ if(!id)return null;
+ const r=I.idx[id];v.mark(id,'sel');
+ if(r.parent){v.mark(r.parent,'parent');v.badge(r.parent,'Parent','purple')}
+ r.children.forEach(c=>{v.mark(c,'child');v.badge(c,'Child','blue')});
+ r.siblings.forEach(c=>{v.mark(c,'sib');v.badge(c,'Sibling','pink')});
+ return r;
+}
+const listTxt=a=>a.length?a.join(', '):'<i>tidak ada</i>';
+
+/* ---------- 6. Istilah 1 ---------- */
+slides.push({title:'Istilah Tree (1): Root, Node, Edge, Leaf',short:'📚 Istilah 1',
+render:()=>`
+<div class="eyebrow">06 · Istilah dalam Tree</div>
+<h2>📚 Istilah 1: Root, Node, Edge, Leaf</h2>
+<div class="split even tf">
+ <div>
+  <p class="lead2">Pilih sebuah istilah, lalu lihat bagian mana pada Tree yang dimaksud.</p>
+  <div class="chips" id="tchips"></div>
+  <div class="infobox" id="tinfo" style="margin-top:12px;order:2"><h3>👆 Pilih istilah</h3><p>Ketuk salah satu tombol di atas.</p></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="tview"></div></div>
+</div>`,
+init:()=>{
+ const v=TreeView($('#tview'),SAMPLE,{levelH:80,scale:1.15});
+ const TERMS={
+  root:['🌱','Root','Node <b>paling atas</b>. Root tidak punya parent, dan semua node lain berasal darinya.','Pada gambar: <b>A</b> adalah Root.',()=>{v.mark('A','root');v.badge('A','Root','gold')}],
+  node:['🔵','Node','<b>Setiap simpul</b> (bulatan) dalam Tree yang menyimpan data.','Tree ini punya <b>9 node</b>: A, B, C, D, E, F, G, H, I.',()=>{SI.order.forEach(i=>{v.mark(i,'hl');v.mark(i,'pulse')})}],
+  edge:['🔗','Edge','<b>Garis penghubung</b> antara dua node (hubungan induk–anak).','9 node → <b>8 edge</b>. Fakta seru: jumlah edge selalu = jumlah node − 1.',()=>{v.edgesOnly('hl',SI.edges)}],
+  leaf:['🍃','Leaf','Node yang <b>tidak punya anak</b> (ujung cabang).','Leaf pada gambar: <b>C, E, G, H, I</b> (5 leaf).',()=>{SI.leaves.forEach(i=>{v.mark(i,'leaf');v.badge(i,'Leaf','green')})}]
+ };
+ const seen=new Set();
+ const show=k=>{
+  v.clearCls('root','leaf','hl','pulse');v.clearBadges();v.clearEdges('hl');
+  const t=TERMS[k];t[4]();
+  $('#tinfo').innerHTML=`<h3>${t[0]} ${t[1]}</h3><p>${t[2]}</p><p>${t[3]}</p>`;
+  $$('#tchips .chip').forEach(c=>c.classList.toggle('on',c.dataset.k===k));
+  seen.add(k);if(seen.size===4)award('t1',5,'Istilah 1 dipelajari');
+ };
+ $('#tchips').innerHTML=Object.keys(TERMS).map(k=>`<button class="chip" data-k="${k}">${TERMS[k][0]} ${TERMS[k][1]}</button>`).join('');
+ $$('#tchips .chip').forEach(c=>c.onclick=()=>show(c.dataset.k));
+ show('root');
+}});
+
+/* ---------- 7. Istilah 2 ---------- */
+slides.push({title:'Istilah Tree (2): Parent, Child, Sibling',short:'👪 Istilah 2',
+render:()=>`
+<div class="eyebrow">07 · Istilah dalam Tree</div>
+<h2>👪 Istilah 2: Parent, Child, Sibling</h2>
+<div class="split even tf">
+ <div>
+  <p class="lead2"><b>Ketuk node mana saja</b> pada Tree, lalu lihat siapa parent, child, dan sibling-nya.</p>
+  <div class="legend"><span><i style="border-color:#8B5CF6;background:#EDE9FE"></i>Parent (induk)</span><span><i style="border-color:#3B82F6;background:#DBEAFE"></i>Child (anak)</span><span><i style="border-color:#F472B6;background:#FCE7F3"></i>Sibling (saudara)</span></div>
+  <div class="infobox" id="rinfo"><h3>👆 Ketuk sebuah node</h3><p>Coba mulai dari <b>F</b>, lalu <b>A</b>, lalu <b>H</b>.</p></div>
+  <div class="quiz-box" style="margin-top:12px;padding:16px;order:3"><div class="question" style="font-size:16px">Node <b>B</b> punya parent (A) sekaligus punya child (E dan F). Artinya…</div>
+   <div class="qopts" id="rq">${['Node hanya boleh jadi parent ATAU child','Sebuah node bisa menjadi parent sekaligus child','Node B pasti Root'].map((t,i)=>`<button class="qopt" data-i="${i}">${t}</button>`).join('')}</div><div class="feedback" id="rqFb"></div></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="rview"></div></div>
+</div>`,
+init:()=>{
+ const v=TreeView($('#rview'),SAMPLE,{levelH:82,scale:1.15});v.clickable(true);const seen=new Set();
+ v.onNode=id=>{
+  const r=relPaint(v,SI,id);
+  $('#rinfo').innerHTML=`<h3>Node <span class="term">${id}</span> dipilih</h3><div class="kv"><b>Parent</b><span>${r.parent?`<span class="tag purple">${r.parent}</span>`:'<i>tidak ada</i> — Root tidak punya parent'}</span>
+   <b>Child</b><span>${r.children.length?r.children.map(c=>`<span class="tag blue">${c}</span>`).join(''):'<i>tidak ada</i> — Leaf tidak punya child'}</span>
+   <b>Sibling</b><span>${r.siblings.length?r.siblings.map(c=>`<span class="tag pink">${c}</span>`).join(''):'<i>tidak ada</i>'+(r.parent?' — anak tunggal':' — Root tidak punya sibling')}</span></div>`;
+  seen.add(id);if(seen.size>=5)award('t2',5,'Menjelajah relasi node');
+ };
+ $$('#rq .qopt').forEach(b=>b.onclick=()=>{$$('#rq .qopt').forEach(x=>x.disabled=true);const ok=b.dataset.i==='1';b.classList.add(ok?'right':'wrong');if(!ok)$$('#rq .qopt')[1].classList.add('right');
+  fb($('#rqFb'),ok,ok?'✅ Benar! Node yang berada di tengah Tree berperan sebagai child bagi node di atasnya dan parent bagi node di bawahnya.':'❌ Perhatikan B: ia anak dari A, tetapi juga induk bagi E dan F.')});
+}});
+
+/* ---------- 8. Istilah 3 ---------- */
+slides.push({title:'Istilah Tree (3): Level dan Subtree',short:'🪜 Istilah 3',
+render:()=>`
+<div class="eyebrow">08 · Istilah dalam Tree</div>
+<h2>🪜 Istilah 3: Level dan Subtree</h2>
+<div class="split even tf">
+ <div>
+  <div class="tabs" id="lvTabs"><button class="tab on" data-m="level">🪜 Level</button><button class="tab" data-m="sub">🌿 Subtree</button></div>
+  <div id="lvCtl"></div>
+  <div class="infobox" id="lvInfo" style="margin-top:10px;order:2"></div>
+  <p class="tiny" style="order:3">📌 Pada modul ini, Root berada di <b>Level 0</b>. (Sebagian buku memulai dari Level 1 — yang penting konsisten.)</p>
+ </div>
+ <div class="panel soft" style="order:1"><div id="lvView"></div></div>
+</div>`,
+init:()=>{
+ const v=TreeView($('#lvView'),SAMPLE,{levelH:78,bands:true,scale:1.15});
+ let mode='level',lvl=1,selNode='B';
+ const byLevel=d=>SI.order.filter(i=>SI.idx[i].depth===d);
+ const paint=()=>{
+  v.clearCls('hl','dim','sel');v.clearBadges();v.clearEdges('hl','dim');
+  $$('#lvTabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.m===mode));
+  if(mode==='level'){
+   v.clickable(false);
+   $('#lvCtl').innerHTML=`<p class="lead2" style="font-size:16px">Pilih level untuk melihat node-node yang berada di tingkat itu.</p><div class="chips">${[0,1,2,3].map(d=>`<button class="chip ${d===lvl?'on':''}" data-d="${d}">Level ${d}</button>`).join('')}</div>`;
+   $$('#lvCtl .chip').forEach(c=>c.onclick=()=>{lvl=+c.dataset.d;paint();});
+   const ids=byLevel(lvl);ids.forEach(i=>{v.mark(i,'hl');v.badge(i,'Level '+lvl,'blue')});SI.order.forEach(i=>{if(!ids.includes(i))v.mark(i,'dim')});
+   $('#lvInfo').innerHTML=`<h3>🪜 Level ${lvl}</h3><p>Node pada level ini: ${ids.map(i=>`<span class="tag blue">${i}</span>`).join('')} (${ids.length} node)</p><p>${lvl===0?'Root selalu berada di Level 0.':'Cara menghitung: dari Root turun '+lvl+' garis (edge).'}</p><p class="tiny">Level tertinggi pada Tree ini adalah <b>${SI.height}</b> — itulah <b>tinggi (height)</b> Tree.</p>`;
+  }else{
+   v.clickable(true);
+   $('#lvCtl').innerHTML=`<p class="lead2" style="font-size:16px"><b>Ketuk node</b> untuk melihat subtree yang berakar di node tersebut.</p>`;
+   const ids=SI.sub(selNode);v.mark(selNode,'sel');ids.forEach(i=>{if(i!==selNode)v.mark(i,'hl')});SI.order.forEach(i=>{if(!ids.includes(i))v.mark(i,'dim')});
+   SI.edges.forEach(e=>{if(ids.includes(e[0])&&ids.includes(e[1]))v.edgeMark(e[0],e[1],'hl');else v.edgeMark(e[0],e[1],'dim')});
+   v.badge(selNode,'Akar subtree','gold');
+   $('#lvInfo').innerHTML=`<h3>🌿 Subtree dari ${selNode}</h3><p>Anggota: ${ids.map(i=>`<span class="tag ${i===selNode?'gold':'blue'}">${i}</span>`).join('')} (${ids.length} node)</p><p>${SI.idx[selNode].leaf?'Sebuah Leaf adalah subtree yang hanya berisi 1 node.':selNode==='A'?'Subtree dari Root = seluruh Tree.':'Subtree = sebuah node beserta <b>semua keturunannya</b>.'}</p>`;
+  }
+ };
+ $$('#lvTabs .tab').forEach(t=>t.onclick=()=>{mode=t.dataset.m;paint();award('t3',5,'Level & Subtree dipelajari')});
+ v.onNode=id=>{if(mode==='sub'){selNode=id;paint()}};
+ paint();
+}});
+
+/* ---------- 9. Kartu Istilah ---------- */
+const CARDS=[
+ ['🌱','Root','akar','Node paling atas, tidak punya parent. Contoh: <b>A</b>.'],
+ ['🔵','Node','simpul','Setiap bulatan yang menyimpan data.'],
+ ['🔗','Edge','garis','Hubungan antar-node. Jumlah edge = jumlah node − 1.'],
+ ['👨','Parent','induk','Node yang punya anak. Contoh: <b>B</b> adalah parent dari E dan F.'],
+ ['👶','Child','anak','Node turunan langsung dari parent. E dan F adalah child dari B.'],
+ ['👫','Sibling','saudara','Node yang punya parent sama. E dan F bersaudara.'],
+ ['🍃','Leaf','daun','Node tanpa anak. Contoh: C, E, G, H, I.'],
+ ['🪜','Level','tingkat','Jarak node dari Root (Root = Level 0).'],
+ ['🌿','Subtree','sub-pohon','Sebuah node beserta semua keturunannya.']];
+slides.push({title:'Kartu Istilah Tree',short:'🃏 Kartu Istilah',key:'cards',
+render:()=>`
+<div class="eyebrow">09 · Rangkuman Istilah</div>
+<h2>🃏 Kartu Istilah Tree</h2>
+<p class="lead2">Ketuk tiap kartu untuk membaca artinya. Buka <b>semua 9 kartu</b> untuk mendapat XP! <span class="pillx" id="cardCnt" style="background:#F3E8FF;color:#5B21B6;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:800">0 / 9</span></p>
+<div class="grid3x">${CARDS.map(c=>`<div class="fc"><div class="fc-in"><div class="fc-f"><span class="e">${c[0]}</span><b>${c[1]}</b><small>${c[2]}</small></div><div class="fc-b"><b>${c[1]}</b>${c[3]}</div></div></div>`).join('')}</div>`,
+init:()=>{const seen=new Set();$$('.fc').forEach((c,i)=>c.onclick=()=>{c.classList.toggle('flipped');seen.add(i);$('#cardCnt').textContent=seen.size+' / 9';if(seen.size===9)award('cards',10,'Semua kartu istilah dibuka')})}});
+
+/* ---------- 10. Membaca Tree langkah demi langkah ---------- */
+slides.push({title:'Membaca Struktur Tree Langkah demi Langkah',short:'👓 Membaca Tree',
+render:()=>`
+<div class="eyebrow">10 · Membaca Struktur Tree</div>
+<h2>👓 Membaca Tree, Langkah demi Langkah</h2>
+<div class="split even tf">
+ <div>
+  <div class="dots" id="rdDots"></div>
+  <div class="infobox" id="rdInfo" style="min-height:190px"></div>
+  <div class="row mt" style="order:2"><button class="btn" id="rdPrev">← Langkah sebelumnya</button><button class="btn primary" id="rdNext">Langkah berikutnya →</button></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="rdView"></div></div>
+</div>`,
+init:()=>{
+ const v=TreeView($('#rdView'),SAMPLE,{levelH:78,bands:true,scale:1.15});const L=v.L;
+ const STEPS=[
+  ['1️⃣ Tentukan Root','Cari node <b>paling atas</b> — node yang tidak punya garis ke atas (tidak punya parent).','Jawaban: Root = <b>A</b>',()=>{v.mark('A','root');v.badge('A','Root','gold')}],
+  ['2️⃣ Tentukan Parent dan Child','Ambil satu node, misalnya <b>B</b>. Node tepat di atasnya adalah <b>parent</b>; node yang terhubung tepat di bawahnya adalah <b>child</b>.','Parent B = <b>A</b> · Child B = <b>E, F</b>',()=>{relPaint(v,SI,'B');v.clearCls('sib');v.badge('E','Child','blue');v.badge('F','Child','blue')}],
+  ['3️⃣ Tentukan Sibling','Sibling adalah node yang <b>parent-nya sama</b>. Lihat anak-anak dari satu parent.','E dan F bersaudara (parent = B). B, C, D juga bersaudara (parent = A).',()=>{['E','F'].forEach(i=>{v.mark(i,'sib');v.badge(i,'Sibling','pink')});['B','C','D'].forEach(i=>{v.mark(i,'sib')})}],
+  ['4️⃣ Tentukan Leaf','Susuri ujung-ujung cabang. Node yang <b>tidak punya anak</b> adalah leaf.','Leaf: <b>C, E, G, H, I</b>',()=>{SI.leaves.forEach(i=>{v.mark(i,'leaf');v.badge(i,'Leaf','green')})}],
+  ['5️⃣ Tentukan Level','Mulai dari Root = Level 0. Setiap turun satu garis, levelnya naik satu.','Level 0: A · Level 1: B, C, D · Level 2: E, F, G · Level 3: H, I',()=>{SI.order.forEach(i=>{v.mark(i,'hl');v.badge(i,'L'+SI.idx[i].depth,'blue')});v.bands(v.L.bands)}],
+  ['6️⃣ Kenali Subtree','Pilih satu node, lalu ambil ia <b>beserta semua keturunannya</b>.','Subtree <b>D</b> = {D, G}. Subtree <b>F</b> = {F, H, I}.',()=>{const ids=SI.sub('F');v.mark('F','sel');ids.forEach(i=>{if(i!=='F')v.mark(i,'hl')});SI.order.forEach(i=>{if(!ids.includes(i))v.mark(i,'dim')});SI.edges.forEach(e=>v.edgeMark(e[0],e[1],ids.includes(e[0])&&ids.includes(e[1])?'hl':'dim'));v.badge('F','Akar subtree','gold')}]];
+ let st=0;
+ const paint=()=>{
+  v.clearCls('root','leaf','parent','child','sib','sel','hl','dim');v.clearBadges();v.clearEdges('hl','dim');v.bands([]);
+  const s=STEPS[st];s[3]();
+  $('#rdInfo').innerHTML=`<h3>${s[0]}</h3><p>${s[1]}</p><div class="highlight" style="margin:8px 0 0">${s[2]}</div>`;
+  $('#rdDots').innerHTML=STEPS.map((_,i)=>`<i class="${i<st?'done':i===st?'on':''}"></i>`).join('');
+  $('#rdPrev').disabled=st===0;$('#rdNext').textContent=st===STEPS.length-1?'✅ Selesai — coba sendiri di slide berikutnya':'Langkah berikutnya →';
+ };
+ $('#rdPrev').onclick=()=>{if(st>0){st--;paint()}};
+ $('#rdNext').onclick=()=>{if(st<STEPS.length-1){st++;paint()}else goTo(current+1)};
+ paint();
+}});
+
+/* ---------- 11. Inspeksi Node ---------- */
+const INSP=T('P',[T('Q',[T('S'),T('T',[T('W'),T('X')]),T('U')]),T('R',[T('V',[T('Y')])])]);
+const II=indexTree(INSP);
+slides.push({title:'Inspeksi Node',short:'🪪 Kartu Node',
+render:()=>`
+<div class="eyebrow">11 · Membaca Struktur Tree</div>
+<h2>🪪 Kartu Data Node</h2>
+<div class="tabs" id="inTabs"><button class="tab on" data-m="card">🔍 Inspeksi Node</button><button class="tab" data-m="guess">🎲 Tebak Node</button></div>
+<div class="split even tf">
+ <div><div class="infobox" id="inInfo" style="min-height:250px;order:2"></div><div class="feedback" id="inFb" style="order:3"></div></div>
+ <div class="panel soft" style="order:1"><div id="inView"></div></div>
+</div>`,
+init:()=>{
+ const v=TreeView($('#inView'),INSP,{levelH:78,bands:true,scale:1.15});v.clickable(true);
+ let mode='card',target=null,clues=[],hits=0;
+ const card=id=>{
+  const r=II.idx[id],path=II.path(id);
+  v.clearCls('sel','path','hl');v.clearBadges();v.clearEdges('path');v.mark(id,'sel');
+  path.forEach(i=>{if(i!==id)v.mark(i,'hl')});for(let k=1;k<path.length;k++)v.edgeMark(path[k-1],path[k],'path');
+  v.badge(id,'Level '+r.depth,'gold');
+  $('#inInfo').innerHTML=`<h3>🪪 Node <span class="term">${id}</span></h3><div class="kv">
+   <b>Status</b><span>${!r.parent?'<span class="tag gold">Root</span>':r.leaf?'<span class="tag green">Leaf</span>':'<span class="tag purple">Node dalam (punya parent & child)</span>'}</span>
+   <b>Level</b><span>${r.depth}</span>
+   <b>Parent</b><span>${r.parent||'<i>tidak ada</i>'}</span>
+   <b>Child</b><span>${listTxt(r.children)}</span>
+   <b>Sibling</b><span>${listTxt(r.siblings)}</span>
+   <b>Subtree</b><span>${II.sub(id).join(', ')} (${II.sub(id).length} node)</span>
+   <b>Jalur dari Root</b><span>${path.join(' → ')} <span class="tiny">(bonus)</span></span></div>`;
+ };
+ const pick=()=>{
+  target=II.order[Math.floor(Math.random()*II.order.length)];const r=II.idx[target];
+  clues=[['Level',n=>II.idx[n].depth===r.depth,'berada di <b>Level '+r.depth+'</b>'],
+         ['Anak',n=>II.idx[n].children.length===r.children.length,r.children.length?'punya <b>'+r.children.length+' child</b>':'<b>tidak punya child</b> (leaf)'],
+         ['Sibling',n=>II.idx[n].siblings.length===r.siblings.length,r.siblings.length?'punya <b>'+r.siblings.length+' sibling</b>':'<b>tidak punya sibling</b>'],
+         ['Parent',n=>II.idx[n].parent===r.parent,r.parent?'parent-nya adalah <b>'+r.parent+'</b>':'<b>tidak punya parent</b>']];
+  v.clearCls('sel','path','hl','ok','bad');v.clearBadges();v.clearEdges('path');
+  $('#inInfo').innerHTML=`<h3>🎲 Siapakah aku?</h3><ul class="list" style="margin:4px 0;padding-left:20px;line-height:1.8">${clues.map(c=>`<li>Aku ${c[2]}</li>`).join('')}</ul><p class="tiny">Ketuk node yang cocok dengan <b>semua</b> petunjuk. Tebakan benar: <b id="gHits">${hits}</b></p><button class="btn" id="gNew">🎲 Petunjuk baru</button>`;
+  $('#gNew').onclick=pick;fb($('#inFb'),null,'');
+ };
+ v.onNode=id=>{
+  if(mode==='card'){card(id);return}
+  if(!target)return;
+  const wrong=clues.filter(c=>!c[1](id));
+  if(!wrong.length){hits++;v.mark(id,'ok');fb($('#inFb'),true,'✅ Tepat! Node <b>'+id+'</b> cocok dengan semua petunjuk.'+(id!==target?' (Petunjuknya memang cocok untuk lebih dari satu node.)':''));$('#gHits').textContent=hits;if(hits>=3)award('guess',10,'Tebak Node');later(pick,1500)}
+  else{v.shake(id);v.mark(id,'bad');later(()=>v.mark(id,'bad',false),700);fb($('#inFb'),false,'❌ Node '+id+' tidak cocok: petunjuk "'+wrong[0][0]+'" tidak terpenuhi.')}
+ };
+ $$('#inTabs .tab').forEach(t=>t.onclick=()=>{mode=t.dataset.m;$$('#inTabs .tab').forEach(x=>x.classList.toggle('on',x===t));fb($('#inFb'),null,'');
+  if(mode==='card'){v.clearCls('ok','bad');card('T')}else pick()});
+ card('T');
+}});
+
+/* ---------- 12. Tree dalam kehidupan nyata ---------- */
+const REAL=[
+ {tab:'🏫 Organisasi Sekolah',short:'Sekolah',
+  root:T('ks',[T('wk',[T('gm',[],'Guru\nMapel'),T('wl',[],'Wali\nKelas')],'Wakil\nKurikulum'),T('ws',[T('os',[],'Pembina\nOSIS'),T('bk',[],'Guru\nBK')],'Wakil\nKesiswaan')],'Kepala\nSekolah'),
+  why:'Setiap jabatan punya <b>atasan</b> langsung, dan satu atasan bisa membawahi beberapa bawahan. Itu hubungan <b>parent–child</b>.',
+  q:['Siapa yang berperan sebagai <b>Root</b>?',['Kepala Sekolah','Wali Kelas','Guru BK'],0,'Kepala Sekolah berada paling atas dan tidak punya atasan (parent).'],
+  map:'Root = Kepala Sekolah · Sibling = sesama wakil · Leaf = guru dan pembina'},
+ {tab:'📁 Folder Komputer',short:'Folder',
+  root:T('d',[T('sk',[T('t1',[],'📄 Tugas'),T('t2',[],'📄 Materi')],'📁 Sekolah'),T('fo',[T('f1',[],'🖼️ Liburan'),T('f2',[],'🖼️ Kelas')],'📁 Foto')],'💾 Drive D:'),
+  why:'Folder dapat berisi folder lain dan file. Folder di dalam folder membentuk <b>cabang</b>; file berada di ujung cabang.',
+  q:['Manakah yang termasuk <b>Leaf</b>?',['📁 Foto','📄 Materi','📁 Sekolah'],1,'File tidak berisi apa-apa lagi (tidak punya child), jadi file adalah leaf.'],
+  map:'Root = Drive D: · Parent = folder · Leaf = file'},
+ {tab:'📱 Menu Aplikasi',short:'Menu',
+  root:T('m',[T('be',[],'Beranda'),T('pe',[T('ak',[],'Akun'),T('ta',[],'Tampilan')],'Pengaturan'),T('pr',[T('ep',[],'Edit\nProfil')],'Profil')],'📱 Menu\nUtama'),
+  why:'Menu utama bercabang ke menu, lalu ke sub-menu. Makin dalam kamu membuka menu, makin tinggi <b>level</b>-nya.',
+  q:['<b>Akun</b> berada di level berapa? (Menu Utama = Level 0)',['Level 1','Level 2','Level 3'],1,'Menu Utama (0) → Pengaturan (1) → Akun (2).'],
+  map:'Root = Menu Utama · Sibling = Beranda, Pengaturan, Profil'},
+ {tab:'👨‍👩‍👧 Silsilah Keluarga',short:'Keluarga',
+  root:T('k',[T('ay',[T('ak',[],'Aku'),T('ad',[],'Adik')],'Ayah'),T('pa',[T('se',[],'Sepupu')],'Paman')],'Kakek'),
+  why:'Keturunan bercabang ke bawah: kakek → anak → cucu. <span class="tiny">(Di sini hanya satu garis keturunan agar tetap berbentuk Tree.)</span>',
+  q:['<b>Aku</b> dan <b>Adik</b> adalah…',['Parent','Sibling','Root'],1,'Keduanya punya parent yang sama (Ayah), sehingga bersaudara (sibling).'],
+  map:'Root = Kakek · Sibling = Aku & Adik, Ayah & Paman · Leaf = Aku, Adik, Sepupu'}];
+slides.push({title:'Tree dalam Kehidupan Nyata',short:'🌍 Tree Nyata',key:'real',
+render:()=>`
+<div class="eyebrow">12 · Tree dalam Kehidupan Nyata</div>
+<h2>🌍 Tree dalam Kehidupan Nyata</h2>
+<div class="tabs" id="rlTabs">${REAL.map((r,i)=>`<button class="tab" data-i="${i}">${r.tab}</button>`).join('')}</div>
+<div class="split even tf">
+ <div>
+  <div class="infobox" id="rlWhy"></div>
+  <div class="row mt" style="order:2"><button class="btn" id="rlTerm">🔍 Tampilkan istilah Tree</button></div>
+  <div class="quiz-box" style="padding:16px;margin-top:12px;order:3"><div class="question" id="rlQ" style="font-size:16px"></div><div class="qopts" id="rlOpts"></div><div class="feedback" id="rlFb"></div></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="rlView"></div></div>
+</div>`,
+init:()=>{
+ let cur=0,showT=false,v=null;const ok={};
+ const load=i=>{
+  cur=i;showT=false;const r=REAL[i];
+  $$('#rlTabs .tab').forEach((t,k)=>{t.classList.toggle('on',k===i);t.classList.toggle('done',!!ok[k])});
+  $('#rlView').innerHTML='';v=TreeView($('#rlView'),r.root,{shape:'pill',levelH:90,gap:12,scale:1.15,minRatio:.8,reserveL:true});
+  $('#rlWhy').innerHTML=`<h3>${r.tab}</h3><p>${r.why}</p><p class="tiny" id="rlMap"></p>`;
+  $('#rlTerm').textContent='🔍 Tampilkan istilah Tree';
+  $('#rlQ').innerHTML=r.q[0];$('#rlOpts').innerHTML=r.q[1].map((t,k)=>`<button class="qopt" data-k="${k}">${t}</button>`).join('');fb($('#rlFb'),null,'');
+  $$('#rlOpts .qopt').forEach(b=>b.onclick=()=>{$$('#rlOpts .qopt').forEach(x=>x.disabled=true);const good=+b.dataset.k===r.q[2];b.classList.add(good?'right':'wrong');if(!good)$$('#rlOpts .qopt')[r.q[2]].classList.add('right');
+   fb($('#rlFb'),good,(good?'✅ Tepat! ':'❌ Belum tepat. ')+r.q[3]);
+   if(good){ok[i]=true;$$('#rlTabs .tab')[i].classList.add('done');if(Object.keys(ok).length===REAL.length)award('real',10,'Semua contoh Tree nyata dipahami')}});
+ };
+ $('#rlTerm').onclick=()=>{
+  showT=!showT;const r=REAL[cur],I=indexTree(r.root);
+  v.clearCls('root','leaf');v.clearBadges();
+  if(showT){v.mark(I.root,'root');v.badge(I.root,'Root','gold');I.leaves.forEach(l=>{v.mark(l,'leaf');v.badge(l,'Leaf','green')});v.bands(v.L.bands);$('#rlMap').innerHTML='📌 '+r.map}
+  else{v.bands([]);$('#rlMap').innerHTML=''}
+  $('#rlTerm').textContent=showT?'🙈 Sembunyikan istilah':'🔍 Tampilkan istilah Tree';
+ };
+ $$('#rlTabs .tab').forEach((t,k)=>t.onclick=()=>load(k));
+ load(0);
+}});
+
+/* ---------- 13. Aktivitas 1: Menentukan istilah ---------- */
+const MATCH=[
+ {n:1,txt:'Node <b>A</b> — paling atas, tidak punya parent',ans:'Root',nodes:['A']},
+ {n:2,txt:'Garis yang menghubungkan <b>B</b> dan <b>F</b>',ans:'Edge',edge:['B','F']},
+ {n:3,txt:'Node <b>H</b> — tidak punya anak sama sekali',ans:'Leaf',nodes:['H']},
+ {n:4,txt:'Node <b>E</b> dan <b>F</b> terhadap satu sama lain (sama-sama anak B)',ans:'Sibling',nodes:['E','F']},
+ {n:5,txt:'Node <b>B</b> terhadap E dan F',ans:'Parent',nodes:['B']},
+ {n:6,txt:'Node <b>D</b> beserta seluruh keturunannya (D dan G)',ans:'Subtree',nodes:['D','G']},
+ {n:7,txt:'Angka pada node <b>I</b>: jaraknya dari Root (dihitung dari 0)',ans:'Level',nodes:['I']}];
+const MATCH_BANK=['Root','Edge','Leaf','Sibling','Parent','Subtree','Level','Child','Node'];
+slides.push({title:'Aktivitas 1: Menentukan Istilah',short:'🧩 Akt. 1 Istilah',key:'act1',
+render:()=>`
+<div class="eyebrow">13 · Aktivitas 1</div>
+<h2>🧩 Menentukan Istilah dari Sebuah Tree</h2>
+<p class="lead2">Tiap nomor pada gambar punya pertanyaan. <b>Ketuk istilah</b> lalu <b>ketuk kotak</b> jawabannya (atau seret istilahnya). Ada 2 istilah pengecoh!</p>
+<div class="split even tf">
+ <div>
+  <div class="bank" id="mBank" style="order:2"></div>
+  <div id="mRows" style="order:3"></div>
+  <div class="row mt" style="order:4"><button class="btn primary" id="mCheck">✔ Periksa Jawaban</button><button class="btn" id="mReset">↺ Ulangi</button></div>
+  <div class="feedback" id="mFb" style="order:5"></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="mView"></div></div>
+</div>`,
+init:()=>{
+ const v=TreeView($('#mView'),SAMPLE,{levelH:80,scale:1.15});
+ MATCH.forEach(m=>{(m.nodes||[]).forEach(i=>v.num(i,String(m.n)));if(m.edge)v.edgeNum(m.edge[0],m.edge[1],String(m.n))});
+ let asg={},sel=null,checked={},tries=0,finished=false;
+ const used=()=>new Set(Object.values(asg));
+ const paint=()=>{
+  $('#mBank').innerHTML=MATCH_BANK.filter(t=>!used().has(t)).map(t=>`<button class="chip ${sel===t?'on':''}" draggable="true" data-t="${t}">${t}</button>`).join('')||'<span class="tiny">Semua istilah sudah dipakai.</span>';
+  $('#mRows').innerHTML=MATCH.map((m,i)=>`<div class="slotrow ${checked[i]===true?'ok':checked[i]===false?'bad':''}" data-i="${i}"><span class="numbub">${m.n}</span><span style="font-size:14.5px;line-height:1.4">${m.txt}</span><div class="slot ${asg[i]?'has':''}" data-i="${i}">${asg[i]?asg[i]:'…'}</div></div>`).join('');
+  $$('#mBank .chip').forEach(c=>{c.onclick=()=>{sel=sel===c.dataset.t?null:c.dataset.t;paint()};
+   c.ondragstart=e=>{e.dataTransfer.setData('text/plain',c.dataset.t);c.classList.add('dragging')};c.ondragend=()=>c.classList.remove('dragging')});
+  $$('#mRows .slot').forEach(s=>{const i=+s.dataset.i;
+   s.onclick=()=>{if(finished)return;if(sel){asg[i]=sel;sel=null;delete checked[i]}else if(asg[i]){delete asg[i];delete checked[i]}paint()};
+   s.ondragover=e=>{e.preventDefault();s.classList.add('over')};s.ondragleave=()=>s.classList.remove('over');
+   s.ondrop=e=>{e.preventDefault();if(finished)return;const t=e.dataTransfer.getData('text/plain');if(t){asg[i]=t;sel=null;delete checked[i]}paint()}});
+  $$('#mRows .slotrow').forEach(r=>r.onmouseenter=()=>focusRow(+r.dataset.i,true));
+  $$('#mRows .slotrow').forEach(r=>r.onmouseleave=()=>focusRow(+r.dataset.i,false));
+ };
+ const focusRow=(i,on)=>{const m=MATCH[i];(m.nodes||[]).forEach(n=>{v.mark(n,'pulse',on);v.mark(n,'sel',on)});if(m.edge)v.edgeMark(m.edge[0],m.edge[1],'path',on)};
+ $('#mCheck').onclick=()=>{
+  if(Object.keys(asg).length<MATCH.length){fb($('#mFb'),false,'Isi dulu semua kotak jawaban ya (7 kotak).');return}
+  tries++;let good=0;MATCH.forEach((m,i)=>{checked[i]=asg[i]===m.ans;if(checked[i])good++});paint();
+  if(good===MATCH.length){finished=true;fb($('#mFb'),true,'🎉 Sempurna! Semua istilah benar'+(tries===1?' pada percobaan pertama!':'.'));burst();award('act1',tries===1?15:10,'Aktivitas 1 selesai')}
+  else fb($('#mFb'),false,`Benar ${good} dari ${MATCH.length}. Kotak merah masih keliru — ketuk kotaknya untuk mengembalikan istilah, lalu coba lagi.`);
+ };
+ $('#mReset').onclick=()=>{asg={};checked={};sel=null;finished=false;fb($('#mFb'),null,'');paint()};
+ paint();
+}});
+
+/* ---------- 14. Aktivitas 2: Detektif Tree ---------- */
+const DET=T('P',[T('Q',[T('T'),T('U',[T('X')])]),T('R'),T('S',[T('V'),T('W')])]);
+const DI=indexTree(DET);
+const DQ=[
+ ['Klik node yang menjadi <b>ROOT</b>.',['P'],false,'Root = node paling atas, tanpa parent.'],
+ ['Klik <b>semua LEAF</b> pada Tree ini.',['R','T','V','W','X'],true,'Leaf = node tanpa anak (ujung cabang).'],
+ ['Klik <b>PARENT</b> dari node <b>U</b>.',['Q'],false,'Parent = node tepat di atas U yang terhubung langsung.'],
+ ['Klik <b>semua CHILD</b> dari node <b>S</b>.',['V','W'],true,'Child = node yang terhubung langsung di bawah S.'],
+ ['Klik <b>SIBLING</b> dari node <b>T</b>.',['U'],true,'Sibling = node lain yang parent-nya sama dengan T (yaitu Q).'],
+ ['Klik <b>semua node di LEVEL 2</b>. (Root = Level 0)',['T','U','V','W'],true,'Level 2 = dua garis di bawah Root.'],
+ ['Klik <b>semua node pada SUBTREE</b> yang berakar di <b>Q</b>.',['Q','T','U','X'],true,'Subtree Q = Q beserta semua keturunannya.'],
+ ['Klik <b>semua node yang punya parent DAN punya child</b> sekaligus.',['Q','S','U'],true,'Bukan Root dan bukan Leaf — node "di tengah" Tree.']];
+slides.push({title:'Aktivitas 2: Detektif Tree',short:'🔍 Akt. 2 Detektif',key:'act2',
+render:()=>`
+<div class="eyebrow">14 · Aktivitas 2</div>
+<h2>🔍 Detektif Tree</h2>
+<div class="split even tf">
+ <div>
+  <div class="hud"><span class="pillx" id="dqNo">Soal 1/8</span><span class="pillx" id="dqPts">Poin: 0</span></div>
+  <div class="infobox" id="dqQ" style="min-height:96px"></div>
+  <p class="tiny" id="dqMode"></p>
+  <div class="row mt" style="order:2"><button class="btn primary" id="dqCheck">✔ Periksa</button><button class="btn" id="dqNext" style="display:none">Soal berikutnya →</button></div>
+  <div class="feedback" id="dqFb" style="order:3"></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="dqView"></div></div>
+</div>`,
+init:()=>{
+ const v=TreeView($('#dqView'),DET,{levelH:80,bands:true,scale:1.15});v.clickable(true);
+ let i=0,pts=0,att=0,sel=new Set(),locked=false;
+ const load=()=>{
+  if(i>=DQ.length){
+   $('#dqQ').innerHTML=`<h3>🏁 Selesai!</h3><p>Skormu: <b>${pts} / ${DQ.length*2}</b> poin.</p><p>${pts>=14?'🏆 Detektif Tree sejati!':pts>=9?'👍 Kerja bagus, terus asah lagi.':'🌱 Ulangi lagi supaya makin jago.'}</p>`;
+   $('#dqCheck').style.display='none';$('#dqNext').style.display='';$('#dqNext').textContent='↺ Main Lagi';$('#dqNext').onclick=()=>{i=0;pts=0;$('#dqCheck').style.display='';load()};
+   v.clearCls('sel','ok','bad','miss');$('#dqNo').textContent='Selesai';
+   award('act2',Math.max(1,pts),'Detektif Tree selesai');if(pts>=12)burst();return}
+  const q=DQ[i];att=0;locked=false;sel=new Set();v.clearCls('sel','ok','bad','miss');
+  $('#dqNo').textContent='Soal '+(i+1)+'/'+DQ.length;$('#dqPts').textContent='Poin: '+pts;
+  $('#dqQ').innerHTML=`<h3>🕵️ ${q[0]}</h3>`;$('#dqMode').textContent=q[2]?'Boleh memilih lebih dari satu node. Ketuk lagi untuk membatalkan.':'Pilih satu node.';
+  fb($('#dqFb'),null,'');$('#dqCheck').style.display='';$('#dqCheck').disabled=false;$('#dqNext').style.display='none';$('#dqNext').onclick=()=>{i++;load()};
+ };
+ v.onNode=id=>{
+  if(locked)return;const q=DQ[i];v.clearCls('ok','bad','miss');
+  if(!q[2]){sel.clear();v.clearCls('sel')}
+  if(sel.has(id)){sel.delete(id);v.mark(id,'sel',false)}else{sel.add(id);v.mark(id,'sel')}
+ };
+ $('#dqCheck').onclick=()=>{
+  if(locked)return;const q=DQ[i],ans=new Set(q[1]);
+  if(!sel.size){fb($('#dqFb'),false,'Pilih dulu node yang menurutmu benar.');return}
+  if(setEq(sel,ans)){const p=att===0?2:1;pts+=p;locked=true;sel.forEach(id=>{v.mark(id,'sel',false);v.mark(id,'ok')});
+   fb($('#dqFb'),true,'✅ Benar! +'+p+' poin. '+q[3]);$('#dqPts').textContent='Poin: '+pts;$('#dqCheck').disabled=true;$('#dqNext').style.display='';$('#dqNext').textContent=i<DQ.length-1?'Soal berikutnya →':'Lihat hasil 🏁'}
+  else{att++;const wrong=[...sel].filter(x=>!ans.has(x));
+   sel.forEach(id=>{v.mark(id,'sel',false);v.mark(id,ans.has(id)?'ok':'bad')});
+   if(att>=2){locked=true;ans.forEach(id=>{if(!sel.has(id))v.mark(id,'miss')});
+    fb($('#dqFb'),false,'💡 Jawaban yang benar ditandai (garis putus-putus kuning = yang terlewat). '+q[3]);$('#dqCheck').disabled=true;$('#dqNext').style.display='';$('#dqNext').textContent=i<DQ.length-1?'Soal berikutnya →':'Lihat hasil 🏁'}
+   else{sel=new Set([...sel].filter(x=>ans.has(x)));
+    fb($('#dqFb'),false,`❌ Belum tepat: ${wrong.length?wrong.length+' node yang dipilih keliru (merah)':''}${wrong.length&&sel.size<ans.size?', dan ':''}${sel.size<ans.size?'masih ada yang terlewat':''}. Petunjuk: ${q[3]}`)}}
+ };
+ load();
+}});
+
+/* ---------- 15. Aktivitas 3: Menyusun Tree berdasarkan kasus ---------- */
+const BUILD=[
+ {tab:'📁 Kasus Folder',story:'Di komputer ada folder <b>Sekolah</b>. Folder Sekolah berisi dua folder: <b>Matematika</b> dan <b>Informatika</b>. Folder Informatika berisi dua file: <b>Tugas</b> dan <b>Materi</b>.',
+  sk:T('s0',[T('s1'),T('s2',[T('s3'),T('s4')])]),bank:['Sekolah','Matematika','Informatika','Tugas','Materi','Foto'],
+  edges:[['Sekolah','Matematika'],['Sekolah','Informatika'],['Informatika','Tugas'],['Informatika','Materi']],root:'Sekolah'},
+ {tab:'👨‍👩‍👧 Kasus Keluarga',story:'<b>Kakek</b> memiliki dua anak: <b>Ayah</b> dan <b>Paman</b>. Ayah memiliki dua anak: <b>Aku</b> dan <b>Adik</b>.',
+  sk:T('s0',[T('s1',[T('s3'),T('s4')]),T('s2')]),bank:['Kakek','Ayah','Paman','Aku','Adik','Bibi'],
+  edges:[['Kakek','Ayah'],['Kakek','Paman'],['Ayah','Aku'],['Ayah','Adik']],root:'Kakek'},
+ {tab:'📱 Kasus Menu',story:'<b>Menu Utama</b> memiliki tiga bagian: <b>Beranda</b>, <b>Pengaturan</b>, dan <b>Profil</b>. Menu Pengaturan memiliki dua sub-menu: <b>Akun</b> dan <b>Tampilan</b>.',
+  sk:T('s0',[T('s1'),T('s2',[T('s4'),T('s5')]),T('s3')]),bank:['Menu Utama','Beranda','Pengaturan','Profil','Akun','Tampilan','Keluar'],
+  edges:[['Menu Utama','Beranda'],['Menu Utama','Pengaturan'],['Menu Utama','Profil'],['Pengaturan','Akun'],['Pengaturan','Tampilan']],root:'Menu Utama'}];
+slides.push({title:'Aktivitas 3: Menyusun Tree dari Kasus',short:'🌳 Akt. 3 Susun Tree',key:'act3',
+render:()=>`
+<div class="eyebrow">15 · Aktivitas 3</div>
+<h2>🌳 Menyusun Tree Berdasarkan Kasus</h2>
+<div class="tabs" id="bTabs">${BUILD.map((b,i)=>`<button class="tab" data-i="${i}">${b.tab}</button>`).join('')}</div>
+<div class="split even tf">
+ <div>
+  <div class="story" id="bStory"></div>
+  <p class="tiny">Ketuk kartu lalu ketuk kotak <b>?</b> pada Tree (atau seret kartunya). Ketuk kotak yang terisi untuk mengembalikan kartu. <b>Tidak semua kartu terpakai!</b></p>
+  <div class="bank" id="bBank" style="order:2"></div>
+  <div class="row mt" style="order:3"><button class="btn primary" id="bCheck">✔ Periksa</button><button class="btn" id="bReset">↺ Ulangi</button></div>
+  <div class="feedback" id="bFb" style="order:4"></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="bView"></div></div>
+</div>`,
+init:()=>{
+ let ci=0,v=null,fill={},sel=null,defs=[],L=null,doneCase={};
+ const load=i=>{
+  ci=i;const b=BUILD[i];fill={};sel=null;
+  $$('#bTabs .tab').forEach((t,k)=>{t.classList.toggle('on',k===i);t.classList.toggle('done',!!doneCase[k])});
+  $('#bStory').innerHTML='📖 '+b.story;fb($('#bFb'),null,'');
+  const longest=b.bank.reduce((a,x)=>tlen(x)>tlen(a)?x:a,'');
+  const sk=(function m(n){return T(n.id,n.children.map(m),longest)})(b.sk);
+  L=layoutTree(sk,{shape:'pill',levelH:82,gap:14});
+  $('#bView').innerHTML='';v=GView($('#bView'),{scale:1.15});v.setView(L.W,L.H);v.clickable(true);
+  v.wrap.ondragover=e=>{e.preventDefault();const g=e.target.closest&&e.target.closest('.gn');v.clearCls('over');if(g)v.mark(g.dataset.id,'over')};
+  v.wrap.ondrop=e=>{e.preventDefault();v.clearCls('over');const g=e.target.closest&&e.target.closest('.gn');const t=e.dataTransfer.getData('text/plain');if(g&&t)place(g.dataset.id,t)};
+  v.wrap.ondragleave=e=>{if(!v.wrap.contains(e.relatedTarget))v.clearCls('over')};
+  v.onNode=id=>{if(sel)place(id,sel);else if(fill[id]){delete fill[id];draw();paint()}};
+  draw(true);paint();
+ };
+ const draw=first=>{
+  defs=L.nodes.map(n=>{const t=fill[n.id];const o=Object.assign({},n,{lines:[t||'?'],from:null});return o});
+  v.update(defs,L.edges,{animate:false,noIntro:!first});
+  L.nodes.forEach(n=>{const has=!!fill[n.id];v.setCls(n.id,has?'filled':'empty')});
+ };
+ const place=(slot,label)=>{
+  Object.keys(fill).forEach(k=>{if(fill[k]===label)delete fill[k]});
+  fill[slot]=label;sel=null;v.clearCls('ok','bad');fb($('#bFb'),null,'');draw();paint();
+ };
+ const paint=()=>{
+  const b=BUILD[ci],usedL=new Set(Object.values(fill));
+  $('#bBank').innerHTML=b.bank.filter(x=>!usedL.has(x)).map(x=>`<button class="chip ${sel===x?'on':''}" draggable="true" data-t="${x}">${x}</button>`).join('')||'<span class="tiny">Semua kartu sudah dipakai.</span>';
+  $$('#bBank .chip').forEach(c=>{c.onclick=()=>{sel=sel===c.dataset.t?null:c.dataset.t;paint()};c.ondragstart=e=>{e.dataTransfer.setData('text/plain',c.dataset.t);c.classList.add('dragging')};c.ondragend=()=>c.classList.remove('dragging')});
+ };
+ $('#bCheck').onclick=()=>{
+  const b=BUILD[ci],ids=L.nodes.map(n=>n.id);
+  if(ids.some(id=>!fill[id])){fb($('#bFb'),false,'Masih ada kotak <b>?</b> yang kosong. Isi semua dulu ya.');return}
+  const exp=new Set(b.edges.map(e=>e[0]+'>'+e[1]));let good=0;
+  L.nodes.forEach(n=>{const lab=fill[n.id];let ok;if(!n.from)ok=lab===b.root;else ok=exp.has(fill[n.from]+'>'+lab);v.setCls(n.id,'filled '+(ok?'ok':'bad'));if(ok)good++});
+  v.clearCls('filled');
+  if(good===ids.length){fb($('#bFb'),true,'🎉 Tree-mu benar! Setiap hubungan parent–child sudah sesuai cerita.');burst();doneCase[ci]=true;$$('#bTabs .tab')[ci].classList.add('done');award('act3_'+ci,8,'Kasus '+(ci+1)+' selesai');if(Object.keys(doneCase).length===BUILD.length)award('act3',10,'Semua kasus Tree disusun')}
+  else fb($('#bFb'),false,`Benar ${good} dari ${ids.length} kotak. Yang merah berarti hubungan parent–child-nya belum sesuai cerita. Baca ceritanya lagi, lalu ketuk kotak merah untuk memperbaiki.`);
+ };
+ $('#bReset').onclick=()=>load(ci);
+ $$('#bTabs .tab').forEach((t,k)=>t.onclick=()=>load(k));
+ load(0);
+}});
+
+/* ---------- 16. Aktivitas 4: Game Misi Tree ---------- */
+const MISSI=[
+ {name:'Misi 1: Toko Buku',story:'Toko buku sekolah punya dua bagian: <b>Buku Cerita</b> dan <b>Alat Tulis</b>. Bagian Alat Tulis menjual <b>Pensil</b> dan <b>Pulpen</b>.',
+  root:T('tb',[T('bc',[],'Buku Cerita'),T('at',[T('pn',[],'Pensil'),T('pl',[],'Pulpen')],'Alat Tulis')],'Toko Buku'),
+  pos:[[.2,.16],[.8,.2],[.14,.55],[.52,.42],[.82,.78]]},
+ {name:'Misi 2: Perpustakaan',story:'Perpustakaan menyimpan buku dalam dua kelompok: <b>Fiksi</b> dan <b>Nonfiksi</b>. Kelompok Fiksi berisi <b>Novel</b> dan <b>Komik</b>. Kelompok Nonfiksi berisi <b>Sains</b>.',
+  root:T('pu',[T('fi',[T('no',[],'Novel'),T('ko',[],'Komik')],'Fiksi'),T('nf',[T('sa',[],'Sains')],'Nonfiksi')],'Perpustakaan'),
+  pos:[[.5,.1],[.14,.3],[.82,.32],[.3,.58],[.72,.62],[.16,.86]]},
+ {name:'Misi 3: Ekstrakurikuler',story:'Sekolah punya <b>Ekstrakurikuler</b> yang dibagi menjadi dua kelompok: <b>Olahraga</b> dan <b>Seni</b>. Olahraga terdiri dari <b>Futsal</b> dan <b>Basket</b>. Seni terdiri dari <b>Musik</b> dan <b>Tari</b>.',
+  root:T('ek',[T('ol',[T('fu',[],'Futsal'),T('ba',[],'Basket')],'Olahraga'),T('se',[T('mu',[],'Musik'),T('ta',[],'Tari')],'Seni')],'Ekstra-\nkurikuler'),
+  pos:[[.5,.5],[.15,.16],[.84,.18],[.16,.5],[.84,.52],[.2,.86],[.8,.88]]}];
+slides.push({title:'Aktivitas 4: Game Misi Tree',short:'🎮 Akt. 4 Misi Tree',key:'act4',
+render:()=>`
+<div class="eyebrow">16 · Aktivitas 4 · Game</div>
+<h2>🎮 Game Misi Tree</h2>
+<div class="tabs" id="gTabs">${MISSI.map((m,i)=>`<button class="tab" data-i="${i}">${m.name.split(':')[0]}</button>`).join('')}</div>
+<div class="split even tf">
+ <div>
+  <div class="story" id="gStory"></div>
+  <div class="infobox" style="min-height:0;margin-top:10px;padding:10px 14px"><p style="margin:0;font-size:14.5px">👉 <b>Cara main:</b> ketuk node <b>PARENT</b> dulu, lalu ketuk node <b>CHILD</b>-nya. Sambungkan semua hubungan sesuai cerita!</p></div>
+  <div class="hud" style="order:2"><span class="pillx" id="gConn">Terhubung 0/0</span><span class="pillx" id="gMis">Salah: 0</span><span class="pillx" id="gStars">☆☆☆</span></div>
+  <div class="row" style="order:3"><button class="btn" id="gHint">💡 Petunjuk</button><button class="btn" id="gShuf">🔀 Acak ulang</button></div>
+  <div class="feedback" id="gFb" style="order:4"></div>
+ </div>
+ <div class="panel soft" style="order:1"><div id="gView"></div></div>
+</div>`,
+init:()=>{
+ const W=460,H=380,stars={};
+ let mi=0,v=null,I=null,defs=[],conn=[],pend=null,mis=0,done=false;
+ const load=i=>{
+  mi=i;const m=MISSI[i];I=indexTree(m.root);conn=[];pend=null;mis=0;done=false;
+  $$('#gTabs .tab').forEach((t,k)=>{t.classList.toggle('on',k===i);t.classList.toggle('done',!!stars[k])});
+  $('#gStory').innerHTML='📖 '+m.story;fb($('#gFb'),null,'');
+  const P=shuffle(m.pos);
+  defs=I.order.map((id,k)=>{const me=measure(I.idx[id].label,'pill');return {id,label:I.idx[id].label,lines:me.lines,shape:'pill',w:me.w,h:me.h,x:Math.round(P[k][0]*(W-90)+45),y:Math.round(P[k][1]*(H-70)+35)}});
+  $('#gView').innerHTML='';v=GView($('#gView'),{scale:1.15,minRatio:.5});v.setView(W,H);v.clickable(true);
+  v.update(defs,[],{animate:false});
+  v.onNode=tap;v.onBg=()=>{if(pend){v.mark(pend,'sel',false);pend=null}};
+  hud();
+ };
+ const hud=()=>{$('#gConn').textContent='Terhubung '+conn.length+'/'+I.edges.length;$('#gMis').textContent='Salah: '+mis;
+  const s=done?(mis<=1?3:mis<=3?2:1):0;$('#gStars').textContent='★'.repeat(s)+'☆'.repeat(3-s)};
+ const lab=id=>I.idx[id].label.replace('\n','');
+ const edgesDef=()=>conn.map(e=>({a:e[0],b:e[1]}));
+ const tap=id=>{
+  if(done)return;
+  if(!pend){pend=id;v.mark(id,'sel');fb($('#gFb'),null,'Parent dipilih: <b>'+lab(id)+'</b>. Sekarang ketuk CHILD-nya.');return}
+  if(pend===id){v.mark(id,'sel',false);pend=null;fb($('#gFb'),null,'');return}
+  const p=pend,c=id;v.mark(p,'sel',false);pend=null;
+  if(conn.some(e=>e[0]===p&&e[1]===c)){fb($('#gFb'),null,'Hubungan itu sudah tersambung.');return}
+  if(I.idx[c].parent===p){
+   conn.push([p,c]);v.update(defs,edgesDef(),{animate:false,noIntro:true});v.edgeMark(p,c,'ok');v.mark(p,'ok');v.mark(c,'ok');later(()=>{v.mark(p,'ok',false);v.mark(c,'ok',false)},600);
+   fb($('#gFb'),true,'✅ Tepat! <b>'+lab(p)+'</b> adalah parent dari <b>'+lab(c)+'</b>.');
+   if(conn.length===I.edges.length)finish();
+  }else if(I.idx[p].parent===c){fb($('#gFb'),null,'↔️ Terbalik! Ketuk <b>PARENT</b> dulu, baru <b>CHILD</b>. (Coba lagi: <b>'+lab(c)+'</b> lalu <b>'+lab(p)+'</b>)')}
+  else{mis++;v.shake(p);v.shake(c);fb($('#gFb'),false,'❌ <b>'+lab(p)+'</b> bukan parent langsung dari <b>'+lab(c)+'</b>. Baca ceritanya lagi.')}
+  hud();
+ };
+ const finish=()=>{
+  done=true;const m=MISSI[mi];const s=mis<=1?3:mis<=3?2:1;stars[mi]=s;
+  const Lm=layoutTree(m.root,{shape:'pill',levelH:78,gap:14,fit:{W,H}});
+  const nd=Lm.nodes.map(n=>Object.assign({},n,{from:null}));
+  later(()=>{v.update(nd,edgesDef(),{animate:true,noIntro:true});v.clearCls('ok');v.mark(I.root,'root');v.badge(I.root,'Root','gold');I.leaves.forEach(l=>{v.mark(l,'leaf');v.badge(l,'Leaf','green')})},450);
+  fb($('#gFb'),true,'🎉 <b>Misi selesai!</b> Nodenya menyusun diri menjadi Tree rapi. Bintang: '+'★'.repeat(s)+' (salah '+mis+'×).');burst();
+  award('act4_'+mi,s*4,m.name+' selesai');$$('#gTabs .tab')[mi].classList.add('done');if(Object.keys(stars).length===MISSI.length)award('act4',10,'Semua misi Tree selesai');hud();
+ };
+ $('#gHint').onclick=()=>{if(done)return;const miss=I.edges.filter(e=>!conn.some(c=>c[0]===e[0]&&c[1]===e[1]));if(!miss.length)return;const e=miss[0];mis++;hud();
+  [e[0],e[1]].forEach(id=>{v.mark(id,'pulse');later(()=>v.mark(id,'pulse',false),1800)});fb($('#gFb'),null,'💡 Petunjuk: hubungkan <b>'+lab(e[0])+'</b> (parent) ke <b>'+lab(e[1])+'</b> (child). <span class="tiny">(Memakai petunjuk dihitung sebagai 1 kesalahan.)</span>')};
+ $('#gShuf').onclick=()=>load(mi);
+ $$('#gTabs .tab').forEach((t,k)=>t.onclick=()=>load(k));
+ load(0);
+}});
+
+/* ---------- 17. Tantangan Kasus: Tree Sekolah ---------- */
+const SCH={ks:'Kepala\nSekolah',wk:'Wakil Kepala\nKurikulum',ws:'Wakil Kepala\nKesiswaan',tu:'Tata\nUsaha',gm:'Guru\nMatematika',gi:'Guru\nInformatika',os:'Pembina\nOSIS',wl:'Wali\nKelas',sa:'Staf\nAdministrasi'};
+const SCH_PAR={ks:null,wk:'ks',ws:'ks',tu:'ks',gm:'wk',gi:'wk',os:'ws',wl:'ws',sa:'tu'};
+const flat=s=>s.replace('\n',' ');
+slides.push({title:'Tantangan Kasus: Struktur Sekolah',short:'🏫 Tantangan Kasus',key:'challenge',
+render:()=>`
+<div class="eyebrow">17 · Tantangan Kasus</div>
+<h2>🏫 Tantangan: Bangun Tree Sekolah</h2>
+<div class="story"><b>Kasus:</b> Sebuah sekolah memiliki Kepala Sekolah, kemudian Wakil Kepala Sekolah, Guru, dan beberapa bagian di bawahnya. Buatlah struktur Tree berdasarkan hubungan berikut:
+ <ul style="margin:6px 0 0;padding-left:20px;line-height:1.75">
+  <li><b>Kepala Sekolah</b> membawahi Wakil Kepala Kurikulum, Wakil Kepala Kesiswaan, dan Tata Usaha.</li>
+  <li><b>Wakil Kepala Kurikulum</b> membawahi Guru Matematika dan Guru Informatika.</li>
+  <li><b>Wakil Kepala Kesiswaan</b> membawahi Pembina OSIS dan Wali Kelas.</li>
+  <li><b>Tata Usaha</b> membawahi Staf Administrasi.</li></ul></div>
+<div class="panel" style="margin-top:12px">
+ <p class="tiny" style="margin-top:0"><b>Cara membangun:</b> (1) Ketuk sebuah kartu untuk menjadi <b>Root</b>. (2) Ketuk node pada Tree sebagai <b>induk</b>. (3) Ketuk kartu untuk menambahkannya sebagai <b>anak</b> dari induk itu. Salah taruh? Pilih node lalu tekan <b>Hapus</b>.</p>
+ <div class="bank" id="tcBank"></div>
+ <p class="tiny" id="tcStat" style="margin:8px 0 0"></p>
+ <div class="panel soft" style="margin-top:8px;padding:10px"><div id="tcEmpty" class="tiny" style="text-align:center;padding:14px">🌱 Tree masih kosong. Ketuk sebuah kartu untuk menjadikannya <b>Root</b>.</div><div id="tcView"></div></div>
+ <div class="row mt"><button class="btn primary" id="tcCheck">✔ Periksa Tree</button><button class="btn" id="tcDel">🗑 Hapus node terpilih</button><button class="btn" id="tcHint">💡 Petunjuk</button><button class="btn" id="tcReset">↺ Ulangi</button></div>
+ <div class="feedback" id="tcFb"></div>
+</div>
+<div id="tcQ"></div>`,
+init:()=>{
+ const nestFrom=(map,id)=>T(id,Object.keys(map).filter(k=>map[k]===id).map(k=>nestFrom(map,k)),SCH[id]);
+ const opt={shape:'pill',levelH:88,gap:10};
+ const Lf=layoutTree(nestFrom(SCH_PAR,'ks'),opt);let vw=Math.ceil(Lf.W),vh=Math.ceil(Lf.H);
+ const v=GView($('#tcView'),{scale:1.15,minRatio:.8});v.setView(vw,vh);v.clickable(true);
+ const bankOrder=shuffle(Object.keys(SCH));
+ let par={},rootId=null,selNode=null,hints=0,solved=false;
+ const draw=()=>{
+  if(!rootId){v.update([],[],{animate:false});$('#tcEmpty').style.display='';return}
+  $('#tcEmpty').style.display='none';
+  let L=layoutTree(nestFrom(par,rootId),Object.assign({fit:{W:vw,H:vh}},opt));
+  if(L.W>vw||L.H>vh){vw=Math.max(vw,Math.ceil(L.W));vh=Math.max(vh,Math.ceil(L.H));v.setView(vw,vh);L=layoutTree(nestFrom(par,rootId),Object.assign({fit:{W:vw,H:vh}},opt))}
+  v.update(L.nodes.map(n=>Object.assign({},n)),L.edges,{animate:true});
+  v.clearCls('sel');if(selNode&&par.hasOwnProperty(selNode))v.mark(selNode,'sel');
+ };
+ const stat=()=>{$('#tcStat').innerHTML=!rootId?'Langkah 1: pilih kartu untuk menjadi <b>Root</b>.':selNode?'Induk terpilih: <b>'+flat(SCH[selNode])+'</b>. Sekarang ketuk kartu untuk menambahkannya sebagai anak.':'Ketuk sebuah node pada Tree untuk memilihnya sebagai <b>induk</b>.'};
+ const bank=()=>{
+  const left=bankOrder.filter(id=>!par.hasOwnProperty(id));
+  $('#tcBank').innerHTML=left.map(id=>`<button class="chip" data-id="${id}">${flat(SCH[id])}</button>`).join('')||'<span class="tiny">Semua kartu sudah dipasang. Tekan <b>Periksa Tree</b>!</span>';
+  $$('#tcBank .chip').forEach(c=>c.onclick=()=>add(c.dataset.id));stat();
+ };
+ const add=id=>{
+  if(solved)return;
+  v.clearCls('ok','bad');fb($('#tcFb'),null,'');
+  if(!rootId){par[id]=null;rootId=id;selNode=id}
+  else if(selNode){par[id]=selNode}
+  else{fb($('#tcFb'),false,'Pilih dulu node <b>induk</b> pada Tree (ketuk salah satu node), baru ketuk kartunya.');return}
+  draw();bank();
+ };
+ v.onNode=id=>{if(solved)return;selNode=id;v.clearCls('sel');v.mark(selNode,'sel');stat()};
+ $('#tcDel').onclick=()=>{
+  if(solved)return;if(!selNode){fb($('#tcFb'),false,'Ketuk dulu node yang ingin dihapus.');return}
+  const rm=id=>{Object.keys(par).filter(k=>par[k]===id).forEach(rm);delete par[id]};
+  rm(selNode);if(selNode===rootId)rootId=null;selNode=null;fb($('#tcFb'),null,'');draw();bank();
+ };
+ $('#tcReset').onclick=()=>{if(solved)return;par={};rootId=null;selNode=null;fb($('#tcFb'),null,'');draw();bank()};
+ $('#tcHint').onclick=()=>{
+  if(solved)return;hints++;
+  const order=['ks','wk','ws','tu','gm','gi','os','wl','sa'];
+  const wrong=order.find(id=>par.hasOwnProperty(id)&&par[id]!==SCH_PAR[id]&&!(id===rootId&&SCH_PAR[id]===null));
+  if(wrong){fb($('#tcFb'),null,'💡 Ada node yang posisinya belum tepat: <b>'+flat(SCH[wrong])+'</b>. Baca ulang siapa yang membawahinya.');return}
+  const nxt=order.find(id=>!par.hasOwnProperty(id)&&(SCH_PAR[id]===null||par.hasOwnProperty(SCH_PAR[id])));
+  if(!nxt){fb($('#tcFb'),null,'Semua kartu sudah terpasang. Tekan Periksa Tree!');return}
+  fb($('#tcFb'),null,SCH_PAR[nxt]===null?'💡 Mulailah dari node paling atas: <b>'+flat(SCH[nxt])+'</b>.':'💡 Coba pasang <b>'+flat(SCH[nxt])+'</b> sebagai anak dari <b>'+flat(SCH[SCH_PAR[nxt]])+'</b>.');
+ };
+ $('#tcCheck').onclick=()=>{
+  if(solved)return;const ids=Object.keys(par);
+  if(!ids.length){fb($('#tcFb'),false,'Tree masih kosong.');return}
+  let good=0;ids.forEach(id=>{const ok=id===rootId?SCH_PAR[id]===null:par[id]===SCH_PAR[id];v.mark(id,ok?'ok':'bad');v.mark(id,'sel',false);if(ok)good++});
+  const missing=Object.keys(SCH).length-ids.length,wrong=ids.length-good;
+  if(good===9){
+   solved=true;v.clearCls('ok');v.mark('ks','root');v.badge('ks','Root','gold');Object.keys(SCH).filter(k=>!Object.values(SCH_PAR).includes(k)).forEach(l=>{v.mark(l,'leaf');v.badge(l,'Leaf','green')});
+   fb($('#tcFb'),true,'🎉 <b>Tree sekolahmu benar!</b> Setiap hubungan atasan–bawahan sudah tepat. Sekarang jawab pertanyaan analisis di bawah.');burst();
+   award('challenge',hints<=2?20:12,'Tantangan Kasus selesai');analysis();$('#tcBank').innerHTML='<span class="tiny">✅ Selesai!</span>';$('#tcStat').textContent='';
+  }else fb($('#tcFb'),false,`Benar ${good}, keliru ${wrong}${missing?', belum dipasang '+missing:''}. Node <b>merah</b> posisinya belum tepat (hijau = sudah tepat).`);
+ };
+ const analysis=()=>{
+  const Q=[['Siapa <b>Root</b> pada Tree sekolahmu?',['Kepala Sekolah','Wakil Kepala Kurikulum','Tata Usaha'],0],
+   ['Berapa jumlah <b>Leaf</b> pada Tree tersebut?',['3','4','5','6'],2],
+   ['<b>Guru Matematika</b> berada di level berapa? (Root = Level 0)',['Level 1','Level 2','Level 3'],1],
+   ['Siapa saja <b>sibling</b> dari Wakil Kepala Kurikulum?',['Wakil Kepala Kesiswaan dan Tata Usaha','Guru Matematika dan Guru Informatika','Kepala Sekolah'],0]];
+  const got=new Set();
+  $('#tcQ').innerHTML='<div class="qwrap" style="margin-top:14px"><h3>🧠 Analisis Tree-mu</h3>'+Q.map((q,i)=>`<div style="margin:12px 0"><div class="question" style="font-size:16px">${i+1}. ${q[0]}</div><div class="qopts" data-q="${i}">${shuffle(q[1].map((t,k)=>[t,k])).map(o=>`<button class="qopt" data-k="${o[1]}">${o[0]}</button>`).join('')}</div><div class="feedback" id="aq${i}"></div></div>`).join('')+'<div class="feedback" id="aqAll"></div></div>';
+  $$('#tcQ .qopts').forEach(g=>{const i=+g.dataset.q;$$('.qopt',g).forEach(b=>b.onclick=()=>{
+   if(got.has(i))return;const ok=+b.dataset.k===Q[i][2];
+   if(ok){got.add(i);b.classList.add('right');$$('.qopt',g).forEach(x=>x.disabled=true);fb($('#aq'+i),true,'✅ Benar!');
+    if(got.size===Q.length){fb($('#aqAll'),true,'🏆 Semua analisis benar — kamu sudah bisa membaca Tree dari sebuah kasus!');award('challengeQ',10,'Analisis Tree benar semua')}}
+   else{b.classList.add('wrong');b.disabled=true;fb($('#aq'+i),false,'❌ Coba pilihan lain.')}})});
+  $('#tcQ').scrollIntoView({behavior:'smooth',block:'nearest'});
+ };
+ draw();bank();
+}});
+
+/* ---------- 18. Evaluasi: Kuis berbasis gambar Tree & kasus ---------- */
+const QK=T('K',[T('L',[T('O'),T('P',[T('R'),T('S')])]),T('M'),T('N',[T('Q',[T('T')])])]);
+const QF=T('d',[T('sk',[T('t1',[],'Tugas.docx'),T('t2',[],'Materi.pdf')],'Sekolah'),T('fo',[T('f1',[],'Liburan.jpg')],'Foto')],'Drive D:');
+const miniTree=(root,o)=>host=>TreeView(host,root,Object.assign({noIntro:true,levelH:64,padY:22,padX:14,scale:1.05,minRatio:.5,shape:'pill',gap:8},o||{}));
+const cycleView=host=>{const v=GView(host,{scale:1.05,minRatio:.5});v.setView(200,150);
+ const nd=[['A',100,34],['B',44,112],['C',156,112]].map(a=>({id:a[0],label:a[0],x:a[1],y:a[2],shape:'circle',w:46,h:46,lines:[a[0]]}));
+ v.update(nd,[{a:'A',b:'B'},{a:'B',b:'C'},{a:'C',b:'A'}],{animate:false,noIntro:true});return v};
+const QZ=[
+ {t:'mcq',topic:'Istilah',tree:QK,q:'Pada Tree di atas, node manakah yang menjadi <b>Root</b>?',opts:['K','L','T'],a:0,ex:'Root adalah node paling atas yang tidak punya parent, yaitu <b>K</b>.'},
+ {t:'mcq',topic:'Istilah',tree:QK,q:'Berapa jumlah <b>Leaf</b> pada Tree tersebut?',opts:['3','4','5','6'],a:2,ex:'Leaf = node tanpa anak: M, O, R, S, dan T → <b>5 leaf</b>.'},
+ {t:'mcq',topic:'Istilah',tree:QK,q:'Siapa <b>parent</b> dari node <b>S</b>?',opts:['L','P','R'],a:1,ex:'S terhubung langsung ke node di atasnya, yaitu <b>P</b>.'},
+ {t:'mcq',topic:'Istilah',tree:QK,q:'Node <b>O</b> bersaudara (<b>sibling</b>) dengan node…',opts:['P','K','R','N'],a:0,ex:'O dan P sama-sama anak dari L, sehingga keduanya sibling.'},
+ {t:'mcq',topic:'Level & Subtree',tree:QK,q:'Node <b>T</b> berada di level berapa? (Root = Level 0)',opts:['2','3','4'],a:1,ex:'Jalurnya K (0) → N (1) → Q (2) → T (3), jadi <b>Level 3</b>.'},
+ {t:'mcq',topic:'Level & Subtree',tree:QK,q:'Berapa node yang ada pada <b>subtree</b> yang berakar di <b>N</b>?',opts:['2','3','4'],a:1,ex:'Subtree N = N, Q, dan T → <b>3 node</b>.'},
+ {t:'click',topic:'Istilah',tree:QK,q:'Klik <b>semua child</b> dari node <b>L</b>, lalu tekan Periksa.',ans:['O','P'],ex:'Child dari L adalah node yang terhubung langsung di bawahnya: <b>O dan P</b>.'},
+ {t:'mcq',topic:'Kasus & Konsep',tree:QF,q:'Pada struktur folder di atas, manakah yang merupakan <b>Leaf</b>?',opts:['Sekolah','Materi.pdf','Foto','Drive D:'],a:1,ex:'File <b>Materi.pdf</b> tidak punya isi lagi (tidak punya child), jadi ia Leaf. Folder punya isi, jadi bukan Leaf.'},
+ {t:'img',topic:'Kasus & Konsep',q:'Manakah gambar yang <b>BUKAN</b> Tree?',opts:[['Gambar',miniTree(T('A',[T('B'),T('C')]),{shape:'circle'})],['Gambar',cycleView],['Gambar',miniTree(T('X',[T('Y',[T('Z')])]),{shape:'circle'})]],a:1,ex:'Pada gambar berputar, A–B–C saling terhubung membentuk <b>lingkaran (siklus)</b>. Tree tidak boleh berputar: setiap node selain Root punya tepat satu parent.'},
+ {t:'img',topic:'Kasus & Konsep',q:'<b>Kasus:</b> Ketua memiliki dua anggota, yaitu Sekretaris dan Bendahara. Sekretaris memiliki dua staf: Staf 1 dan Staf 2. Manakah Tree yang tepat?',
+  opts:[['Gambar',miniTree(T('k',[T('s',[T('a',[],'Staf 1'),T('b',[],'Staf 2')],'Sekr.'),T('n',[],'Bend.')],'Ketua'))],
+        ['Gambar',miniTree(T('k',[T('s',[],'Sekr.'),T('n',[T('a',[],'Staf 1'),T('b',[],'Staf 2')],'Bend.')],'Ketua'))],
+        ['Gambar',miniTree(T('k',[T('s',[T('n',[],'Bend.'),T('a',[],'Staf 1'),T('b',[],'Staf 2')],'Sekr.')],'Ketua'))]],a:0,ex:'Ketua → Sekretaris dan Bendahara (setingkat). Staf 1 dan Staf 2 berada <b>di bawah Sekretaris</b>, bukan Bendahara.'},
+ {t:'mcq',topic:'Kasus & Konsep',q:'Sebuah Tree memiliki <b>10 node</b>. Berapa jumlah <b>edge</b>-nya?',opts:['9','10','11','8'],a:0,ex:'Setiap node selain Root punya satu edge ke parent-nya, jadi edge = node − 1 = <b>9</b>.'}];
+slides.push({title:'Evaluasi: Kuis Tree',short:'🎓 Kuis Tree',key:'quiz',
+render:()=>`<div class="eyebrow">18 · Evaluasi</div><h2>🎓 Kuis Tree</h2><p class="lead2">Soal berbasis <b>gambar Tree</b> dan <b>kasus</b> — bukan sekadar hafalan istilah. Ada ${QZ.length} soal.</p><div id="quizBox"></div>`,
+init:()=>{
+ const box=$('#quizBox');let list=[],pos=0,res=[],full=true;
+ const start=(qs,isFull)=>{list=qs;pos=0;res=[];full=isFull;show()};
+ const show=()=>{
+  if(pos>=list.length){end();return}
+  const q=list[pos];
+  box.innerHTML=`<div class="qwrap"><div class="qhead"><span>Soal ${pos+1} / ${list.length}</span><span>${q.topic}</span></div><div class="qbar"><i style="width:${pos/list.length*100}%"></i></div>
+   <div class="question">${q.q}</div>${q.tree?'<div class="panel soft" style="padding:8px;max-width:560px;margin:8px auto"><div id="qTree"></div></div>':''}
+   <div id="qBody"></div><div class="feedback" id="qFb"></div><div class="row mt" id="qAct"></div></div>`;
+  let tv=null;if(q.tree){tv=TreeView($('#qTree'),q.tree,{noIntro:true,shape:'pill',levelH:74,gap:10,scale:1.05,minRatio:.8});}
+  const done=(ok,msg)=>{res.push({topic:q.topic,ok,id:q.id});fb($('#qFb'),ok,(ok?'✅ Benar! ':'❌ Kurang tepat. ')+msg);
+   $('#qAct').innerHTML=`<button class="btn primary" id="qNext">${pos<list.length-1?'Soal berikutnya →':'Lihat hasil 🏁'}</button>`;$('#qNext').onclick=()=>{pos++;show()}};
+  if(q.t==='mcq'){
+   $('#qBody').innerHTML='<div class="qopts">'+shuffle(q.opts.map((o,i)=>[o,i])).map(o=>`<button class="qopt" data-i="${o[1]}">${o[0]}</button>`).join('')+'</div>';
+   $$('#qBody .qopt').forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===q.a;$$('#qBody .qopt').forEach(x=>{x.disabled=true;if(+x.dataset.i===q.a)x.classList.add('right')});if(!ok)b.classList.add('wrong');done(ok,q.ex)});
+  }else if(q.t==='click'){
+   tv.clickable(true);const sel=new Set();let locked=false;
+   tv.onNode=id=>{if(locked)return;sel.has(id)?(sel.delete(id),tv.mark(id,'sel',false)):(sel.add(id),tv.mark(id,'sel'))};
+   $('#qAct').innerHTML='<button class="btn primary" id="qChk">✔ Periksa</button>';
+   $('#qChk').onclick=()=>{if(locked)return;if(!sel.size){fb($('#qFb'),false,'Pilih dulu node-nya.');return}locked=true;const ans=new Set(q.ans),ok=setEq(sel,ans);
+    tv.clearCls('sel');sel.forEach(id=>tv.mark(id,ans.has(id)?'ok':'bad'));q.ans.forEach(id=>{if(!sel.has(id))tv.mark(id,'miss')});done(ok,q.ex)};
+  }else{
+   $('#qBody').innerHTML='<div class="imgopts">'+shuffle(q.opts.map((o,i)=>[o,i])).map((o,k)=>`<button class="imgopt" data-i="${o[1]}"><b>Gambar ${'ABC'[k]}</b><div class="io"></div></button>`).join('')+'</div>';
+   const order=$$('#qBody .imgopt');order.forEach(el=>q.opts[+el.dataset.i][1]($('.io',el)));
+   order.forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===q.a;order.forEach(x=>{x.disabled=true;if(+x.dataset.i===q.a)x.classList.add('right')});if(!ok)b.classList.add('wrong');done(ok,q.ex)});
+  }
+  box.scrollIntoView&&0;
+ };
+ const end=()=>{
+  const ok=res.filter(r=>r.ok).length,n=res.length;
+  const topics=['Istilah','Level & Subtree','Kasus & Konsep'];
+  const bars=topics.map(t=>{const rs=res.filter(r=>r.topic===t);if(!rs.length)return'';const g=rs.filter(r=>r.ok).length;return `<div><span>${t}</span><i><u style="width:${g/rs.length*100}%"></u></i><span>${g}/${rs.length}</span></div>`}).join('');
+  const pct=ok/n;const medal=pct>=.9?'🏆':pct>=.7?'🌳':pct>=.5?'🌿':'🌱';
+  const msg=pct>=.9?'Luar biasa! Kamu menguasai Tree.':pct>=.7?'Bagus sekali! Sedikit lagi sempurna.':pct>=.5?'Lumayan! Baca ulang bagian yang masih keliru.':'Tetap semangat! Ulangi materi lalu coba lagi.';
+  const wrongIds=res.filter(r=>!r.ok).map(r=>r.id);
+  if(full){award('quiz',ok*3,'Kuis selesai ('+ok+'/'+n+')');if(ok>=9){S.done.quizStar=true;renderNav()}if(pct>=.7)burst()}
+  box.innerHTML=`<div class="qwrap center"><div style="font-size:54px">${medal}</div><div class="score-big">${ok}<span style="font-size:28px;color:#64748B"> / ${n}</span></div><p>${msg}</p><div class="bars" style="text-align:left;max-width:520px;margin:10px auto">${bars}</div>
+   <div class="row" style="justify-content:center">${wrongIds.length?'<button class="btn primary" id="qRetry">🔁 Ulangi soal yang salah</button>':''}<button class="btn" id="qAgain">↺ Ulangi semua</button><button class="btn" id="qGo">Lihat rangkuman →</button></div></div>`;
+  if($('#qRetry'))$('#qRetry').onclick=()=>start(wrongIds.map(i=>Object.assign({id:i},QZ[i])),false);
+  $('#qAgain').onclick=()=>start(QZ.map((q,i)=>Object.assign({id:i},q)),true);$('#qGo').onclick=()=>goTo(current+1);
+ };
+ start(QZ.map((q,i)=>Object.assign({id:i},q)),true);
+}});
+
+/* ---------- 19. Rangkuman: peta konsep ---------- */
+const CM=[
+ ['blue','🧱 Komponen',[['Root','Node paling atas; tidak punya parent.'],['Node','Setiap simpul yang menyimpan data.'],['Edge','Garis penghubung antar-node. Jumlah edge = jumlah node − 1.'],['Leaf','Node tanpa anak (ujung cabang).']]],
+ ['purple','👪 Hubungan',[['Parent','Node yang punya anak (induk).'],['Child','Node turunan langsung dari parent.'],['Sibling','Node-node yang punya parent yang sama.']]],
+ ['green','📏 Ukuran & Bagian',[['Level','Jarak node dari Root; Root berada di Level 0.'],['Subtree','Sebuah node beserta semua keturunannya.']]],
+ ['pink','🌍 Contoh Nyata',[['Organisasi sekolah','Kepala sekolah → wakil → guru dan staf.'],['Folder komputer','Drive → folder → file.'],['Menu aplikasi','Menu utama → sub-menu.'],['Silsilah keluarga','Kakek → anak → cucu.']]]];
+slides.push({title:'Rangkuman: Peta Konsep Tree',short:'🗺️ Rangkuman',key:'map',
+render:()=>`
+<div class="eyebrow">19 · Rangkuman</div>
+<h2>🗺️ Peta Konsep Tree</h2>
+<p class="lead2">Ketuk tiap istilah untuk mengingat artinya. Jelajahi semuanya untuk XP tambahan!</p>
+<div class="cmt"><div class="cmt-root">🌳 TREE</div>
+ <div class="cmt-row">${CM.map((b,bi)=>`<div class="cmt-br br-${b[0]}"><h4>${b[1]}</h4><div class="chips">${b[2].map((c,ci)=>`<button class="chip" data-b="${bi}" data-c="${ci}">${c[0]}</button>`).join('')}</div></div>`).join('')}</div>
+ <div class="cmt-info" id="cmInfo">👆 Ketuk salah satu istilah di atas.</div>
+</div>
+<div class="highlight" style="margin-top:14px">🌳 <b>Inti Tree:</b> struktur data non-linear berjenjang — ada satu <b>Root</b>, setiap node (selain Root) punya tepat satu <b>Parent</b>, dan tidak ada putaran.</div>`,
+init:()=>{
+ const seen=new Set();const total=CM.reduce((a,b)=>a+b[2].length,0);
+ $$('.cmt .chip').forEach(c=>c.onclick=()=>{
+  $$('.cmt .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');
+  const t=CM[+c.dataset.b][2][+c.dataset.c];$('#cmInfo').innerHTML=`<b>${t[0]}</b> — ${t[1]}`;
+  seen.add(c.dataset.b+'-'+c.dataset.c);if(seen.size===total)award('map',5,'Peta konsep dijelajahi');
+ });
+}});
+
+/* ---------- 20. Penutup: lencana ---------- */
+const BADGES=[['act1','act1','🧩','Ahli Istilah','Aktivitas 1'],['act2','act2','🔍','Detektif Tree','Aktivitas 2'],['act3','act3','🌳','Penyusun Tree','Aktivitas 3'],['act4','act4','🎮','Pemain Misi','Aktivitas 4'],['challenge','challenge','🏫','Arsitek Sekolah','Tantangan Kasus'],['quizStar','quiz','🎓','Bintang Kuis','Kuis: 9+ benar']];
+const CHECK=['Menjelaskan apa itu Tree dan mengapa Tree digunakan','Menyebutkan Root, Node, Edge, dan Leaf','Menentukan Parent, Child, dan Sibling','Menentukan Level dan mengenali Subtree','Membaca struktur Tree dari sebuah gambar','Menyusun Tree berdasarkan sebuah kasus','Memberi contoh Tree dalam kehidupan sehari-hari'];
+slides.push({title:'Selesai: Lencana dan Refleksi',short:'🏆 Selesai',
+render:()=>{
+ const got=BADGES.filter(b=>S.done[b[0]]).length;
+ const lv=S.xp>=200?['🏆','Penjaga Hutan Tree']:S.xp>=120?['🌳','Pohon Rindang']:S.xp>=60?['🌿','Pohon Muda']:['🌱','Tunas Tree'];
+ return `
+<div class="center"><div class="eyebrow">20 · Penutup</div><div style="font-size:64px">${lv[0]}</div><h2 style="margin-bottom:4px">Petualangan Tree Selesai!</h2>
+<p class="lead2" style="margin:0">Levelmu: <b>${lv[1]}</b> · <b>⭐ ${S.xp} XP</b> · Lencana: <b>${got} / ${BADGES.length}</b></p></div>
+<div class="badges">${BADGES.map(b=>`<div class="bdg ${S.done[b[0]]?'got':''}" data-go="${b[1]}"><div class="e">${b[2]}</div><b>${b[3]}</b><small>${S.done[b[0]]?'Diperoleh ✓':b[4]+' — ketuk untuk menuju ke sana'}</small></div>`).join('')}</div>
+<div class="grid2" style="align-items:start"><div><h3>✅ Aku sudah bisa…</h3><div id="chk">${CHECK.map((c,i)=>`<div class="check" data-i="${i}"><i>✓</i><span>${c}</span></div>`).join('')}</div></div>
+<div><h3>💬 Refleksi singkat</h3><div class="highlight" style="margin-top:6px">Tuliskan di buku catatanmu: <br>1) Contoh Tree di sekitarmu selain yang dibahas hari ini.<br>2) Bagian Tree yang menurutmu paling mudah dan paling sulit.</div>
+<div class="row mt"><button class="btn" id="goStart">↺ Kembali ke awal</button><button class="btn primary" id="goQuiz">🎓 Coba Kuis Lagi</button></div></div></div>`},
+init:()=>{
+ $$('.bdg').forEach(b=>b.onclick=()=>{const i=slides.findIndex(s=>s.key===b.dataset.go);if(i>=0)goTo(i)});
+ $$('.check').forEach(c=>c.onclick=()=>c.classList.toggle('on'));
+ $('#goStart').onclick=()=>goTo(0);$('#goQuiz').onclick=()=>goTo(slides.findIndex(s=>s.key==='quiz'));
+ if(BADGES.filter(b=>S.done[b[0]]).length>=4)burst();
+}});
+
+/* ========== Mesin slide, menu geser, tombol buka/tutup ========== */
+let current=0;
+const nav=$('#nav'),slideEl=$('#slide'),progress=$('#progress'),counter=$('#counter'),prevB=$('#prev'),nextB=$('#next'),footerInfo=$('#footerInfo'),app=$('.app');
+function bindToggle(btn,cls,hideLabel,showLabel,hideIcon,showIcon){
+ const lab=btn.querySelector('.tl'),ico=btn.querySelector('.ti');
+ btn.onclick=()=>{const hidden=app.classList.toggle(cls);btn.setAttribute('aria-pressed',String(hidden));lab.textContent=hidden?showLabel:hideLabel;ico.textContent=hidden?showIcon:hideIcon};
+}
+const sideBtn=$('#toggleSidebar');
+bindToggle(sideBtn,'no-sidebar','Sembunyikan menu','Tampilkan menu','☰','☰');
+const isPhone=window.matchMedia('(max-width:850px)');
+const desktopSideClick=sideBtn.onclick;
+function setDrawer(open){app.classList.toggle('drawer-open',open);sideBtn.setAttribute('aria-expanded',String(open));if(open){const a=$('#nav .active');if(a)a.scrollIntoView({block:'center'})}}
+sideBtn.onclick=e=>{isPhone.matches?setDrawer(!app.classList.contains('drawer-open')):desktopSideClick(e)};
+$('#scrim').onclick=()=>setDrawer(false);
+$('#drawerClose').onclick=()=>setDrawer(false);
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){setDrawer(false);return}
+ if(e.target.closest&&e.target.closest('input,textarea,select'))return;
+ if(e.key==='ArrowRight'&&!nextB.disabled)goTo(current+1);
+ if(e.key==='ArrowLeft'&&!prevB.disabled)goTo(current-1);
+});
+(isPhone.addEventListener?isPhone.addEventListener('change',()=>setDrawer(false)):isPhone.addListener(()=>setDrawer(false)));
+bindToggle($('#toggleTop'),'no-top','Sembunyikan bar atas','Tampilkan bar atas','⬆','⬇');
+
+function renderNav(){
+ nav.innerHTML=slides.map((s,i)=>`<button class="${i===current?'active':''}${s.key&&S.done[s.key]?' done':''}" data-go="${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span>${s.short}</span></button>`).join('');
+ $$('[data-go]',nav).forEach(b=>b.onclick=()=>{goTo(Number(b.dataset.go));setDrawer(false)});
+}
+function render(){
+ clearTimers();
+ const s=slides[current];
+ slideEl.innerHTML='<div class="slide-inner">'+s.render()+'</div>';
+ progress.style.width=((current+1)/slides.length*100)+'%';
+ counter.textContent=(current+1)+' / '+slides.length;
+ footerInfo.textContent=s.title;
+ prevB.disabled=current===0;
+ nextB.disabled=current===slides.length-1;
+ nextB.textContent=current===slides.length-1?'Selesai':'Berikutnya →';
+ renderNav();
+ slideEl.scrollTop=0;
+ if(s.init)s.init();
+}
+function goTo(i){if(i<0||i>=slides.length)return;current=i;render()}
+prevB.onclick=()=>goTo(current-1);
+nextB.onclick=()=>goTo(current+1);
+refreshXP(false);
+render();
+
+})();
+</script>
+</body>
+</html>
