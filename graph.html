@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Struktur Data — Pertemuan 3: Graph</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#F0F7FF;
+  --panel:#FFFFFF;
+  --panel2:#EFF6FF;
+  --text:#172554;
+  --muted:#64748B;
+  --accent:#3B82F6;
+  --accent2:#8B5CF6;
+  --gold:#FBBF24;
+  --danger:#F472B6;
+  --success:#22C55E;
+  --pink:#F472B6;
+  --purple:#8B5CF6;
+  --border:rgba(37,99,235,.14);
+  --shadow:0 18px 50px rgba(37,99,235,.12)
+}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(135deg,#F0F7FF 0%,#FDFBFF 52%,#FFF7FC 100%);color:var(--text);overflow:hidden}
+button{font:inherit}
+.app{height:100vh;height:100dvh;display:grid;grid-template-columns:270px 1fr;grid-template-rows:64px 1fr 70px}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:18px;padding:0 22px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--border);box-shadow:0 4px 18px rgba(37,99,235,.07);z-index:5}
+.brand{font-weight:800;white-space:nowrap}.brand span{color:var(--accent2)}
+.progress-wrap{flex:1;height:8px;background:#DBEAFE;border-radius:99px;overflow:hidden}
+.progress{height:100%;width:6.25%;background:linear-gradient(90deg,#3B82F6,#8B5CF6,#F472B6);border-radius:99px;transition:.3s}
+.counter{font-size:13px;color:var(--muted);white-space:nowrap}
+.sidebar{background:rgba(255,255,255,.92);border-right:1px solid var(--border);box-shadow:4px 0 18px rgba(37,99,235,.06);padding:18px 12px;overflow:auto}
+.sidebar-title{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);padding:0 10px 12px}
+.nav{display:flex;flex-direction:column;gap:5px}
+.nav button{border:1px solid transparent;background:transparent;color:#475569;text-align:left;padding:10px 11px;border-radius:10px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:13px}
+.nav button:hover{background:#EFF6FF;color:#172554}
+.nav button.active{background:linear-gradient(90deg,#DBEAFE,#F3E8FF);border-color:rgba(139,92,246,.24);color:#172554}
+.num{width:25px;height:25px;border-radius:8px;background:#E0E7FF;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.nav button.active .num{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#FFFFFF}
+.stage{position:relative;min-width:0;min-height:0;padding:24px;background:
+ radial-gradient(circle at 85% 10%,rgba(59,130,246,.16),transparent 30%),
+ radial-gradient(circle at 15% 90%,rgba(244,114,182,.12),transparent 28%),
+ radial-gradient(circle at 55% 95%,rgba(139,92,246,.08),transparent 25%)}
+.slide{height:100%;width:100%;max-width:1180px;margin:auto;background:linear-gradient(145deg,#FFFFFF,#F8FBFF);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);overflow:auto}
+.slide-inner{min-height:100%;padding:46px 56px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{color:var(--accent);font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(34px,5vw,64px);line-height:1.03;margin:0 0 18px;letter-spacing:-2px}
+h2{font-size:clamp(28px,4vw,44px);margin:0 0 18px;letter-spacing:-1px}
+h3{margin:0 0 8px;font-size:19px}
+p{font-size:17px;line-height:1.7;color:#475569;margin:8px 0}
+.lead{font-size:20px;max-width:800px;color:#475569}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:35px;align-items:center}
+.hero-art{min-height:330px;border-radius:24px;background:linear-gradient(145deg,#DBEAFE,#F3E8FF 52%,#FCE7F3);border:1px solid var(--border);box-shadow:inset 0 0 40px rgba(255,255,255,.55);display:grid;place-items:center;position:relative;overflow:hidden}
+.hero-art:before,.hero-art:after{content:"";position:absolute;border-radius:50%;filter:blur(2px)}
+.hero-art:before{width:190px;height:190px;background:rgba(59,130,246,.18);top:-60px;right:-40px}
+.hero-art:after{width:160px;height:160px;background:rgba(244,114,182,.18);bottom:-50px;left:-30px}
+.tree-art{position:relative;width:270px;height:230px}
+.dot{position:absolute;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#FFFFFF;border:3px solid var(--accent);color:#172554;box-shadow:0 8px 18px rgba(59,130,246,.16);font-weight:800;z-index:2}
+.line{position:absolute;height:3px;background:#93C5FD;transform-origin:left center;z-index:1}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.card{background:#FFFFFF;border:1px solid var(--border);box-shadow:0 8px 24px rgba(37,99,235,.08);border-radius:16px;padding:20px}
+.card .icon{font-size:28px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.list{padding-left:20px;color:#475569;line-height:1.9;font-size:16px}
+.highlight{border-left:4px solid var(--accent);background:#ECFDF5;padding:15px 18px;border-radius:0 12px 12px 0;margin:15px 0}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#EEF6FF;border:1px solid #BFDBFE;padding:18px;border-radius:14px;color:#1D4ED8;box-shadow:inset 0 2px 8px rgba(59,130,246,.04);font-size:18px}
+.center{text-align:center}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border-radius:99px;background:#F3E8FF;color:#5B21B6;border:1px solid #DDD6FE;font-size:12px;margin:3px}
+.term{color:var(--accent);font-weight:800}
+.footer{grid-column:1/-1;background:rgba(255,255,255,.96);border-top:1px solid var(--border);box-shadow:0 -4px 18px rgba(37,99,235,.06);display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:5}
+.footer-info{font-size:13px;color:var(--muted)}
+.controls{display:flex;gap:9px}
+.btn{border:1px solid var(--border);background:#FFFFFF;color:#172554;border-color:#BFDBFE;padding:11px 17px;border-radius:11px;cursor:pointer;font-weight:700}
+.btn:hover{background:#DBEAFE}
+.btn.primary{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#FFFFFF;border-color:transparent}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.quiz-box{background:#FFFFFF;border:1px solid #BFDBFE;box-shadow:0 10px 28px rgba(37,99,235,.08);border-radius:18px;padding:24px;margin-top:16px}
+.question{font-size:20px;font-weight:750;line-height:1.45;margin-bottom:16px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option{padding:14px;border:1px solid #2a3854;background:#F8FAFC;color:#172554;border-color:#CBD5E1;border-radius:12px;text-align:left;cursor:pointer}
+.option:hover{border-color:#60A5FA}
+.data-card{cursor:grab}
+.data-card:active{cursor:grabbing}
+.drop-zone{transition:.2s;border:2px dashed #93C5FD}
+.drop-zone.over{border-color:#3B82F6;background:#EFF6FF;transform:translateY(-2px)}
+.drop-items .data-card{padding:7px 10px;font-size:12px;cursor:default}
+.activity-note{font-size:13px;color:var(--muted)}
+
+.option.correct{border-color:#3B82F6;background:rgba(59,130,246,.18)}
+.option.wrong{border-color:var(--danger);background:rgba(251,113,133,.10)}
+.feedback{min-height:25px;margin-top:14px;font-weight:700}
+.array{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0}
+.array-item{width:72px;height:72px;background:#FFFFFF;border:2px solid #BFDBFE;box-shadow:0 6px 16px rgba(37,99,235,.08);border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.array-item .idx{font-size:10px;color:var(--muted)}.array-item .val{font-weight:800;font-size:20px}
+.node-board{position:relative;height:290px;border-radius:18px;background:linear-gradient(135deg,#EFF6FF,#FDF4FF);border:1px solid #BFDBFE;margin-top:18px;overflow:hidden}
+.node{position:absolute;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:#FFFFFF;border:3px solid #8B5CF6;color:#312E81;box-shadow:0 7px 18px rgba(139,92,246,.15);font-weight:800;cursor:pointer;user-select:none}
+.node.selected{border-color:var(--gold);box-shadow:0 0 0 5px rgba(251,191,36,.18),0 8px 20px rgba(251,191,36,.18)}
+.node.connected{border-color:#3B82F6}
+.svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.edge{stroke:#94A3B8;stroke-width:3}
+.mode{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.result{font-size:25px;font-weight:850;color:var(--accent);margin-top:12px}
+.big-check{font-size:80px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{padding:11px;border-bottom:1px solid var(--border);text-align:left;color:#475569}
+th{color:var(--accent)}
+@media(max-width:850px){
+ .app{grid-template-columns:1fr;grid-template-rows:58px 1fr 66px}
+ .sidebar{display:none}.topbar{padding:0 13px}.brand{font-size:13px}
+ .stage{padding:10px}.slide{border-radius:16px}.slide-inner{padding:28px 22px}
+ .hero,.two-col,.grid2{grid-template-columns:1fr}.cards,.grid3{grid-template-columns:1fr}
+ .options{grid-template-columns:1fr}.footer{padding:0 12px}.footer-info{display:none}
+}
+
+/* Fun Learning visual layer */
+.slide-inner > .eyebrow{
+  display:inline-flex;
+  width:max-content;
+  padding:7px 12px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#DBEAFE,#F3E8FF);
+  color:#4C1D95;
+  box-shadow:0 4px 12px rgba(139,92,246,.08);
+}
+.card{
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 28px rgba(37,99,235,.12);
+  border-color:#93C5FD;
+}
+.btn{
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 16px rgba(37,99,235,.12);
+}
+.btn.primary{
+  background:linear-gradient(135deg,#3B82F6,#8B5CF6);
+  box-shadow:0 7px 18px rgba(59,130,246,.22);
+}
+.highlight{
+  border-left:5px solid #FBBF24;
+  background:linear-gradient(90deg,#FFFBEB,#FFF7ED);
+  box-shadow:0 6px 18px rgba(251,191,36,.08);
+}
+.question{color:#172554}
+.result{color:#16A34A}
+.term{color:#7C3AED}
+
+/* Peta konsep (slide Rangkuman) */
+.cm-wrap{overflow-x:auto;margin:4px -6px 0;padding:0 6px}
+.cm-svg{display:block;width:100%;min-width:760px;height:auto}
+.cm-node{opacity:0;transform:translateY(8px);animation:cmIn .5s ease forwards;animation-delay:var(--d,0s)}
+.cm-line{fill:none;stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;animation:cmDraw .6s ease forwards;animation-delay:var(--d,0s)}
+@keyframes cmIn{to{opacity:1;transform:none}}
+@keyframes cmDraw{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.cm-node{animation:none;opacity:1;transform:none}.cm-line{animation:none;stroke-dashoffset:0}}
+
+/* Buka/tutup menu samping & bar atas */
+.sidebar{grid-column:1;grid-row:2;min-width:0;transition:opacity .2s ease}
+.stage{grid-column:2;grid-row:2}
+.topbar{grid-row:1;min-height:0;overflow:hidden;transition:opacity .2s ease}
+.footer{grid-row:3}
+.app{transition:grid-template-columns .28s ease,grid-template-rows .28s ease}
+.app.no-sidebar{grid-template-columns:0px 1fr}
+.app.no-top{grid-template-rows:0px 1fr 70px}
+.app.no-sidebar .sidebar{opacity:0;visibility:hidden;padding-left:0;padding-right:0;border-right-width:0;box-shadow:none;overflow:hidden;transition:opacity .15s ease,visibility 0s linear .28s}
+.app.no-top .topbar{opacity:0;visibility:hidden;border-bottom-width:0;box-shadow:none;transition:opacity .15s ease,visibility 0s linear .28s}
+.footer-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.footer-info{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:6px}
+.btn.sm{padding:8px 12px;font-size:13px;white-space:nowrap;flex:none}
+.btn.toggle[aria-pressed="true"]{background:#EDE9FE;border-color:#C4B5FD;color:#4C1D95}
+.btn:focus-visible{outline:3px solid #93C5FD;outline-offset:2px}
+@media(max-width:850px){
+ .stage{grid-column:1}
+ .app.no-sidebar{grid-template-columns:1fr}
+ .app.no-top{grid-template-rows:0px 1fr 66px}
+ #toggleSidebar{display:none}
+ .toggle .tl{display:none}
+ .btn.sm{padding:9px 12px}
+}
+
+/* ===== Tampilan HP: menu geser (drawer), peta konsep vertikal, perbaikan layout ===== */
+.sidebar-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.drawer-close{display:none;flex:none;width:40px;height:40px;margin:-6px -4px 0 0;border:1px solid #BFDBFE;background:#fff;color:#172554;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;place-items:center}
+.scrim{display:none}
+.cmm{display:none}
+.cmm{max-width:560px;margin:8px auto 0}
+.cmm-root{border-radius:18px;padding:10px 14px;text-align:center;color:#fff;font-weight:800;font-size:20px;line-height:1.15;background:linear-gradient(135deg,#3B82F6,#8B5CF6);box-shadow:0 6px 18px rgba(59,130,246,.22)}
+.cmm-root small{display:block;font-size:12px;font-weight:500;opacity:.92}
+.cmm-kids{margin-left:20px;padding:14px 0 0 14px}
+.cmm-branch{position:relative;--c:#3B82F6;--f:#DBEAFE;--p:#F1F7FF;--t:#1E3A8A}
+.cmm-branch+.cmm-branch{margin-top:14px}
+.cmm-branch:before{content:"";position:absolute;left:-14px;top:51px;width:14px;height:3px;border-radius:3px;background:var(--c)}
+.cmm-branch:after{content:"";position:absolute;left:-14px;top:-14px;width:3px;height:calc(100% + 14px);border-radius:3px;background:var(--c)}
+.cmm-branch:last-child:after{height:65px}
+.b-blue{--c:#3B82F6;--f:#DBEAFE;--p:#F1F7FF;--t:#1E3A8A}
+.b-purple{--c:#8B5CF6;--f:#EDE9FE;--p:#F5F3FF;--t:#4C1D95}
+.b-green{--c:#22C55E;--f:#DCFCE7;--p:#F3FCF6;--t:#14532D}
+.b-pink{--c:#F472B6;--f:#FCE7F3;--p:#FEF3F9;--t:#831843}
+.cmm-link{display:block;width:max-content;max-width:100%;height:20px;line-height:17px;margin-bottom:5px;padding:0 10px;border-radius:999px;background:#fff;border:1.3px solid var(--c);color:var(--t);font-size:11.5px;font-weight:700}
+.cmm-head{min-height:52px;box-sizing:border-box;padding:6px 12px;border-radius:16px;background:var(--f);border:2px solid var(--c);color:var(--t);display:flex;flex-direction:column;justify-content:center;font-weight:800;font-size:16px;line-height:1.2;box-shadow:0 4px 12px rgba(37,99,235,.10)}
+.cmm-head small{font-size:12px;font-weight:500;color:#475569}
+.cmm-panel{margin-top:8px;padding:10px;border-radius:16px;border:1.5px dashed var(--c);background:var(--p);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmm-chip{background:#fff;border:1.5px solid var(--c);border-radius:12px;padding:8px 6px;text-align:center;color:var(--t);font-weight:800;font-size:13.5px;line-height:1.2;display:flex;flex-direction:column;justify-content:center;box-shadow:0 3px 10px rgba(37,99,235,.10)}
+.cmm-chip small{display:block;margin-top:2px;font-size:11.5px;font-weight:500;color:#64748B}
+.cmm-chip.wide{grid-column:1/-1}
+.cm-slide{margin:-20px 0}
+
+@media(max-width:850px){
+ /* menu geser */
+ .sidebar{display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;width:min(84vw,320px);z-index:40;padding:14px 12px;background:#fff;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-102%);visibility:hidden;box-shadow:none;transition:transform .28s ease,visibility 0s linear .28s}
+ .app.no-sidebar .sidebar{opacity:1;padding-left:12px;padding-right:12px;border-right-width:1px}
+ .app.drawer-open .sidebar{transform:none;visibility:visible;box-shadow:8px 0 40px rgba(15,23,42,.28);transition:transform .28s ease,visibility 0s}
+ .scrim{display:block;position:fixed;inset:0;z-index:35;background:rgba(15,23,42,.45);opacity:0;pointer-events:none;transition:opacity .25s ease}
+ .app.drawer-open .scrim{opacity:1;pointer-events:auto}
+ .drawer-close{display:grid}
+ .nav button{padding:13px 12px;font-size:15px;gap:12px}
+ .num{width:28px;height:28px}
+ /* tombol footer: ikon saja, mudah disentuh */
+ #toggleSidebar{display:inline-flex}
+ .btn.sm{min-width:44px;min-height:44px;padding:0 12px;align-items:center;justify-content:center;font-size:16px}
+ .footer .controls{gap:6px}
+ .footer .controls .btn{min-height:44px;padding:0 11px;font-size:13.5px;white-space:nowrap}
+ .footer-left{flex:none}
+ /* peta konsep: versi vertikal */
+ .cm-wrap{display:none}
+ .cmm{display:block}
+ .cm-slide{margin:0}
+ /* label kecil tidak keluar dari kartu */
+ .slide-inner > .eyebrow{width:fit-content;max-width:100%;line-height:1.35;white-space:normal}
+ /* game hubungkan node: posisi node muat di layar sempit */
+ #nodeGame .node[data-node="A"]{left:5%!important;top:40%!important}
+ #nodeGame .node[data-node="B"]{left:30%!important;top:8%!important}
+ #nodeGame .node[data-node="C"]{left:56%!important;top:40%!important}
+ #nodeGame .node[data-node="D"]{left:calc(95% - 62px)!important;top:66%!important}
+ .app{grid-template-rows:58px 1fr 66px}
+ .app.no-top{grid-template-rows:0px 1fr 66px}
+}
+/* HP kecil (<= 380px) */
+@media(max-width:380px){
+ .btn.sm{min-width:40px}
+ .footer{padding:0 8px}
+ .footer-left{gap:6px}
+ .footer .controls{gap:5px}
+ .footer .controls .btn{padding:0 8px;font-size:12.5px}
+}
+@media(max-width:380px){.topbar{gap:10px}.brand{font-size:12px}.progress-wrap{min-width:36px}}
+@media(max-width:340px){#toggleTop{display:none}}
+/* HP mode landscape (layar pendek) */
+@media(max-width:850px) and (max-height:480px){
+ .app{grid-template-rows:44px 1fr 56px}
+ .app.no-top{grid-template-rows:0px 1fr 56px}
+ .stage{padding:6px}
+ .slide-inner{padding:18px 22px}
+ .btn.sm{min-height:40px}.footer .controls .btn{min-height:40px}
+}
+
+/* ================= PERTEMUAN 2 : komponen baru ================= */
+.xp{font-size:13px;font-weight:800;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;padding:5px 11px;border-radius:99px;white-space:nowrap;transition:transform .2s}
+.xp.pop{transform:scale(1.2)}
+.toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,18px);background:#172554;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:80;box-shadow:0 10px 30px rgba(15,23,42,.3);max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.burst{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+.burst span{position:absolute;top:-30px;animation:fall 2.1s ease-in forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(360deg);opacity:.9}}
+.grad{background:linear-gradient(90deg,#3B82F6,#8B5CF6,#F472B6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.split{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:26px;align-items:start}
+.split.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.panel{background:#fff;border:1px solid #BFDBFE;border-radius:18px;padding:16px;box-shadow:0 10px 28px rgba(37,99,235,.08)}
+.panel.soft{background:linear-gradient(135deg,#EFF6FF,#FDF4FF)}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.row.mt{margin-top:12px}
+.btn.big{padding:14px 22px;font-size:16px}
+.btn.ok{background:#16A34A;color:#fff;border-color:transparent}
+.btn.ghost{background:transparent}
+.tiny{font-size:13px;color:var(--muted);line-height:1.5;margin:6px 0}
+.pills{margin:8px -3px 4px}
+.slide h2{margin-bottom:10px}
+.lead2{font-size:18px;line-height:1.65;color:#475569;margin:0 0 10px}
+.feedback.good{color:#15803D}.feedback.bad{color:#BE185D}
+.feedback{font-size:15px;line-height:1.55}
+
+/* chip pilihan */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid #BFDBFE;background:#fff;color:#172554;padding:9px 14px;border-radius:99px;font-weight:800;font-size:14px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:#60A5FA;transform:translateY(-1px)}
+.chip.on{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(99,102,241,.28)}
+.chip.used{opacity:.35;pointer-events:none}
+.chip.ok{background:#DCFCE7;border-color:#22C55E;color:#14532D}
+.chip.bad{background:#FEE2E2;border-color:#F87171;color:#7F1D1D}
+.chip.dragging{opacity:.4}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.tab{border:2px solid #E0E7FF;background:#fff;color:#475569;padding:9px 14px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer}
+.tab.on{border-color:#8B5CF6;background:linear-gradient(90deg,#DBEAFE,#F3E8FF);color:#172554}
+.tab.done::after{content:" ✓";color:#16A34A}
+
+/* kanvas SVG */
+.gvwrap{overflow-x:auto;overflow-y:hidden;border-radius:14px;-webkit-overflow-scrolling:touch}
+.gv{display:block;margin:0 auto;width:100%;height:auto;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.gn .shape{fill:#fff;stroke:#3B82F6;stroke-width:3;transition:fill .2s,stroke .2s}
+.gn text{fill:#172554;font-weight:800;font-size:15px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.gv.clickable .gn{cursor:pointer}
+.gv.clickable .gn:hover .shape{stroke-width:4.5}
+.gn{transition:opacity .25s}
+.gn.root .shape{fill:#FEF3C7;stroke:#F59E0B}
+.gn.leaf .shape{fill:#DCFCE7;stroke:#22C55E}
+.gn.parent .shape{fill:#EDE9FE;stroke:#8B5CF6}
+.gn.child .shape{fill:#DBEAFE;stroke:#3B82F6}
+.gn.sib .shape{fill:#FCE7F3;stroke:#F472B6}
+.gn.hl .shape{fill:#DBEAFE;stroke:#2563EB;stroke-width:4.5}
+.gn.sel .shape{fill:#FFFBEB;stroke:#F59E0B;stroke-width:5}
+.gn.ok .shape{fill:#DCFCE7;stroke:#16A34A;stroke-width:4}
+.gn.bad .shape{fill:#FEE2E2;stroke:#EF4444;stroke-width:4}
+.gn.miss .shape{fill:#FEF9C3;stroke:#EAB308;stroke-width:4;stroke-dasharray:6 4}
+.gn.empty .shape{fill:#F8FAFC;stroke:#94A3B8;stroke-dasharray:6 5;stroke-width:2.5}
+.gn.empty text{fill:#94A3B8}
+.gn.filled .shape{fill:#EFF6FF;stroke:#3B82F6}
+.gn.dim{opacity:.28}
+.gn.over .shape{fill:#DBEAFE;stroke:#2563EB;stroke-width:4.5}
+.gn.pulse .shape{animation:gpulse 1s ease-in-out infinite}
+@keyframes gpulse{50%{stroke-width:7;stroke-opacity:.55}}
+.gn .in{transform-box:fill-box;transform-origin:center}
+.gn .in.intro{animation:gin .45s cubic-bezier(.3,1.5,.5,1) backwards}
+@keyframes gin{from{opacity:0;transform:scale(.3)}}
+.gn .in.shake{animation:gshake .4s}
+@keyframes gshake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.ge{stroke:#94A3B8;stroke-width:3;stroke-linecap:round;transition:stroke .2s,opacity .25s}
+.ge.hl{stroke:#3B82F6;stroke-width:5.5}
+.ge.ok{stroke:#16A34A;stroke-width:4.5}
+.ge.dim{opacity:.22}
+.ge.path{stroke:#F59E0B;stroke-width:6}
+.gband{fill:rgba(59,130,246,.06)}.gband.alt{fill:rgba(139,92,246,.07)}
+.gbandlbl{font-size:13px;font-weight:800;fill:#64748B;dominant-baseline:central}
+.gb rect{stroke-width:1.5}.gb text{font-size:11px;font-weight:800;text-anchor:middle;dominant-baseline:central}
+.gb-gold rect{fill:#FEF3C7;stroke:#F59E0B}.gb-gold text{fill:#92400E}
+.gb-purple rect{fill:#EDE9FE;stroke:#8B5CF6}.gb-purple text{fill:#5B21B6}
+.gb-blue rect{fill:#DBEAFE;stroke:#3B82F6}.gb-blue text{fill:#1E3A8A}
+.gb-pink rect{fill:#FCE7F3;stroke:#F472B6}.gb-pink text{fill:#9D174D}
+.gb-green rect{fill:#DCFCE7;stroke:#22C55E}.gb-green text{fill:#14532D}
+.gb-gray rect{fill:#F1F5F9;stroke:#94A3B8}.gb-gray text{fill:#334155}
+.gnum circle{fill:#F59E0B;stroke:#fff;stroke-width:2}.gnum text{fill:#fff;font-size:13px;font-weight:800;text-anchor:middle;dominant-baseline:central}
+
+/* info box & langkah */
+.infobox{background:#fff;border:2px solid #C7D2FE;border-radius:16px;padding:14px 16px;min-height:96px}
+.infobox h3{margin:0 0 6px;font-size:18px}
+.infobox p{margin:4px 0;font-size:15.5px;line-height:1.6}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#475569}
+.legend i{width:14px;height:14px;border-radius:50%;border:3px solid;display:inline-block}
+.dots{display:flex;gap:6px;margin:10px 0}
+.dots i{width:10px;height:10px;border-radius:50%;background:#DBEAFE;transition:.2s}
+.dots i.on{background:#3B82F6;transform:scale(1.25)}
+.dots i.done{background:#22C55E}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:15px;align-items:baseline}
+.kv b{color:#475569;font-weight:700}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:800;margin:1px 2px;border:1.5px solid}
+.tag.gold{background:#FEF3C7;border-color:#F59E0B;color:#92400E}.tag.green{background:#DCFCE7;border-color:#22C55E;color:#14532D}
+.tag.purple{background:#EDE9FE;border-color:#8B5CF6;color:#5B21B6}.tag.blue{background:#DBEAFE;border-color:#3B82F6;color:#1E3A8A}
+.tag.pink{background:#FCE7F3;border-color:#F472B6;color:#9D174D}.tag.gray{background:#F1F5F9;border-color:#94A3B8;color:#334155}
+
+/* kartu balik */
+.fc{perspective:900px;cursor:pointer;min-height:132px}
+.fc-in{position:relative;height:100%;min-height:132px;transition:transform .55s;transform-style:preserve-3d}
+.fc.flipped .fc-in{transform:rotateY(180deg)}
+.fc-f,.fc-b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px solid #BFDBFE}
+.fc-f{background:linear-gradient(145deg,#fff,#EFF6FF);box-shadow:0 8px 22px rgba(37,99,235,.10)}
+.fc-f .e{font-size:30px}.fc-f b{font-size:17px;margin-top:4px}.fc-f small{color:#64748B;font-size:12px;margin-top:2px}
+.fc-b{background:linear-gradient(145deg,#F5F3FF,#FDF2F8);transform:rotateY(180deg);font-size:13.5px;line-height:1.45;color:#334155}
+.fc-b b{color:#5B21B6;font-size:15px;margin-bottom:3px}
+.fc.flipped .fc-f{visibility:hidden;transition:visibility 0s .25s}
+.grid3x{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.grid3x .fc{min-height:150px}.grid3x .fc-in{min-height:150px}
+
+/* deck Tree Hunt */
+.deck{max-width:560px;margin:8px auto}
+.hunt-card{background:#fff;border:2px solid #C7D2FE;border-radius:22px;padding:22px;text-align:center;box-shadow:0 14px 36px rgba(99,102,241,.14);min-height:200px;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.97)}}
+.hunt-card .em{font-size:54px}.hunt-card h3{font-size:22px;margin:6px 0}
+.hunt-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.hunt-btns .btn{padding:15px;font-size:16px}
+
+/* lomba cari */
+.cells{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.cell{min-width:46px;text-align:center;padding:9px 6px;border-radius:10px;border:2px solid #BFDBFE;background:#fff;font-weight:800;font-size:14px;transition:.15s}
+.cell.scan{background:#FEF3C7;border-color:#F59E0B;transform:translateY(-3px)}
+.cell.found{background:#DCFCE7;border-color:#16A34A}
+.cell.skip{opacity:.5}
+.meter{font-size:22px;font-weight:900;color:#4C1D95}
+
+/* slot & bank */
+.bank{display:flex;gap:8px;flex-wrap:wrap;padding:12px;border:2px dashed #C7D2FE;border-radius:14px;background:#FAFAFF;min-height:56px}
+.slotrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px;border:1.5px solid #E0E7FF;border-radius:12px;background:#fff;margin:8px 0;transition:.15s}
+.slotrow.hot{border-color:#F59E0B;background:#FFFBEB}
+.slotrow.ok{border-color:#22C55E;background:#F0FDF4}.slotrow.bad{border-color:#F87171;background:#FEF2F2}
+.numbub{width:28px;height:28px;border-radius:50%;background:#F59E0B;color:#fff;font-weight:900;display:grid;place-items:center;font-size:14px}
+.slot{min-width:118px;min-height:42px;border:2px dashed #94A3B8;border-radius:11px;display:flex;align-items:center;justify-content:center;padding:4px 8px;cursor:pointer;background:#F8FAFC;color:#94A3B8;font-size:13px;font-weight:700}
+.slot.over{border-color:#3B82F6;background:#EFF6FF}
+.slot.has{border-style:solid;border-color:#3B82F6;background:#EFF6FF;color:#172554}
+
+/* game */
+.stars{font-size:26px;letter-spacing:4px}
+.hud{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.hud .pillx{background:#F3E8FF;color:#5B21B6;border:1px solid #DDD6FE;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:800}
+.story{background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1px solid #FDE68A;border-radius:14px;padding:12px 16px;font-size:15.5px;line-height:1.65;color:#78350F}
+.story b{color:#92400E}
+
+/* kuis */
+.qwrap{background:#fff;border:1px solid #BFDBFE;border-radius:18px;padding:18px;box-shadow:0 10px 28px rgba(37,99,235,.08)}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;font-weight:800;color:#64748B}
+.qbar{height:8px;background:#DBEAFE;border-radius:99px;overflow:hidden;margin-bottom:12px}.qbar i{display:block;height:100%;background:linear-gradient(90deg,#3B82F6,#8B5CF6);transition:.3s}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.qopt{padding:13px 14px;border:2px solid #CBD5E1;background:#F8FAFC;border-radius:12px;text-align:left;cursor:pointer;color:#172554;font-weight:650;font-size:15px}
+.qopt:hover{border-color:#60A5FA}.qopt.right{border-color:#16A34A;background:#DCFCE7}.qopt.wrong{border-color:#F87171;background:#FEE2E2}
+.qopt:disabled{cursor:default}
+.imgopts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.imgopt{border:2px solid #CBD5E1;border-radius:14px;padding:6px;background:#fff;cursor:pointer;text-align:center}
+.imgopt:hover{border-color:#60A5FA}.imgopt.right{border-color:#16A34A;background:#F0FDF4}.imgopt.wrong{border-color:#F87171;background:#FEF2F2}
+.imgopt b{display:block;margin:2px 0 4px;color:#475569;font-size:14px}
+.score-big{font-size:56px;font-weight:900;line-height:1}
+.bars{display:grid;gap:8px;margin:10px 0}
+.bars div{display:grid;grid-template-columns:120px 1fr auto;gap:10px;align-items:center;font-size:14px;font-weight:700}
+.bars i{display:block;height:12px;border-radius:99px;background:#E0E7FF;overflow:hidden}.bars i u{display:block;height:100%;background:linear-gradient(90deg,#22C55E,#3B82F6)}
+
+/* peta konsep tree */
+.cmt{max-width:1000px;margin:6px auto 0}
+.cmt-root{width:max-content;margin:0 auto;padding:10px 26px;border-radius:18px;color:#fff;font-weight:900;font-size:22px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);box-shadow:0 8px 22px rgba(99,102,241,.3);text-align:center;position:relative}
+.cmt-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding-top:26px;position:relative}
+.cmt-br{position:relative;border-radius:16px;padding:12px;border:2px solid var(--c);background:var(--p)}
+.cmt-br:before{content:"";position:absolute;left:50%;top:-26px;width:3px;height:26px;background:var(--c);transform:translateX(-50%)}
+.cmt-br:after{content:"";position:absolute;top:-26px;left:-8px;right:-8px;height:3px;background:var(--c)}
+.cmt-br:first-child:after{left:50%}.cmt-br:last-child:after{right:50%}
+.cmt-br h4{margin:0 0 8px;font-size:15px;color:var(--t)}
+.cmt-root:after{content:"";position:absolute;left:50%;bottom:-26px;width:3px;height:26px;background:#8B5CF6;transform:translateX(-50%)}
+.cmt-br .chips{gap:6px}.cmt-br .chip{padding:6px 10px;font-size:13px;border-color:var(--c)}
+.cmt-br .chip.on{background:var(--c);color:#fff}
+.cmt-info{margin-top:14px;background:#fff;border:2px solid #C7D2FE;border-radius:14px;padding:12px 16px;min-height:66px;font-size:15.5px;line-height:1.6}
+.br-blue{--c:#3B82F6;--p:#F1F7FF;--t:#1E3A8A}.br-purple{--c:#8B5CF6;--p:#F5F3FF;--t:#4C1D95}.br-green{--c:#22C55E;--p:#F3FCF6;--t:#14532D}.br-pink{--c:#F472B6;--p:#FEF3F9;--t:#831843}
+
+/* lencana */
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0}
+.bdg{border:2px dashed #CBD5E1;border-radius:16px;padding:12px;text-align:center;background:#F8FAFC;color:#94A3B8;filter:grayscale(1);transition:.3s;cursor:pointer}
+.bdg.got{border:2px solid #F59E0B;background:linear-gradient(145deg,#FFFBEB,#FEF3C7);color:#78350F;filter:none;box-shadow:0 10px 24px rgba(245,158,11,.2)}
+.bdg .e{font-size:34px}.bdg b{display:block;font-size:14px}.bdg small{font-size:12px}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border:1.5px solid #E0E7FF;border-radius:12px;margin:6px 0;cursor:pointer;background:#fff;font-size:15px}
+.check.on{background:#F0FDF4;border-color:#22C55E}
+.check i{width:22px;height:22px;border-radius:7px;border:2px solid #A5B4FC;flex:none;display:grid;place-items:center;font-style:normal;font-size:14px;color:#fff}
+.check.on i{background:#22C55E;border-color:#22C55E}
+.nav button.done .num::after{content:"✓";position:absolute;font-size:9px;transform:translate(9px,-9px);background:#22C55E;color:#fff;border-radius:50%;width:13px;height:13px;display:grid;place-items:center}
+.nav button .num{position:relative}
+.hero-gv{filter:drop-shadow(0 10px 20px rgba(59,130,246,.15))}
+
+@media(max-width:850px){
+ .split,.split.even{grid-template-columns:minmax(0,1fr)}
+ .grid3x{grid-template-columns:repeat(2,1fr)}
+ .qopts{grid-template-columns:1fr}
+ .imgopts{grid-template-columns:1fr}
+ .badges{grid-template-columns:repeat(2,1fr)}
+ .bars div{grid-template-columns:90px 1fr auto}
+ .cmt-row{grid-template-columns:1fr;padding-top:0;padding-left:20px;margin-left:12px;border-left:3px solid #8B5CF6;gap:12px}
+ .cmt-root{margin-bottom:26px}
+ .cmt-br:before{left:-20px;top:24px;width:20px;height:3px;transform:none}
+ .cmt-br:after{display:none}
+ .cmt-root:after{left:24px;bottom:-26px}
+ .hunt-btns .btn{padding:14px 8px;font-size:15px}
+ .xp{font-size:12px;padding:4px 8px}
+ .toast{bottom:84px}
+}
+
+.split>*,.grid2>*,.panel,.infobox,.story,.qwrap{min-width:0}
+.chip{max-width:100%}
+@media(max-width:850px){.grid2{grid-template-columns:minmax(0,1fr)}.bank{min-width:0}}
+@media(max-width:480px){.slotrow{grid-template-columns:auto minmax(0,1fr)}.slotrow .slot{grid-column:1/-1}}
+
+@media(max-width:850px){.split.tf{gap:12px}.split.tf>div:first-child{display:contents}.split.tf>div:first-child>.tabs{order:0}}
+
+.scrollhint{text-align:center;margin:2px 0 0!important}
+
+/* ================= PERTEMUAN 3 : Graph ================= */
+.eg .ge{fill:none;stroke:#94A3B8;stroke-width:3;stroke-linecap:round;transition:stroke .2s,opacity .25s}
+.eg .ge-hit{fill:none;stroke:transparent;stroke-width:20;pointer-events:none}
+.gv.edgeclk .eg .ge-hit{pointer-events:stroke;cursor:pointer}
+.eg .gar{fill:#94A3B8;stroke:none;transition:fill .2s}
+.eg{transition:opacity .25s}
+.eg.hl .ge{stroke:#3B82F6;stroke-width:5.5}.eg.hl .gar{fill:#3B82F6}
+.eg.ok .ge{stroke:#16A34A;stroke-width:5}.eg.ok .gar{fill:#16A34A}
+.eg.bad .ge{stroke:#EF4444;stroke-width:5}.eg.bad .gar{fill:#EF4444}
+.eg.path .ge{stroke:#F59E0B;stroke-width:6.5}.eg.path .gar{fill:#F59E0B}
+.eg.dim{opacity:.22}
+.gw rect{fill:#fff;stroke:#CBD5E1;stroke-width:1.5}
+.gw text{fill:#334155;font-size:12px;font-weight:800;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.gw.path rect,.gw.hl rect{stroke:#F59E0B;fill:#FFFBEB}.gw.ok rect{stroke:#16A34A;fill:#F0FDF4}
+.gv.draggable{touch-action:none}.gv.draggable .gn{cursor:grab}.gv.draggable .gn:active{cursor:grabbing}
+.gn.c0 .shape{fill:#DBEAFE;stroke:#3B82F6}.gn.c1 .shape{fill:#FCE7F3;stroke:#F472B6}.gn.c2 .shape{fill:#DCFCE7;stroke:#22C55E}
+.gn.c3 .shape{fill:#FEF3C7;stroke:#F59E0B}.gn.c4 .shape{fill:#EDE9FE;stroke:#8B5CF6}.gn.c5 .shape{fill:#CFFAFE;stroke:#06B6D4}
+.lamp{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;border:1.5px solid #E0E7FF;background:#fff;font-size:14.5px;margin:6px 0;font-weight:650}
+.lamp i{font-style:normal;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;color:#fff;background:#94A3B8;flex:none}
+.lamp.ok{border-color:#22C55E;background:#F0FDF4}.lamp.ok i{background:#22C55E}
+.lamp.no{border-color:#FCA5A5;background:#FEF2F2}.lamp.no i{background:#EF4444}
+.tbl{width:100%;border-collapse:separate;border-spacing:0 6px;font-size:14.5px}
+.tbl th{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#64748B;text-align:left;padding:2px 10px}
+.tbl td{background:#fff;border-top:1.5px solid #E0E7FF;border-bottom:1.5px solid #E0E7FF;padding:9px 10px}
+.tbl td:first-child{border-left:1.5px solid #E0E7FF;border-radius:12px 0 0 12px;font-weight:800}
+.tbl td:last-child{border-right:1.5px solid #E0E7FF;border-radius:0 12px 12px 0}
+.tbl tr.sel td{background:#EEF2FF;border-color:#818CF8}
+.tbl tr{cursor:pointer}
+.tbl .hid{filter:blur(5px);user-select:none;transition:filter .3s}.tbl .hid.show{filter:none}
+.tline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.tline span{padding:7px 12px;border-radius:99px;font-weight:800;font-size:13px;background:#E0E7FF;color:#3730A3}
+.tline span.cur{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff}
+.cklist{list-style:none;padding:0;margin:8px 0}
+.cklist li{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;border:1.5px solid #E0E7FF;border-radius:11px;margin:5px 0;background:#fff;font-size:14.5px;line-height:1.45}
+.cklist li i{font-style:normal;width:22px;height:22px;border-radius:7px;border:2px solid #A5B4FC;flex:none;display:grid;place-items:center;color:#fff;font-size:13px}
+.cklist li.done{background:#F0FDF4;border-color:#22C55E}.cklist li.done i{background:#22C55E;border-color:#22C55E}
+.toggle2{display:inline-flex;border:2px solid #C7D2FE;border-radius:12px;overflow:hidden}
+.toggle2 button{border:0;background:#fff;padding:9px 16px;font-weight:800;cursor:pointer;color:#475569}
+.toggle2 button.on{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff}
+details.dt{background:#fff;border:1.5px solid #E0E7FF;border-radius:12px;padding:8px 12px;margin:8px 0;font-size:14px}
+details.dt summary{cursor:pointer;font-weight:800;color:#4338CA}
+details.dt ol{margin:6px 0 2px;padding-left:20px;line-height:1.7}
+.mini-io svg{max-width:100%}
+@media(min-width:851px){.split.tf>.panel{position:sticky;top:6px}}
+.toggle2{flex-wrap:wrap;max-width:100%}.toggle2 button{flex:1 1 auto}
+.tbl{table-layout:fixed}.tbl td,.tbl th{word-break:break-word;overflow-wrap:anywhere}
+@media(max-width:480px){.tbl td{padding:8px 6px;font-size:13px}.tbl th{padding:2px 6px}.toggle2 button{padding:9px 10px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">🕸️ Petualangan <span>Graph</span></div>
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+  <div class="xp" id="xp">⭐ 0 XP</div>
+  <div class="counter" id="counter">1 / 22</div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Daftar slide">
+  <div class="sidebar-head">
+    <div class="sidebar-title">Pertemuan 3 · Struktur Data Graph</div>
+    <button class="drawer-close" id="drawerClose" aria-label="Tutup menu">✕</button>
+  </div>
+  <div class="nav" id="nav"></div>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<main class="stage">
+  <div class="slide" id="slide"></div>
+</main>
+
+<footer class="footer">
+  <div class="footer-left">
+    <button class="btn sm toggle" id="toggleSidebar" aria-pressed="false" aria-label="Sembunyikan atau tampilkan menu samping"><span class="ti">☰</span> <span class="tl">Sembunyikan menu</span></button>
+    <button class="btn sm toggle" id="toggleTop" aria-pressed="false" aria-label="Sembunyikan atau tampilkan bar atas"><span class="ti">⬆</span> <span class="tl">Sembunyikan bar atas</span></button>
+    <div class="footer-info" id="footerInfo"></div>
+  </div>
+  <div class="controls">
+    <button class="btn" id="prev">← Sebelumnya</button>
+    <button class="btn primary" id="next">Berikutnya →</button>
+  </div>
+</footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+/* ========== Utilitas ========== */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const NS='http://www.w3.org/2000/svg';
+const svgEl=(n,a,p)=>{const e=document.createElementNS(NS,n);for(const k in (a||{}))e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+let timers=[];
+const later=(fn,ms)=>{const t=setTimeout(fn,ms);timers.push(t);return t};
+const clearTimers=()=>{timers.forEach(clearTimeout);timers=[]};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const setEq=(a,b)=>a.size===b.size&&[...a].every(x=>b.has(x));
+const slides=[];
+
+/* ========== Skor, XP, notifikasi ========== */
+const S={xp:0,done:{},best:{}};
+function refreshXP(pop){const e=$('#xp');e.textContent='⭐ '+S.xp+' XP';if(pop){e.classList.add('pop');setTimeout(()=>e.classList.remove('pop'),260)}}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2300)}
+function award(key,xp,msg){if(S.done[key])return false;S.done[key]=true;S.xp+=xp;refreshXP(true);toast('⭐ +'+xp+' XP · '+msg);if(typeof renderNav==='function')renderNav();return true}
+function burst(){const box=document.createElement('div');box.className='burst';const em=['🎉','⭐','🌳','✨','🍃','🎊'];
+  for(let i=0;i<22;i++){const s=document.createElement('span');s.textContent=em[i%em.length];s.style.left=(5+Math.random()*90)+'%';s.style.animationDelay=(Math.random()*.4)+'s';s.style.fontSize=(18+Math.random()*16)+'px';box.appendChild(s)}
+  document.body.appendChild(box);setTimeout(()=>box.remove(),2600)}
+function fb(el,ok,msg){el.className='feedback '+(ok===true?'good':ok===false?'bad':'');el.innerHTML=msg||''}
+
+/* ========== Struktur data pohon ========== */
+const T=(id,children,label)=>({id,label:label===undefined?id:label,children:children||[]});
+function indexTree(root){
+  const idx={},order=[];
+  (function w(n,p,d){idx[n.id]={id:n.id,label:n.label,parent:p,children:n.children.map(c=>c.id),depth:d};order.push(n.id);n.children.forEach(c=>w(c,n.id,d+1))})(root,null,0);
+  order.forEach(id=>{const r=idx[id];r.siblings=r.parent?idx[r.parent].children.filter(c=>c!==id):[];r.leaf=r.children.length===0});
+  const sub=id=>{const out=[id];(function w(i){idx[i].children.forEach(c=>{out.push(c);w(c)})})(id);return out};
+  const path=id=>{const p=[];let c=id;while(c){p.unshift(c);c=idx[c].parent}return p};
+  const edges=[];order.forEach(id=>{if(idx[id].parent)edges.push([idx[id].parent,id])});
+  return {idx,order,root:root.id,sub,path,edges,height:Math.max(...order.map(i=>idx[i].depth)),leaves:order.filter(i=>idx[i].leaf)};
+}
+const tlen=s=>[...String(s)].reduce((a,ch)=>a+(ch.codePointAt(0)>0x2E80?1.9:(/[A-Z]/.test(ch)?1.1:1)),0);
+function measure(label,shape){
+  const lines=String(label).split('\n');const len=Math.max(...lines.map(tlen));
+  if(shape==='circle'&&lines.length===1&&len<=2.3)return {shape:'circle',w:46,h:46,lines};
+  return {shape:'pill',w:Math.max(46,Math.round(len*8.3+28)),h:32+(lines.length-1)*17,lines};
+}
+
+/* ========== Kanvas SVG interaktif untuk Graph (panah, bobot, seret) ========== */
+function GView(host,o){
+  o=o||{};
+  const wrap=document.createElement('div');wrap.className='gvwrap';host.appendChild(wrap);
+  const svg=svgEl('svg',{class:'gv',preserveAspectRatio:'xMidYMid meet'});wrap.appendChild(svg);
+  const gBack=svgEl('g',{},svg),gEdge=svgEl('g',{},svg),gNode=svgEl('g',{},svg),gFront=svgEl('g',{},svg);
+  const N=new Map(),E=new Map();let raf=0,W=400,H=300,dragOn=false,dragging=null,moved=false,sx=0,sy=0;
+  const api={svg,wrap,N,E,onNode:null,onBg:null,onEdge:null,onDrop:null};
+  api.setView=(w,h)=>{W=w;H=h;svg.setAttribute('viewBox','0 0 '+w+' '+h);svg.style.maxWidth=Math.round(w*(o.scale||1.3))+'px';svg.style.minWidth=Math.round(w*(o.minRatio||.62))+'px';
+    setTimeout(()=>{if(!wrap.isConnected)return;const need=wrap.scrollWidth>wrap.clientWidth+4;if(need&&!api.hint){api.hint=document.createElement('div');api.hint.className='tiny scrollhint';api.hint.textContent='↔ Geser ke samping untuk melihat seluruh gambar';wrap.after(api.hint)}else if(!need&&api.hint){api.hint.remove();api.hint=null}},60)};
+  api.clickable=v=>svg.classList.toggle('clickable',!!v);
+  api.edgeClickable=v=>svg.classList.toggle('edgeclk',!!v);
+  api.draggable=v=>{dragOn=!!v;svg.classList.toggle('draggable',dragOn)};
+  const clsAttr=n=>'gn '+[...n.cls].join(' ');
+  function mkNode(d,x,y){
+    const g=svgEl('g',{'data-id':d.id},gNode),inn=svgEl('g',{class:'in'},g);
+    d.shape==='circle'?svgEl('circle',{class:'shape',r:d.w/2},inn):svgEl('rect',{class:'shape',x:-d.w/2,y:-d.h/2,width:d.w,height:d.h,rx:Math.min(15,d.h/2)},inn);
+    const t=svgEl('text',{},inn);d.lines.forEach((ln,i)=>{const s=svgEl('tspan',{x:0,y:(i-(d.lines.length-1)/2)*17},t);s.textContent=ln});
+    return {g,d,x,y,tx:x,ty:y,sx:x,sy:y,cls:new Set(),badge:null,num:null,sig:d.shape+'|'+d.lines.join('\n')+'|'+d.w};
+  }
+  function setCls(n,str){n.cls=new Set(String(str||'').split(' ').filter(Boolean));n.g.setAttribute('class',clsAttr(n))}
+  const rmNode=n=>{n.g.remove();if(n.badge)n.badge.remove();if(n.num)n.num.remove()};
+  const rmEdge=e=>{e.g.remove();if(e.wt)e.wt.remove();if(e.num)e.num.remove()};
+  const ekey=(a,b)=>E.has(a+'>'+b)?a+'>'+b:E.has(b+'>'+a)?b+'>'+a:null;
+  api.update=(nodes,edges,opt)=>{
+    opt=opt||{};const seen=new Set();
+    nodes.forEach(d=>{
+      if(!d.lines){const m=measure(d.label,d.shape||'circle');Object.assign(d,m)}
+      seen.add(d.id);let n=N.get(d.id);
+      const sig=d.shape+'|'+d.lines.join('\n')+'|'+d.w;
+      if(n&&n.sig!==sig){rmNode(n);N.delete(d.id);n=null}
+      if(!n){const fr=d.from&&N.get(d.from);n=mkNode(d,fr?fr.x:d.x,fr?fr.y:d.y);if(!opt.animate){n.x=d.x;n.y=d.y}N.set(d.id,n);setCls(n,d.cls||'');if(!opt.noIntro)n.g.firstChild.classList.add('intro')}
+      else n.d=d;
+      n.tx=d.x;n.ty=d.y;
+      if(d.cls!==undefined&&opt.applyCls)setCls(n,d.cls);
+    });
+    [...N.keys()].forEach(id=>{if(!seen.has(id)){rmNode(N.get(id));N.delete(id)}});
+    const ekeys=new Set();
+    edges.forEach(d=>{
+      const k=d.a+'>'+d.b;ekeys.add(k);let e=E.get(k);
+      if(!e){const g=svgEl('g',{class:'eg','data-k':k},gEdge);const h=svgEl('path',{class:'ge-hit'},g);const l=svgEl('path',{class:'ge'},g);e={g,h,l,ar:null,wt:null,num:null,a:d.a,b:d.b};E.set(k,e);if(d.cls)d.cls.split(' ').forEach(c=>g.classList.add(c))}
+      e.dir=!!d.dir;e.curve=d.curve||0;
+      if(e.dir&&!e.ar)e.ar=svgEl('path',{class:'gar'},e.g);
+      if(!e.dir&&e.ar){e.ar.remove();e.ar=null}
+      if(d.w!==undefined&&d.w!==null){
+        const txt=d.w+(d.unit?' '+d.unit:'');
+        if(!e.wt){e.wt=svgEl('g',{class:'gw'},gFront);svgEl('rect',{},e.wt);svgEl('text',{},e.wt)}
+        e.wt.lastChild.textContent=txt;const w=Math.round(tlen(txt)*7+16),r=e.wt.firstChild;
+        r.setAttribute('x',-w/2);r.setAttribute('y',-10);r.setAttribute('width',w);r.setAttribute('height',20);r.setAttribute('rx',10);
+      }else if(e.wt){e.wt.remove();e.wt=null}
+    });
+    [...E.keys()].forEach(k=>{if(!ekeys.has(k)){rmEdge(E.get(k));E.delete(k)}});
+    if(opt.bands)api.bands(opt.bands);
+    api.go(!!opt.animate);
+  };
+  api.bands=list=>{gBack.textContent='';list.forEach(b=>{svgEl('rect',{class:'gband'+(b.alt?' alt':''),x:0,y:b.y0,width:W,height:b.y1-b.y0},gBack);const t=svgEl('text',{class:'gbandlbl',x:10,y:(b.y0+b.y1)/2},gBack);t.textContent=b.label})};
+  const bd=(n,vx,vy)=>{const hw=n.d.w/2,hh=n.d.h/2;if(n.d.shape==='circle')return hw;return Math.min(hw/(Math.abs(vx)||1e-6),hh/(Math.abs(vy)||1e-6))};
+  const f=v=>v.toFixed(1);
+  function sync(){
+    N.forEach(n=>{n.g.setAttribute('transform','translate('+f(n.x)+' '+f(n.y)+')');
+      if(n.badge)n.badge.setAttribute('transform','translate('+f(n.x)+' '+f(n.y+n.d.h/2+12)+')');
+      if(n.num)n.num.setAttribute('transform','translate('+f(n.x+n.d.w/2-3)+' '+f(n.y-n.d.h/2+3)+')')});
+    E.forEach(e=>{
+      const A=N.get(e.a),B=N.get(e.b);if(!A||!B)return;
+      const x1=A.x,y1=A.y,x2=B.x,y2=B.y,dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy)||1;
+      let cx=null,cy=null;if(e.curve){cx=(x1+x2)/2-dy/len*e.curve;cy=(y1+y2)/2+dx/len*e.curve}
+      let ex=x2,ey=y2,vx=0,vy=0;
+      if(e.dir){const tx=cx===null?x1:cx,ty=cy===null?y1:cy;vx=x2-tx;vy=y2-ty;const vl=Math.hypot(vx,vy)||1;vx/=vl;vy/=vl;const t=bd(B,vx,vy)+3;ex=x2-vx*t;ey=y2-vy*t}
+      const d=cx===null?'M'+f(x1)+' '+f(y1)+'L'+f(ex)+' '+f(ey):'M'+f(x1)+' '+f(y1)+'Q'+f(cx)+' '+f(cy)+' '+f(ex)+' '+f(ey);
+      e.l.setAttribute('d',d);e.h.setAttribute('d',d);
+      if(e.ar){const px=-vy,py=vx;e.ar.setAttribute('d','M'+f(ex)+' '+f(ey)+'L'+f(ex-vx*14+px*7)+' '+f(ey-vy*14+py*7)+'L'+f(ex-vx*14-px*7)+' '+f(ey-vy*14-py*7)+'Z')}
+      const mx=cx===null?(x1+x2)/2:.25*x1+.5*cx+.25*x2,my=cx===null?(y1+y2)/2:.25*y1+.5*cy+.25*y2;
+      if(e.wt)e.wt.setAttribute('transform','translate('+f(mx)+' '+f(my)+')');
+      if(e.num)e.num.setAttribute('transform','translate('+f(mx)+' '+f(my-(e.wt?18:0))+')');
+    });
+  }
+  api.go=animate=>{
+    cancelAnimationFrame(raf);
+    N.forEach(n=>{n.sx=n.x;n.sy=n.y});
+    if(!animate){N.forEach(n=>{n.x=n.tx;n.y=n.ty});sync();return}
+    const t0=performance.now(),D=o.dur||480;
+    const step=now=>{const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3);N.forEach(n=>{n.x=n.sx+(n.tx-n.sx)*e;n.y=n.sy+(n.ty-n.sy)*e});sync();if(k<1)raf=requestAnimationFrame(step)};
+    raf=requestAnimationFrame(step);
+  };
+  api.moveAll=(fn,animate)=>{N.forEach((n,id)=>{const p=fn(id,n);n.tx=p.x;n.ty=p.y});api.go(animate)};
+  /* --- gaya node --- */
+  api.mark=(id,cls,on)=>{const n=N.get(id);if(!n)return;on===false?n.cls.delete(cls):n.cls.add(cls);n.g.setAttribute('class',clsAttr(n))};
+  api.only=(cls,ids)=>{const s=new Set(ids);N.forEach((n,id)=>{s.has(id)?n.cls.add(cls):n.cls.delete(cls);n.g.setAttribute('class',clsAttr(n))})};
+  api.clearCls=(...cs)=>{N.forEach(n=>{cs.forEach(c=>n.cls.delete(c));n.g.setAttribute('class',clsAttr(n))})};
+  api.setCls=(id,str)=>{const n=N.get(id);if(n)setCls(n,str)};
+  api.hasCls=(id,c)=>{const n=N.get(id);return !!n&&n.cls.has(c)};
+  api.badge=(id,text,color)=>{const n=N.get(id);if(!n)return;if(n.badge){n.badge.remove();n.badge=null}if(!text)return;
+    const w=Math.round(tlen(text)*6.6+16),g=svgEl('g',{class:'gb gb-'+(color||'gray')},gFront);svgEl('rect',{x:-w/2,y:-9,width:w,height:18,rx:9},g);const t=svgEl('text',{x:0,y:1},g);t.textContent=text;n.badge=g;sync()};
+  api.clearBadges=()=>N.forEach(n=>{if(n.badge){n.badge.remove();n.badge=null}});
+  api.num=(id,text)=>{const n=N.get(id);if(!n)return;if(n.num){n.num.remove();n.num=null}if(!text)return;const g=svgEl('g',{class:'gnum'},gFront);svgEl('circle',{r:11},g);const t=svgEl('text',{x:0,y:1},g);t.textContent=text;n.num=g;sync()};
+  api.edgeNum=(a,b,text)=>{const k=ekey(a,b);if(!k)return;const e=E.get(k);if(e.num){e.num.remove();e.num=null}if(!text)return;const g=svgEl('g',{class:'gnum'},gFront);svgEl('circle',{r:11},g);const t=svgEl('text',{x:0,y:1},g);t.textContent=text;e.num=g;sync()};
+  api.clearNums=()=>{N.forEach(n=>{if(n.num){n.num.remove();n.num=null}});E.forEach(e=>{if(e.num){e.num.remove();e.num=null}})};
+  /* --- gaya edge (a,b boleh terbalik) --- */
+  api.edgeMark=(a,b,cls,on)=>{const k=ekey(a,b);if(!k)return;const e=E.get(k);e.g.classList.toggle(cls,on!==false);if(e.wt)e.wt.classList.toggle(cls,on!==false)};
+  api.edgesOnly=(cls,pairs)=>{const s=new Set(pairs.map(p=>ekey(p[0],p[1])).filter(Boolean));E.forEach((e,k)=>{e.g.classList.toggle(cls,s.has(k));if(e.wt)e.wt.classList.toggle(cls,s.has(k))})};
+  api.clearEdges=(...cs)=>E.forEach(e=>cs.forEach(c=>{e.g.classList.remove(c);if(e.wt)e.wt.classList.remove(c)}));
+  api.hasEdge=(a,b)=>!!ekey(a,b);
+  api.shake=id=>{const n=N.get(id);if(!n)return;const i=n.g.firstChild;i.classList.remove('shake');void i.getBoundingClientRect();i.classList.add('shake')};
+  api.pos=id=>{const n=N.get(id);return n?{x:n.x,y:n.y}:null};
+  api.size=()=>({W,H});
+  /* --- interaksi --- */
+  const toSvg=e=>{const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())};
+  svg.addEventListener('pointerdown',e=>{if(!dragOn)return;const g=e.target.closest('.gn');if(!g)return;dragging=N.get(g.dataset.id);moved=false;sx=e.clientX;sy=e.clientY});
+  svg.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    if(!moved){if(Math.hypot(e.clientX-sx,e.clientY-sy)<6)return;moved=true;try{svg.setPointerCapture(e.pointerId)}catch(_){}}
+    const p=toSvg(e);dragging.x=dragging.tx=Math.max(26,Math.min(W-26,p.x));dragging.y=dragging.ty=Math.max(26,Math.min(H-26,p.y));sync();
+  });
+  const up=e=>{if(dragging){if(moved&&api.onDrop)api.onDrop(dragging.d.id);dragging=null;try{svg.releasePointerCapture(e.pointerId)}catch(_){}}};
+  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',up);
+  svg.addEventListener('click',e=>{
+    if(moved){moved=false;return}
+    const g=e.target.closest('.gn');
+    if(g&&api.onNode){api.onNode(g.dataset.id,e);return}
+    const eg=e.target.closest('.eg');
+    if(!g&&eg&&api.onEdge){const r=E.get(eg.dataset.k);if(r){api.onEdge(r.a,r.b,e);return}}
+    if(!g&&api.onBg)api.onBg(e);
+  });
+  api.destroy=()=>{cancelAnimationFrame(raf);wrap.remove();if(api.hint)api.hint.remove()};
+  return api;
+}
+
+/* ========== Pustaka Graph ========== */
+function Gr(nodes,edges,o){o=o||{};return {nodes:nodes.map(n=>({id:n[0],label:n[1],x:n[2],y:n[3]})),edges:edges.map(e=>({a:e[0],b:e[1],w:e[2],curve:e[3]})),dir:!!o.dir,W:o.W||440,H:o.H||300,unit:o.unit||''}}
+const gLab=(g,id)=>{const n=g.nodes.find(x=>x.id===id);return n?n.label:id};
+const gInc=(g,id)=>g.edges.filter(e=>e.a===id||e.b===id);
+const gDeg=(g,id)=>gInc(g,id).length;
+const gOut=(g,id)=>g.edges.filter(e=>e.a===id).map(e=>e.b);
+const gIn=(g,id)=>g.edges.filter(e=>e.b===id).map(e=>e.a);
+const gNb=(g,id)=>g.dir?gOut(g,id):g.edges.flatMap(e=>e.a===id?[e.b]:e.b===id?[e.a]:[]);
+const gAdj=(g,a,b)=>gNb(g,a).includes(b);
+const gEdgeOf=(g,a,b)=>g.edges.find(e=>(e.a===a&&e.b===b)||(!g.dir&&e.a===b&&e.b===a));
+function gComps(g){const seen={},out=[];g.nodes.forEach(n=>{if(seen[n.id])return;const st=[n.id],c=[];seen[n.id]=1;while(st.length){const x=st.pop();c.push(x);g.edges.forEach(e=>{const y=e.a===x?e.b:e.b===x?e.a:null;if(y&&!seen[y]){seen[y]=1;st.push(y)}})}out.push(c)});return out}
+const gConn=g=>gComps(g).length===1;
+function gBfs(g,a,b){const prev={[a]:null},q=[a];while(q.length){const x=q.shift();if(x===b)break;gNb(g,x).forEach(y=>{if(!(y in prev)){prev[y]=x;q.push(y)}})}if(!(b in prev))return null;const p=[];for(let c=b;c!==null;c=prev[c])p.unshift(c);return p}
+const gCost=(g,p)=>{let s=0;for(let i=1;i<p.length;i++){const e=gEdgeOf(g,p[i-1],p[i]);s+=e&&e.w?e.w:0}return s};
+function gDijk(g,a,b){const dist={},prev={},todo=new Set(g.nodes.map(n=>n.id));g.nodes.forEach(n=>dist[n.id]=Infinity);dist[a]=0;
+  while(todo.size){let u=null;todo.forEach(x=>{if(u===null||dist[x]<dist[u])u=x});if(u===null||dist[u]===Infinity)break;todo.delete(u);
+   g.edges.forEach(e=>{let v=null;if(e.a===u)v=e.b;else if(!g.dir&&e.b===u)v=e.a;if(v&&todo.has(v)&&dist[u]+e.w<dist[v]){dist[v]=dist[u]+e.w;prev[v]=u}})}
+  if(dist[b]===Infinity)return null;const p=[];for(let c=b;c!==undefined;c=prev[c])p.unshift(c);return {path:p,cost:dist[b]}}
+const gPathOk=(g,p)=>{for(let i=1;i<p.length;i++)if(!gAdj(g,p[i-1],p[i]))return false;return new Set(p).size===p.length};
+const gNames=(g,p)=>p.map(x=>gLab(g,x)).join(' → ');
+const cloneG=g=>({nodes:g.nodes.map(n=>Object.assign({},n)),edges:g.edges.map(e=>Object.assign({},e)),dir:g.dir,W:g.W,H:g.H,unit:g.unit});
+
+function GraphView(host,g,o){
+  o=o||{};const v=GView(host,o);v.g=g;v.setView(g.W,g.H);
+  const mk=n=>{const m=measure(n.label,o.shape||'circle');return {id:n.id,label:n.label,lines:m.lines,shape:m.shape,w:m.w,h:m.h,x:n.x,y:n.y}};
+  v.mkDefs=()=>v.g.nodes.map(mk);
+  v.mkEdges=()=>v.g.edges.map(e=>({a:e.a,b:e.b,dir:v.g.dir,w:e.w,unit:v.g.unit,curve:e.curve}));
+  v.refresh=(anim,opt)=>v.update(v.mkDefs(),v.mkEdges(),Object.assign({animate:!!anim,noIntro:true},opt||{}));
+  v.update(v.mkDefs(),v.mkEdges(),{animate:false,noIntro:!!o.noIntro});
+  return v;
+}
+/* seret dua node untuk membuat / mengetuk pasangan */
+function pairTap(v,cb){
+  let pend=null;
+  v.onNode=id=>{
+    if(pend===null){pend=id;v.mark(id,'sel');cb.pick&&cb.pick(id);return}
+    if(pend===id){v.mark(id,'sel',false);pend=null;cb.cancel&&cb.cancel();return}
+    const a=pend;pend=null;v.mark(a,'sel',false);cb.pair(a,id);
+  };
+  v.onBg=()=>{if(pend!==null){v.mark(pend,'sel',false);pend=null;cb.cancel&&cb.cancel()}};
+  return {clear:()=>{if(pend!==null){v.mark(pend,'sel',false);pend=null}}};
+}
+/* penelusur path: ketuk node satu per satu */
+function Tracer(v,g,o){
+  o=o||{};let path=[];const say=o.say||(()=>{});
+  const lab=id=>gLab(g,id);
+  const paint=()=>{
+    v.clearCls('sel');v.clearEdges('path');v.clearNums();
+    path.forEach((id,i)=>{v.mark(id,'sel');v.num(id,String(i+1))});
+    for(let i=1;i<path.length;i++)v.edgeMark(path[i-1],path[i],'path');
+    o.change&&o.change(path.slice());
+  };
+  const api={path:()=>path.slice(),reset:()=>{path=[];say('');paint()},undo:()=>{path.pop();say('');paint()}};
+  v.onNode=id=>{
+    if(!path.length){if(o.start&&id!==o.start){v.shake(id);say('Path harus dimulai dari <b>'+lab(o.start)+'</b>.');return}path.push(id);say('');paint();return}
+    const last=path[path.length-1];
+    if(id===last)return;
+    if(path.length>1&&id===path[path.length-2]){path.pop();say('');paint();return}
+    if(path.includes(id)){v.shake(id);say('Node itu sudah dilewati. Path tidak boleh melewati node yang sama dua kali.');return}
+    if(!gAdj(g,last,id)){v.shake(id);say('❌ Tidak ada edge langsung dari <b>'+lab(last)+'</b> ke <b>'+lab(id)+'</b>. Path tidak boleh melompat!');return}
+    path.push(id);say('');paint();
+  };
+  return api;
+}
+
+/* ========== Mesin kuis (dipakai Detektif, Latihan, Evaluasi) ========== */
+function runQuiz(box,list,o){
+  o=Object.assign({tries:1,nextLabel:'Lanjut →'},o||{});
+  let pos=0,res=[],cur=list,full=true;
+  const max=o.tries>1?2:1,pts=att=>o.tries>1?(att===0?2:att===1?1:0):(att===0?1:0);
+  const start=(qs,isFull)=>{cur=qs;pos=0;res=[];full=isFull;show()};
+  const show=()=>{
+    if(pos>=cur.length){end();return}
+    const q=cur[pos];let att=0,locked=false;
+    box.innerHTML=`<div class="qwrap"><div class="qhead"><span>Soal ${pos+1} / ${cur.length}</span><span>${q.topic||''}</span></div><div class="qbar"><i style="width:${pos/cur.length*100}%"></i></div>
+     <div class="question">${q.q}</div>${q.g?'<div class="panel soft" style="padding:8px;max-width:560px;margin:8px auto"><div id="qG"></div></div>':''}
+     <div id="qBody"></div><div class="feedback" id="qFb"></div><div class="row mt" id="qAct"></div></div>`;
+    const v=q.g?GraphView($('#qG'),q.g,{noIntro:true,scale:1.05,minRatio:.6,shape:'circle'}):null;
+    const finish=(ok,msg)=>{locked=true;res.push({topic:q.topic,pts:ok?pts(att):0,max,id:q.id});
+      fb($('#qFb'),ok,(ok?'✅ Benar! ':'❌ Kurang tepat. ')+msg);
+      $('#qAct').innerHTML=`<button class="btn primary" id="qNext">${pos<cur.length-1?'Soal berikutnya →':'Lihat hasil 🏁'}</button>`;$('#qNext').onclick=()=>{pos++;show()}};
+    const wrong=(hint,reveal)=>{if(att+1<o.tries){att++;fb($('#qFb'),false,'❌ Belum tepat. '+(hint||'')+' Coba lagi!');return true}reveal&&reveal();finish(false,q.ex);return false};
+    if(q.k==='mcq'){
+      $('#qBody').innerHTML='<div class="qopts">'+shuffle(q.opts.map((t,i)=>[t,i])).map(t=>`<button class="qopt" data-i="${t[1]}">${t[0]}</button>`).join('')+'</div>';
+      const btns=$$('#qBody .qopt');
+      btns.forEach(b=>b.onclick=()=>{if(locked)return;const ok=+b.dataset.i===q.a;
+        if(ok){b.classList.add('right');btns.forEach(x=>x.disabled=true);finish(true,q.ex)}
+        else{b.classList.add('wrong');b.disabled=true;wrong(q.hint||'',()=>{btns.forEach(x=>{x.disabled=true;if(+x.dataset.i===q.a)x.classList.add('right')})})}});
+    }else if(q.k==='click'){
+      v.clickable(true);const sel=new Set();
+      v.onNode=id=>{if(locked)return;v.clearCls('ok','bad','miss');sel.has(id)?(sel.delete(id),v.mark(id,'sel',false)):(sel.add(id),v.mark(id,'sel'))};
+      $('#qBody').innerHTML='<p class="tiny">Ketuk node yang kamu maksud (boleh lebih dari satu), lalu tekan Periksa.</p>';
+      $('#qAct').innerHTML='<button class="btn primary" id="qChk">✔ Periksa</button>';
+      $('#qChk').onclick=()=>{if(locked)return;if(!sel.size){fb($('#qFb'),false,'Pilih dulu node-nya.');return}
+        const ans=new Set(q.ans),ok=setEq(sel,ans);v.clearCls('sel');sel.forEach(id=>v.mark(id,ans.has(id)?'ok':'bad'));
+        if(ok){finish(true,q.ex)}
+        else{const keep=[...sel].filter(x=>ans.has(x));const done=!wrong(q.hint||'',()=>{q.ans.forEach(id=>{if(!sel.has(id))v.mark(id,'miss')})});if(!done){setTimeout(()=>{if(locked)return;v.clearCls('bad','ok');sel.clear();keep.forEach(id=>{sel.add(id);v.mark(id,'sel')})},900)}}};
+    }else if(q.k==='path'){
+      v.clickable(true);const tr=Tracer(v,q.g,{start:q.from,say:m=>fb($('#qFb'),null,m)});
+      $('#qBody').innerHTML='<p class="tiny">Ketuk node satu per satu untuk membuat path (ketuk node sebelumnya untuk membatalkan), lalu tekan Periksa.</p>';
+      $('#qAct').innerHTML='<button class="btn primary" id="qChk">✔ Periksa path</button><button class="btn" id="qRst">↺ Ulangi</button>';
+      $('#qRst').onclick=()=>tr.reset();
+      $('#qChk').onclick=()=>{if(locked)return;const p=tr.path();
+        if(p.length<2||p[p.length-1]!==q.to){fb($('#qFb'),false,'Path harus berakhir di <b>'+gLab(q.g,q.to)+'</b>.');return}
+        const ok=(!q.need||q.need(p));
+        if(ok){finish(true,q.ex+' Path-mu: <b>'+gNames(q.g,p)+'</b>.')}
+        else{wrong(q.hint||'')}};
+    }else{
+      $('#qBody').innerHTML='<div class="imgopts">'+shuffle(q.opts.map((o2,i)=>[o2,i])).map((o2,k)=>`<button class="imgopt" data-i="${o2[1]}"><b>Gambar ${'ABC'[k]}</b><div class="io"></div></button>`).join('')+'</div>';
+      const order=$$('#qBody .imgopt');order.forEach(el=>{const gg=q.opts[+el.dataset.i];GraphView($('.io',el),gg,{noIntro:true,scale:1,minRatio:.5})});
+      order.forEach(b=>b.onclick=()=>{if(locked)return;const ok=+b.dataset.i===q.a;
+        if(ok){b.classList.add('right');order.forEach(x=>x.disabled=true);finish(true,q.ex)}
+        else{b.classList.add('wrong');b.disabled=true;wrong(q.hint||'',()=>{order.forEach(x=>{x.disabled=true;if(+x.dataset.i===q.a)x.classList.add('right')})})}});
+    }
+  };
+  const end=()=>{
+    const sum=res.reduce((a,r)=>a+r.pts,0),tot=res.reduce((a,r)=>a+r.max,0);
+    const topics=[...new Set(res.map(r=>r.topic))];
+    const bars=topics.map(t=>{const rs=res.filter(r=>r.topic===t),s=rs.reduce((a,r)=>a+r.pts,0),m=rs.reduce((a,r)=>a+r.max,0);return `<div><span>${t}</span><i><u style="width:${s/m*100}%"></u></i><span>${s}/${m}</span></div>`}).join('');
+    const pct=tot?sum/tot:0,medal=pct>=.9?'🏆':pct>=.7?'🌟':pct>=.5?'🌿':'🌱';
+    const msg=pct>=.9?'Luar biasa! Kamu sangat paham Graph.':pct>=.7?'Bagus sekali! Sedikit lagi sempurna.':pct>=.5?'Lumayan! Baca ulang bagian yang masih keliru.':'Tetap semangat! Ulangi materi lalu coba lagi.';
+    const wrongIds=res.filter(r=>r.pts<r.max).map(r=>r.id);
+    if(o.done)o.done({sum,tot,pct,res,full});
+    box.innerHTML=`<div class="qwrap center"><div style="font-size:54px">${medal}</div><div class="score-big">${sum}<span style="font-size:28px;color:#64748B"> / ${tot}</span></div><p>${msg}</p><div class="bars" style="text-align:left;max-width:520px;margin:10px auto">${bars}</div>
+     <div class="row" style="justify-content:center">${wrongIds.length?'<button class="btn primary" id="qRetry">🔁 Ulangi soal yang kurang</button>':''}<button class="btn" id="qAgain">↺ Ulangi semua</button>${o.next?`<button class="btn" id="qGo">${o.nextLabel}</button>`:''}</div></div>`;
+    if($('#qRetry'))$('#qRetry').onclick=()=>start(wrongIds.map(i=>list[i]),false);
+    $('#qAgain').onclick=()=>start(list,true);if(o.next)$('#qGo').onclick=o.next;
+  };
+  list.forEach((q,i)=>q.id=i);
+  start(list,true);
+}
+const SPLIT='<div class="split even tf">';
+const panelH=(id,ord)=>`<div class="panel soft" style="order:${ord===undefined?1:ord}"><div id="${id}"></div></div>`;
+/* XP bertingkat: hanya menambah selisih bila hasil lebih baik */
+function bestXP(key,xp,msg){const prev=S.best[key]||0;if(xp<=prev)return false;S.xp+=xp-prev;S.best[key]=xp;S.done[key]=true;refreshXP(true);toast('⭐ +'+(xp-prev)+' XP · '+msg);if(typeof renderNav==='function')renderNav();return true}
+const starsOf=pen=>pen<=1?3:pen<=3?2:1;
+
+/* ========== Data graph bersama ========== */
+const PENTA=[['a',220,48],['b',90,132],['c',350,132],['d',140,252],['e',300,252]];
+const PENTA_E=[['a','b'],['a','c'],['b','c'],['b','d'],['c','e'],['d','e']];
+const themeGraph=(labels,o)=>{o=o||{};return Gr(PENTA.map((p,i)=>[p[0],labels[i],p[1],p[2]]),PENTA_E.map((e,i)=>[e[0],e[1],o.w?o.w[i]:undefined]),{W:440,H:300,dir:o.dir,unit:o.unit})};
+const G_SQ=Gr([['a','Ani',110,70],['b','Budi',330,70],['c','Citra',110,220],['d','Deni',330,220]],[['a','b'],['a','c'],['b','d'],['c','d']],{W:440,H:290});
+const G_F7=Gr([['a','Ani',70,70],['b','Budi',200,40],['c','Citra',220,150],['d','Deni',360,80],['e','Eka',90,190],['f','Fani',350,240],['g','Gita',210,270]],
+  [['a','b'],['a','c'],['b','d'],['c','d'],['c','e'],['d','f'],['g','f'],['c','g'],['e','g']],{W:440,H:310});
+
+/* ---------- 1. Pembuka ---------- */
+slides.push({title:'Pembuka',short:'🕸️ Pembuka',
+render:()=>`
+<div class="hero">
+ <div>
+  <div class="eyebrow">Pertemuan 3 · Informatika SMP</div>
+  <h1>Petualangan <span class="grad">Graph</span> 🕸️</h1>
+  <p class="lead">Dunia ini penuh hubungan: pertemanan, jaringan komputer, jalan, hingga media sosial. Pelajari cara menggambarkannya dengan <b>Graph</b>.</p>
+  <div class="pills"><span class="pill">🌐 Node &amp; Edge</span><span class="pill">🔢 Degree</span><span class="pill">🧭 Path</span><span class="pill">🎮 Misi Graph</span></div>
+  <div class="tline"><span>Pertemuan 1 · Fondasi</span><span>Pertemuan 2 · Tree</span><span class="cur">Pertemuan 3 · Graph</span></div>
+  <div class="story" style="margin:12px 0">🎯 <b>Misi hari ini:</b> menjadi <b>Penjelajah Jaringan</b> — membaca Graph, menghubungkan node sesuai misi, lalu mencari jalur terbaik. Kumpulkan <b>XP</b> dan <b>lencana</b>!</div>
+  <button class="btn primary big" id="start">Mulai Petualangan →</button>
+ </div>
+ <div class="hero-art"><div id="heroG" style="width:100%;position:relative;z-index:2"></div><div class="tiny" style="position:absolute;bottom:8px;z-index:2">👆 Ketuk salah satu titik!</div></div>
+</div>`,
+init:()=>{
+ $('#start').onclick=()=>goTo(1);
+ const g=Gr([['a','Ani',80,60],['b','Budi',260,50],['c','Citra',60,170],['d','Deni',190,140],['e','Eka',290,200],['f','Fani',150,250]],
+  [['a','b'],['a','c'],['b','d'],['c','d'],['d','e'],['c','f'],['e','f']],{W:340,H:290});
+ const v=GraphView($('#heroG'),g,{scale:1.05,noIntro:false});v.svg.classList.add('hero-gv');v.clickable(true);
+ const defs=v.mkDefs(),eds=v.mkEdges();
+ v.update([],[],{animate:false});
+ defs.forEach((d,i)=>later(()=>v.update(defs.slice(0,i+1),[],{animate:false}),300+i*260));
+ eds.forEach((e,i)=>later(()=>v.update(defs,eds.slice(0,i+1),{animate:false,noIntro:true}),300+defs.length*260+i*260));
+ v.onNode=id=>{v.clearCls('sel','child');v.mark(id,'sel');gNb(g,id).forEach(n=>v.mark(n,'child'));v.shake(id);v.clearBadges();v.badge(id,'Degree '+gDeg(g,id),'gold')};
+}});
+
+/* ---------- 2. Ingat Kembali ---------- */
+slides.push({title:'Ingat Kembali Pertemuan 1 dan 2',short:'🔁 Ingat Kembali',key:'warm',
+render:()=>`
+<div class="eyebrow">02 · Pemanasan</div>
+<h2>🔁 Ingat Kembali Pertemuan Sebelumnya</h2>
+<p class="lead2">Ketuk kartu untuk membaliknya, lalu jawab cek cepat.</p>
+<div class="grid3x" style="grid-template-columns:repeat(3,1fr)">
+ ${[['🔵','Node','simpul','Node','Bagian atau objek yang menyimpan data (Pertemuan 1).'],
+    ['🔗','Edge','hubungan','Edge','Garis yang menghubungkan dua node.'],
+    ['🌳','Tree','berjenjang','Tree','Ada satu Root; setiap node selain Root punya <b>tepat satu parent</b>; tidak ada putaran (Pertemuan 2).']]
+  .map(c=>`<div class="fc"><div class="fc-in"><div class="fc-f"><span class="e">${c[0]}</span><b>${c[1]}</b><small>${c[2]}</small></div><div class="fc-b"><b>${c[3]}</b>${c[4]}</div></div></div>`).join('')}
+</div>
+<div class="quiz-box">
+ <div class="question">Cek cepat: pada <b>Tree</b>, berapa parent yang dimiliki setiap node selain Root?</div>
+ <div class="qopts" id="wOpts">${['Tidak ada','Tepat satu','Dua','Boleh banyak'].map((o,i)=>`<button class="qopt" data-i="${i}">${o}</button>`).join('')}</div>
+ <div class="feedback" id="wFb"></div>
+</div>
+<div class="highlight" style="margin-top:12px">🤔 <b>Bagaimana kalau</b> sebuah node boleh punya <b>banyak hubungan</b>, boleh <b>berputar</b>, dan tidak harus punya Root? Itulah <b>Graph</b> — yang kita pelajari hari ini.</div>`,
+init:()=>{
+ $$('.fc').forEach(c=>c.onclick=()=>c.classList.toggle('flipped'));
+ $$('#wOpts .qopt').forEach(b=>b.onclick=()=>{$$('#wOpts .qopt').forEach(x=>x.disabled=true);const ok=b.dataset.i==='1';b.classList.add(ok?'right':'wrong');if(!ok)$$('#wOpts .qopt')[1].classList.add('right');
+  fb($('#wFb'),ok,ok?'✅ Tepat! Batasan itulah yang membuat Tree "rapi". Graph lebih bebas.':'❌ Ingat: pada Tree setiap node (selain Root) hanya punya <b>satu parent</b>.');if(ok)award('warm',5,'Pemanasan selesai')});
+}});
+
+/* ---------- 3. Apersepsi ---------- */
+const AP=[
+ {tab:'👫 Jaringan Pertemanan',g:themeGraph(['Ani','Budi','Citra','Deni','Eka']),titik:'setiap <b>siswa</b>',garis:'hubungan <b>pertemanan</b> antar-siswa',note:'Siapa berteman dengan siapa?'},
+ {tab:'💻 Jaringan Komputer',g:Gr([['s','Switch',220,150],['p1','PC 1',80,60],['p2','PC 2',80,240],['p3','PC 3',360,60],['sv','Server',360,240]],[['s','p1'],['s','p2'],['s','p3'],['s','sv']],{W:440,H:300}),titik:'setiap <b>komputer / perangkat</b>',garis:'<b>kabel atau koneksi</b> jaringan',note:'Komputer mana yang saling terhubung?'},
+ {tab:'🛣️ Jalan Antarkota',g:Gr([['g','Gresik',70,70],['s','Surabaya',200,150],['si','Sidoarjo',350,80],['m','Mojokerto',90,250],['ml','Malang',340,250]],[['g','s',20],['s','si',25],['s','m',50],['si','ml',80],['m','ml',60]],{W:440,H:300,unit:'km'}),titik:'setiap <b>kota</b>',garis:'<b>jalan</b> yang menghubungkan dua kota (angka = jarak, perkiraan)',note:'Kota mana yang terhubung jalan?'},
+ {tab:'📱 Media Sosial',g:Gr([['a','@ani',220,50],['b','@budi',370,150],['c','@citra',300,255],['d','@deni',110,255],['e','@eka',60,140]],[['a','b'],['b','c'],['c','a'],['e','a'],['d','c']],{W:440,H:300,dir:true}),titik:'setiap <b>akun</b>',garis:'<b>follow</b> (panah menunjukkan siapa mengikuti siapa)',note:'Siapa mengikuti siapa?'}];
+slides.push({title:'Apersepsi: Hubungan di Sekitar Kita',short:'🌐 Apersepsi',key:'apers',
+render:()=>`
+<div class="eyebrow">03 · Apersepsi</div>
+<h2>🌐 Hubungan di Sekitar Kita</h2>
+${SPLIT}<div>
+ <p class="lead2">Dunia penuh <b>hubungan</b>. Pilih sebuah contoh, lalu temukan <b>titik</b> dan <b>garis</b>-nya.</p>
+ <div class="tabs" id="apTabs">${AP.map((a,i)=>`<button class="tab" data-i="${i}">${a.tab}</button>`).join('')}</div>
+ <div class="infobox" id="apInfo" style="order:2"></div>
+ <div class="row mt" style="order:2"><button class="btn primary" id="apShow">🔍 Tunjukkan titik &amp; garis</button></div>
+ <div class="feedback" id="apFb" style="order:3"></div>
+</div>${panelH('apView')}</div>`,
+init:()=>{
+ let cur=0,v=null,shown=false;const seen=new Set();
+ const load=i=>{
+  cur=i;shown=false;const a=AP[i];seen.add(i);
+  $$('#apTabs .tab').forEach((t,k)=>{t.classList.toggle('on',k===i);t.classList.toggle('done',seen.has(k)&&k!==i)});
+  $('#apView').innerHTML='';v=GraphView($('#apView'),a.g,{shape:'circle',scale:1.1,minRatio:.6});v.clickable(true);
+  $('#apInfo').innerHTML=`<h3>${a.tab}</h3><p>❓ ${a.note}</p><p class="tiny">Ketuk sebuah titik untuk melihat siapa saja yang terhubung dengannya.</p>`;
+  $('#apShow').textContent='🔍 Tunjukkan titik & garis';
+  v.onNode=id=>{v.clearCls('sel','child');v.mark(id,'sel');gNb(a.g,id).forEach(n=>v.mark(n,'child'));const nb=gNb(a.g,id).map(n=>gLab(a.g,n));
+   fb($('#apFb'),null,`<b>${gLab(a.g,id)}</b> `+(a.g.dir?'mengikuti / terhubung ke: ':'terhubung dengan: ')+(nb.length?nb.join(', '):'<i>tidak ada</i>'))};
+  if(seen.size===AP.length)award('apers',5,'Semua contoh hubungan dijelajahi');
+ };
+ $('#apShow').onclick=()=>{
+  shown=!shown;const a=AP[cur];v.clearBadges();v.clearCls('hl');v.clearEdges('hl');
+  if(shown){a.g.nodes.forEach(n=>{v.mark(n.id,'hl');v.badge(n.id,'titik','blue')});v.edgesOnly('hl',a.g.edges.map(e=>[e.a,e.b]));
+   fb($('#apFb'),null,`📌 <b>Titik</b> = ${a.titik}. <b>Garis</b> = ${a.garis}.`)}else fb($('#apFb'),null,'');
+  $('#apShow').textContent=shown?'🙈 Sembunyikan':'🔍 Tunjukkan titik & garis';
+ };
+ $$('#apTabs .tab').forEach((t,k)=>t.onclick=()=>load(k));
+ load(0);
+}});
+
+/* ---------- 4. Pertanyaan pemantik ---------- */
+slides.push({title:'Pertanyaan Pemantik',short:'❓ Pemantik',key:'pemantik',
+render:()=>`
+<div class="eyebrow">04 · Pertanyaan Pemantik</div>
+<h2>❓ Bagaimana Menggambarkan Banyak Hubungan?</h2>
+${SPLIT}<div>
+ <div class="story"><b>Pertanyaan:</b> Bagaimana cara kita menggambarkan banyak objek yang saling terhubung?</div>
+ <div class="qopts" id="pmOpts" style="grid-template-columns:1fr">${['Menulis kalimat panjang untuk setiap hubungan','Menggambar objek sebagai titik dan hubungan sebagai garis','Menghafal semua hubungan di kepala'].map((t,i)=>`<button class="qopt" data-i="${i}">${t}</button>`).join('')}</div>
+ <div class="feedback" id="pmFb"></div>
+ <div id="pmChal" style="order:2;display:none">
+  <details class="dt" open><summary>📝 Versi tulisan (9 hubungan pertemanan)</summary><ol>${G_F7.edges.map(e=>`<li>${gLab(G_F7,e.a)} berteman dengan ${gLab(G_F7,e.b)}</li>`).join('')}</ol></details>
+  <div class="infobox" style="min-height:0"><h3>🎯 Tantangan</h3><p>Siapa yang punya <b>teman paling banyak</b>? Coba lewat tulisan, lalu cek lewat gambar.</p><div class="chips" id="pmNames">${G_F7.nodes.map(n=>`<button class="chip" data-id="${n.id}">${n.label}</button>`).join('')}</div><div class="feedback" id="pmFb2"></div></div>
+ </div>
+</div>${panelH('pmView')}</div>`,
+init:()=>{
+ const g=G_F7;const v=GraphView($('#pmView'),g,{scale:1.1,minRatio:.6});v.clickable(true);
+ const info=id=>{v.clearCls('sel','child');v.clearBadges();v.mark(id,'sel');gNb(g,id).forEach(n=>v.mark(n,'child'));v.badge(id,gDeg(g,id)+' teman','gold');
+  fb($('#pmFb2'),null,`Teman <b>${gLab(g,id)}</b>: ${gNb(g,id).map(n=>gLab(g,n)).join(', ')}`)};
+ v.onNode=id=>{if($('#pmChal').style.display!=='none')info(id);};
+ $$('#pmOpts .qopt').forEach(b=>b.onclick=()=>{$$('#pmOpts .qopt').forEach(x=>x.disabled=true);const ok=b.dataset.i==='1';b.classList.add(ok?'right':'wrong');if(!ok)$$('#pmOpts .qopt')[1].classList.add('right');
+  fb($('#pmFb'),ok,ok?'✅ Tepat! Menggambar <b>titik (node)</b> dan <b>garis (edge)</b> itulah yang disebut <b>Graph</b>.':'❌ Kurang praktis. Cara terbaik: gambar objek sebagai <b>titik</b> dan hubungannya sebagai <b>garis</b> — itulah <b>Graph</b>.');
+  $('#pmChal').style.display='';if(ok)award('pemantik',5,'Pertanyaan pemantik terjawab')});
+ $$('#pmNames .chip').forEach(c=>c.onclick=()=>{const id=c.dataset.id,best=Math.max(...g.nodes.map(n=>gDeg(g,n.id)));const ok=gDeg(g,id)===best;
+  $$('#pmNames .chip').forEach(x=>x.classList.remove('ok','bad'));c.classList.add(ok?'ok':'bad');info(id);
+  fb($('#pmFb2'),ok,(ok?'✅ Betul! <b>Citra</b> punya 4 teman. ':'❌ Belum. ')+(ok?'Lewat gambar cukup menghitung garis di tiap titik; lewat tulisan harus membaca 9 kalimat.':`${gLab(g,id)} hanya punya ${gDeg(g,id)} teman. Ketuk titik lain untuk menghitung garisnya.`))});
+}});
+
+/* ---------- 5. Apa Itu Graph? ---------- */
+slides.push({title:'Apa Itu Graph?',short:'🕸️ Apa Itu Graph?',key:'def',
+render:()=>`
+<div class="eyebrow">05 · Apa Itu Graph?</div>
+<h2>🕸️ Apa Itu Graph?</h2>
+${SPLIT}<div>
+ <p class="lead2"><b>Graph</b> adalah struktur data yang digunakan untuk menggambarkan <b>hubungan</b> antara berbagai objek atau data.</p>
+ <div class="highlight">Graph = kumpulan <b>node</b> (titik) yang dihubungkan oleh <b>edge</b> (garis). Tidak perlu rumus matematika — cukup pahami titik dan garis!</div>
+ <div class="infobox" id="dfCap" style="order:2"></div>
+ <div class="row mt" style="order:2"><button class="btn primary" id="dfAdd">➕ Tambah langkah</button><button class="btn" id="dfReset">↺ Ulang</button><button class="btn" id="dfShuf">🔀 Acak posisi</button><button class="btn" id="dfTidy">🧲 Rapikan</button></div>
+ <div class="dots" id="dfDots" style="order:2"></div>
+</div>${panelH('dfView')}</div>`,
+init:()=>{
+ const g=cloneG(G_SQ);const v=GraphView($('#dfView'),g,{scale:1.1,minRatio:.6});v.draggable(true);
+ const allD=v.mkDefs(),allE=v.mkEdges();let step=0,dragged=false;
+ const caps=[
+  ['🌱 Ayo bangun sebuah Graph!','Tekan <b>Tambah langkah</b>. Contohnya jaringan pertemanan empat siswa.'],
+  ['1️⃣ Objeknya jadi node','Ada 4 objek: Ani, Budi, Citra, dan Deni. Setiap objek menjadi satu <b>node</b>.'],
+  ['2️⃣ Hubungan jadi edge','<b>Ani</b> berteman dengan <b>Budi</b> → tarik satu garis (edge).'],
+  ['3️⃣ Tambah hubungan','<b>Ani</b> juga berteman dengan <b>Citra</b>.'],
+  ['4️⃣ Tambah hubungan','<b>Budi</b> berteman dengan <b>Deni</b>.'],
+  ['5️⃣ Graph selesai!','<b>Citra</b> berteman dengan <b>Deni</b>. Kini ada <b>4 node</b> dan <b>4 edge</b>. 👆 <b>Coba seret</b> node mana pun: posisinya boleh berubah, hubungannya tetap sama!']];
+ const draw=anim=>{
+  const d=allD.map(x=>{const n=v.N.get(x.id);return Object.assign({},x,n?{x:n.x,y:n.y}:{})});
+  v.update(step>=1?d:[],step>=2?allE.slice(0,step-1):[],{animate:false,noIntro:step!==1});
+  $('#dfCap').innerHTML='<h3>'+caps[step][0]+'</h3><p>'+caps[step][1]+'</p>';
+  $('#dfDots').innerHTML=[1,2,3,4,5].map(i=>`<i class="${i<step?'done':i===step?'on':''}"></i>`).join('');
+  $('#dfAdd').disabled=step>=5;
+  if(step>=5)award('def',5,'Graph pertama terbentuk');
+ };
+ $('#dfAdd').onclick=()=>{if(step<5){step++;draw()}};
+ $('#dfReset').onclick=()=>{step=0;v.N.forEach(n=>{});v.update([],[],{animate:false});draw()};
+ $('#dfShuf').onclick=()=>{if(step<1)return;v.moveAll(()=>({x:40+Math.random()*(g.W-80),y:40+Math.random()*(g.H-80)}),true)};
+ $('#dfTidy').onclick=()=>{if(step<1)return;v.moveAll(id=>{const n=g.nodes.find(x=>x.id===id);return {x:n.x,y:n.y}},true)};
+ draw();
+}});
+
+/* ---------- 6 & 7. Node dan Edge (tema berganti) ---------- */
+const NODE_TH=[
+ {tab:'👩‍🎓 Siswa',labels:['Ani','Budi','Citra','Deni','Eka'],mean:'Setiap <b>siswa</b> adalah satu node.'},
+ {tab:'💻 Komputer',labels:['PC 1','PC 2','Router','Server','Printer'],mean:'Setiap <b>komputer / perangkat</b> adalah satu node.'},
+ {tab:'🏙️ Kota',labels:['Gresik','Surabaya','Sidoarjo','Lamongan','Mojokerto'],mean:'Setiap <b>kota</b> adalah satu node.'},
+ {tab:'🏢 Gedung',labels:['Lab','Kantin','Aula','Perpus','Kelas'],mean:'Setiap <b>gedung / ruangan</b> adalah satu node.'},
+ {tab:'📱 Akun',labels:['@ani','@budi','@citra','@deni','@eka'],mean:'Setiap <b>akun media sosial</b> adalah satu node.'}];
+const EDGE_TH=[
+ {tab:'🤝 Pertemanan',labels:['Ani','Budi','Citra','Deni','Eka'],phr:(a,b)=>`<b>${a}</b> berteman dengan <b>${b}</b>`,mean:'Setiap garis adalah <b>hubungan pertemanan</b>.'},
+ {tab:'🔌 Koneksi Komputer',labels:['PC 1','PC 2','Router','Server','Printer'],phr:(a,b)=>`<b>${a}</b> terhubung ke <b>${b}</b> lewat kabel/jaringan`,mean:'Setiap garis adalah <b>kabel atau koneksi</b>.'},
+ {tab:'🛣️ Jalan',labels:['Surabaya','Gresik','Sidoarjo','Lamongan','Mojokerto'],phr:(a,b)=>`Ada <b>jalan</b> yang menghubungkan <b>${a}</b> dan <b>${b}</b>`,mean:'Setiap garis adalah <b>jalan</b>.'},
+ {tab:'✈️ Rute Penerbangan',labels:['Jakarta','Surabaya','Bali','Yogya','Makassar'],phr:(a,b)=>`Ada <b>rute penerbangan</b> antara <b>${a}</b> dan <b>${b}</b>`,mean:'Setiap garis adalah <b>rute penerbangan</b>.'}];
+function themeSlide(c){
+ return {title:c.title,short:c.short,key:c.key,
+ render:()=>`<div class="eyebrow">${c.eyebrow}</div><h2>${c.h2}</h2>${SPLIT}<div>
+   <p class="lead2">${c.lead}</p>
+   <div class="tabs" id="thTabs">${c.themes.map((t,i)=>`<button class="tab" data-i="${i}">${t.tab}</button>`).join('')}</div>
+   <div class="infobox" id="thInfo" style="order:2"></div>
+   <div class="hud" style="order:2"><span class="pillx" id="thCnt"></span></div>
+   <div class="feedback" id="thFb" style="order:3"></div></div>${panelH('thView')}</div>`,
+ init:()=>{
+  let v=null,g=null,found=new Set();const done={};
+  const total=()=>c.kind==='node'?g.nodes.length:g.edges.length;
+  const cnt=()=>$('#thCnt').textContent=`Ketuk semua ${c.kind}: ${found.size}/${total()}`;
+  const load=i=>{
+   const t=c.themes[i];found=new Set();g=themeGraph(t.labels);
+   $$('#thTabs .tab').forEach((x,k)=>{x.classList.toggle('on',k===i);x.classList.toggle('done',!!done[k])});
+   $('#thView').innerHTML='';v=GraphView($('#thView'),g,{scale:1.1,minRatio:.6});v.clickable(true);v.edgeClickable(true);
+   $('#thInfo').innerHTML=`<h3>${t.tab}</h3><p>${c.defn}</p><p>${t.mean}</p>`;fb($('#thFb'),null,'');cnt();
+   const complete=()=>{if(found.size===total()){done[i]=true;$$('#thTabs .tab')[i].classList.add('done');fb($('#thFb'),true,`🎉 Lengkap! Ada <b>${total()}</b> ${c.kind} pada gambar ini.`);
+     if(Object.keys(done).length>=3)award(c.key,8,c.h2.replace(/^\S+\s/,'')+' dipahami')}};
+   if(c.kind==='node'){
+    v.onNode=id=>{if(!found.has(id)){found.add(id);v.mark(id,'ok');v.badge(id,'Node','green')}cnt();fb($('#thFb'),null,`<b>${gLab(g,id)}</b> adalah sebuah <b>node</b>. ${t.mean}`);complete()};
+    v.onEdge=()=>fb($('#thFb'),false,'Itu <b>garis</b> (edge), bukan node. Ketuk <b>bulatannya</b>!');
+   }else{
+    v.onEdge=(a,b)=>{const k=[a,b].sort().join('-');if(!found.has(k)){found.add(k);v.edgeMark(a,b,'ok')}cnt();fb($('#thFb'),null,'🔗 '+t.phr(gLab(g,a),gLab(g,b)));complete()};
+    v.onNode=id=>{v.shake(id);fb($('#thFb'),false,'Itu <b>node</b> (titik), bukan edge. Ketuk <b>garisnya</b>!')};
+   }
+  };
+  $$('#thTabs .tab').forEach((x,k)=>x.onclick=()=>load(k));load(0);
+ }};
+}
+slides.push(themeSlide({kind:'node',title:'Node / Vertex',short:'🔵 Node / Vertex',key:'node',eyebrow:'06 · Node / Vertex',h2:'🔵 Node (Vertex)',themes:NODE_TH,
+ lead:'<b>Node / Vertex</b> = objek atau titik yang ada dalam Graph. Node bisa berupa apa saja!',defn:'Node = objek atau titik dalam Graph.'}));
+slides.push(themeSlide({kind:'edge',title:'Edge',short:'🔗 Edge',key:'edge',eyebrow:'07 · Edge',h2:'🔗 Edge',themes:EDGE_TH,
+ lead:'<b>Edge</b> = hubungan antara <b>dua node</b>. Ketuk garisnya untuk melihat artinya.',defn:'Edge = hubungan antara dua node.'}));
+
+/* ---------- 8. Degree ---------- */
+const G_AH=Gr([['h','Ahmad',210,150],['b','Budi',210,48],['a','Ani',70,150],['c','Citra',350,150],['d','Deni',210,255]],[['h','b'],['h','a'],['h','c'],['h','d']],{W:420,H:300});
+const G_D2=Gr([['A','A',70,60],['B','B',200,40],['C','C',330,90],['D','D',80,200],['E','E',210,210],['F','F',340,240]],[['A','B'],['A','D'],['B','C'],['B','E'],['C','E'],['D','E'],['E','F']],{W:440,H:300});
+slides.push({title:'Degree',short:'🔢 Degree',key:'degree',
+render:()=>`
+<div class="eyebrow">08 · Degree</div>
+<h2>🔢 Degree</h2>
+<div class="tabs" id="dgTabs"><button class="tab on" data-m="a">🔍 Jelajahi</button><button class="tab" data-m="b">✏️ Latihan</button></div>
+<div id="dgA">${SPLIT}<div>
+ <p class="lead2"><b>Degree</b> = jumlah hubungan (garis) yang dimiliki sebuah node. Ketuk sebuah node lalu hitung garisnya.</p>
+ <div class="infobox" id="dgInfo" style="order:2"><h3>👆 Ketuk sebuah node</h3><p>Coba mulai dari <b>Ahmad</b>.</p></div>
+ <div class="infobox" id="dgTab" style="order:3;min-height:0;margin-top:10px"></div>
+</div>${panelH('dgView')}</div></div>
+<div id="dgB" style="display:none"><div id="dgQ"></div></div>`,
+init:()=>{
+ const g=G_AH;const v=GraphView($('#dgView'),g,{scale:1.1,minRatio:.6});v.clickable(true);const seen={};
+ const tab=()=>{$('#dgTab').innerHTML='<b>Tabel degree</b> (ketuk semua node):<div class="chips" style="margin-top:6px">'+g.nodes.map(n=>`<span class="tag ${seen[n.id]!==undefined?'green':'gray'}">${n.label}: ${seen[n.id]!==undefined?seen[n.id]:'?'}</span>`).join('')+'</div>'+(Object.keys(seen).length===g.nodes.length?`<p style="margin:8px 0 0">🤯 <b>Fakta seru:</b> jumlah semua degree = ${g.nodes.map(n=>seen[n.id]).join(' + ')} = <b>${g.nodes.reduce((a,n)=>a+seen[n.id],0)}</b> = 2 × ${g.edges.length} edge. Setiap edge dihitung dua kali (sekali di tiap ujung)!</p>`:'')};
+ v.onNode=id=>{
+  const inc=gInc(g,id);v.clearCls('sel','child');v.clearBadges();v.clearEdges('hl');v.clearNums();v.mark(id,'sel');
+  inc.forEach((e,i)=>{v.edgeMark(e.a,e.b,'hl');v.edgeNum(e.a,e.b,String(i+1));v.mark(e.a===id?e.b:e.a,'child')});
+  v.badge(id,'Degree = '+inc.length,'gold');seen[id]=inc.length;
+  $('#dgInfo').innerHTML=`<h3>Degree ${gLab(g,id)} = <span class="term">${inc.length}</span></h3><p>Ada <b>${inc.length}</b> garis yang terhubung ke ${gLab(g,id)} (diberi nomor 1–${inc.length}).</p>`;
+  tab();if(Object.keys(seen).length===g.nodes.length)award('degree',6,'Degree dijelajahi');
+ };
+ tab();
+ const Q=[
+  {k:'mcq',topic:'Degree',g:G_AH,q:'Berapa <b>degree</b> dari <b>Ahmad</b>?',opts:['3','4','5','1'],a:1,ex:'Ahmad punya 4 garis (ke Budi, Ani, Citra, Deni), jadi degree Ahmad = <b>4</b>.',hint:'Hitung semua garis yang menempel di Ahmad.'},
+  {k:'mcq',topic:'Degree',g:G_D2,q:'Berapa <b>degree</b> dari node <b>B</b>?',opts:['2','3','4'],a:1,ex:'B terhubung ke A, C, dan E → degree <b>3</b>.',hint:'Hitung garis yang menempel pada B.'},
+  {k:'click',topic:'Degree',g:G_D2,q:'Klik node yang punya <b>degree terbesar</b>.',ans:['E'],ex:'E punya 4 garis (ke B, C, D, F) — paling banyak.',hint:'Bandingkan jumlah garis tiap node.'},
+  {k:'click',topic:'Degree',g:G_D2,q:'Klik node yang <b>degree-nya 1</b>.',ans:['F'],ex:'Hanya F yang punya satu garis (ke E).',hint:'Cari node yang hanya punya satu garis.'}];
+ let started=false;
+ $$('#dgTabs .tab').forEach(t=>t.onclick=()=>{$$('#dgTabs .tab').forEach(x=>x.classList.toggle('on',x===t));$('#dgA').style.display=t.dataset.m==='a'?'':'none';$('#dgB').style.display=t.dataset.m==='b'?'':'none';
+  if(t.dataset.m==='b'&&!started){started=true;runQuiz($('#dgQ'),Q,{tries:2,done:r=>{award('degreeQ',Math.max(1,r.sum),'Latihan Degree selesai')}})}});
+}});
+
+/* ---------- 9. Path ---------- */
+const G_CH=Gr([['A','A',50,150],['B','B',150,150],['C','C',250,150],['D','D',350,150]],[['A','B'],['B','C'],['C','D']],{W:400,H:300});
+const G_SP=Gr([['s','Sekolah',70,150],['p','Pasar',210,55],['m','Masjid',210,245],['r','Rumah',360,150]],[['s','p'],['p','r'],['s','m'],['m','r']],{W:440,H:300});
+slides.push({title:'Path',short:'🧭 Path',key:'path',
+render:()=>`
+<div class="eyebrow">09 · Path</div>
+<h2>🧭 Path</h2>
+${SPLIT}<div>
+ <p class="lead2"><b>Path</b> = jalur dari satu node menuju node lainnya, melewati edge yang ada.</p>
+ <div class="tabs" id="phTabs"><button class="tab on" data-i="0">🔤 A → D</button><button class="tab" data-i="1">🏫 Sekolah → Rumah</button></div>
+ <div class="infobox" id="phInfo" style="order:2"></div>
+ <div class="row mt" style="order:2"><button class="btn" id="phUndo">↩ Batalkan</button><button class="btn" id="phReset">↺ Ulangi</button></div>
+ <div class="feedback" id="phFb" style="order:3"></div>
+ <div class="infobox" id="phFound" style="order:3;min-height:0;margin-top:8px;display:none"></div>
+</div>${panelH('phView')}</div>`,
+init:()=>{
+ const cfg=[{g:G_CH,from:'A',to:'D',info:'<h3>Bentuk path dari A ke D</h3><p>Ketuk <b>A</b>, lalu node-node berikutnya sampai <b>D</b>. Setiap langkah harus lewat sebuah edge.</p><p class="tiny">Coba juga melompat langsung A → C: apa yang terjadi?</p>'},
+  {g:G_SP,from:'s',to:'r',info:'<h3>Dari Sekolah ke Rumah</h3><p>Ketuk <b>Sekolah</b>, lanjut ke node yang terhubung, sampai <b>Rumah</b>. Ada lebih dari satu path — temukan keduanya!</p>'}];
+ let v=null,tr=null,ci=0,found=[];
+ const load=i=>{
+  ci=i;found=[];const c=cfg[i];$$('#phTabs .tab').forEach((t,k)=>t.classList.toggle('on',k===i));
+  $('#phView').innerHTML='';v=GraphView($('#phView'),c.g,{scale:1.1,minRatio:.6});v.clickable(true);
+  $('#phInfo').innerHTML=c.info;fb($('#phFb'),null,'');$('#phFound').style.display='none';
+  tr=Tracer(v,c.g,{start:c.from,say:m=>fb($('#phFb'),m?false:null,m),change:p=>{
+   if(p.length&&p[p.length-1]===c.to){const s=gNames(c.g,p);
+    fb($('#phFb'),true,`✅ Path: <b>${s}</b><br>Panjang path = <b>${p.length-1}</b> edge.`);
+    if(!found.includes(s)){found.push(s);if(i===1){$('#phFound').style.display='';$('#phFound').innerHTML='<b>Path yang sudah ditemukan ('+found.length+'/2):</b><ul style="margin:4px 0">'+found.map(f=>'<li>'+f+'</li>').join('')+'</ul>'}
+     if(i===0||found.length===2)award('path',8,'Path ditemukan')}}
+   else if(p.length){fb($('#phFb'),null,'Path sementara: <b>'+gNames(c.g,p)+'</b>')}}});
+ };
+ $('#phUndo').onclick=()=>tr.undo();$('#phReset').onclick=()=>tr.reset();
+ $$('#phTabs .tab').forEach((t,k)=>t.onclick=()=>load(k));load(0);
+}});
+
+/* ---------- 10. Connected ---------- */
+const G_C1=Gr([['A','A',50,90],['B','B',150,90],['C','C',250,90],['D','D',120,230],['E','E',260,230]],[['A','B'],['B','C'],['D','E']],{W:330,H:300});
+const G_C2=Gr([['A','A',40,150],['B','B',130,150],['C','C',220,150],['D','D',310,150],['E','E',400,150]],[['A','B'],['B','C'],['C','D'],['D','E']],{W:440,H:300});
+slides.push({title:'Connected',short:'🔌 Connected',key:'conn',
+render:()=>`
+<div class="eyebrow">10 · Connected</div>
+<h2>🔌 Connected (Terhubung)</h2>
+${SPLIT}<div>
+ <p class="lead2">Sebuah Graph <b>connected</b> jika dari node mana pun kita bisa menuju node lain lewat suatu path.</p>
+ <div class="tabs" id="cnTabs"><button class="tab on" data-i="0">❌ Belum terhubung</button><button class="tab" data-i="1">✅ Terhubung</button></div>
+ <div class="row" style="order:1"><div class="toggle2" id="cnMode"><button class="on" data-m="edit">➕ Tambah / hapus edge</button><button data-m="test">🔍 Uji path</button></div><button class="btn" id="cnReset">↺ Reset</button></div>
+ <div id="cnStat" style="order:2;margin-top:8px"></div>
+ <div class="feedback" id="cnFb" style="order:3"></div>
+</div>${panelH('cnView')}</div>`,
+init:()=>{
+ const bases=[G_C1,G_C2];let g=null,v=null,mode='edit',ti=0,pp=null;
+ const paint=()=>{
+  const cs=gComps(g);v.clearCls('c0','c1','c2','c3','c4','c5');cs.forEach((c,i)=>c.forEach(id=>v.mark(id,'c'+i)));
+  const ok=cs.length===1;
+  $('#cnStat').innerHTML=`<div class="lamp ${ok?'ok':'no'}"><i>${ok?'✓':'✕'}</i><span>${ok?'Graph ini <b>CONNECTED</b> — semua node saling terjangkau.':'Graph ini <b>BELUM connected</b> — ada <b>'+cs.length+' kelompok</b> yang terpisah.'}</span></div><p class="tiny">Warna node = kelompok (komponen) yang saling terhubung.</p>`;
+  return ok;
+ };
+ const load=i=>{
+  ti=i;g=cloneG(bases[i]);$$('#cnTabs .tab').forEach((t,k)=>t.classList.toggle('on',k===i));
+  $('#cnView').innerHTML='';v=GraphView($('#cnView'),g,{scale:1.1,minRatio:.6});v.clickable(true);v.edgeClickable(true);
+  fb($('#cnFb'),null,i===0?'Tugasmu: <b>tambahkan edge</b> agar semua node terhubung. Ketuk dua node untuk membuat edge.':'Semua node sudah terhubung. Coba <b>hapus</b> sebuah edge (ketuk garisnya) dan lihat apa yang terjadi!');
+  paint();
+  pp=pairTap(v,{pair:(a,b)=>{
+   if(mode==='test'){const p=gBfs(g,a,b);v.clearEdges('path');v.clearNums();
+     if(p){for(let k=1;k<p.length;k++)v.edgeMark(p[k-1],p[k],'path');fb($('#cnFb'),true,`Ada path dari <b>${a}</b> ke <b>${b}</b>: <b>${p.join(' → ')}</b>`)}
+     else fb($('#cnFb'),false,`Tidak ada path dari <b>${a}</b> ke <b>${b}</b> — keduanya berada di kelompok yang berbeda.`);return}
+   const ex=gEdgeOf(g,a,b);
+   if(ex){g.edges=g.edges.filter(e=>e!==ex);v.refresh(false);fb($('#cnFb'),null,`Edge <b>${a}–${b}</b> dihapus.`)}
+   else{const before=gComps(g).length;g.edges.push({a,b});v.refresh(false);const after=gComps(g).length;
+     fb($('#cnFb'),after<before?true:null,after<before?`👍 Dua kelompok bergabung! Sekarang tersisa <b>${after}</b> kelompok.`:`Edge <b>${a}–${b}</b> ditambahkan, tetapi belum menyambung kelompok yang terpisah (keduanya sudah satu kelompok).`)}
+   if(paint()&&ti===0){fb($('#cnFb'),true,'🎉 Sekarang Graph-nya <b>connected</b>!');burst();award('conn',10,'Graph berhasil dihubungkan')}}});
+  v.onEdge=(a,b)=>{if(mode!=='edit')return;const ex=gEdgeOf(g,a,b);g.edges=g.edges.filter(e=>e!==ex);v.refresh(false);fb($('#cnFb'),null,`Edge <b>${a}–${b}</b> dihapus.`);paint()};
+ };
+ $$('#cnMode button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('#cnMode button').forEach(x=>x.classList.toggle('on',x===b));v.clearEdges('path');fb($('#cnFb'),null,mode==='test'?'Ketuk dua node untuk menguji apakah ada path di antara keduanya.':'Ketuk dua node untuk menambah/menghapus edge.')});
+ $$('#cnTabs .tab').forEach((t,k)=>t.onclick=()=>load(k));
+ $('#cnReset').onclick=()=>load(ti);load(0);
+}});
+
+/* ---------- 11. Tree adalah Graph khusus ---------- */
+const G_TR=Gr([['A','A',220,45],['B','B',120,140],['C','C',320,140],['D','D',60,245],['E','E',180,245],['F','F',320,245]],[['A','B'],['A','C'],['B','D'],['B','E'],['C','F']],{W:440,H:300});
+slides.push({title:'Tree adalah Graph Khusus',short:'🌳 Tree ⊂ Graph',key:'tree',
+render:()=>`
+<div class="eyebrow">11 · Jembatan dari Pertemuan 2</div>
+<h2>🌳 Tree adalah Graph Khusus</h2>
+${SPLIT}<div>
+ <p class="lead2">Ingat Tree? Tree sebenarnya <b>Graph dengan aturan ketat</b>. Ketuk dua node untuk <b>menambah</b> edge, atau ketuk garis untuk <b>menghapusnya</b>.</p>
+ <div id="trLamps" style="order:1"></div>
+ <div class="infobox" id="trVerdict" style="order:2"></div>
+ <div class="row mt" style="order:2"><button class="btn" id="trReset">↺ Kembalikan ke Tree</button></div>
+ <table class="tbl" style="order:3;margin-top:8px"><tr><th></th><th>Tree</th><th>Graph</th></tr>
+  <tr><td>Root</td><td>Ada satu Root</td><td>Tidak ada Root khusus</td></tr>
+  <tr><td>Hubungan</td><td>1 parent per node</td><td>Bebas banyak</td></tr>
+  <tr><td>Putaran</td><td>Tidak boleh</td><td>Boleh</td></tr></table>
+</div>${panelH('trView')}</div>`,
+init:()=>{
+ let g=cloneG(G_TR);const v=GraphView($('#trView'),g,{scale:1.1,minRatio:.6});v.clickable(true);v.edgeClickable(true);
+ let sawGraph=false,sawBack=false;
+ const eval_=()=>{
+  const n=g.nodes.length,e=g.edges.length,cs=gComps(g).length,con=cs===1,cyc=e>n-cs,isT=con&&!cyc;
+  $('#trLamps').innerHTML=[[con,`Terhubung (connected)`],[e===n-1,`Jumlah edge = node − 1 <span class="tiny">(sekarang ${e} edge, ${n} node)</span>`],[!cyc,'Tidak ada putaran']].map(l=>`<div class="lamp ${l[0]?'ok':'no'}"><i>${l[0]?'✓':'✕'}</i><span>${l[1]}</span></div>`).join('');
+  $('#trVerdict').innerHTML=isT?'<h3>🌳 Masih sebuah Tree!</h3><p>Terhubung dan tanpa putaran. Coba <b>tambahkan satu edge</b> antara dua node yang belum berhubungan.</p>':`<h3>🕸️ Bukan Tree lagi — tetapi tetap sebuah Graph!</h3><p>${cyc?'Ada <b>putaran</b> (jalur yang kembali ke node semula).':`Graph terpecah menjadi <b>${cs} kelompok</b>.`} Graph memang lebih bebas daripada Tree.</p>`;
+  if(!isT)sawGraph=true;if(isT&&sawGraph)sawBack=true;
+  if(sawGraph&&sawBack)award('tree',10,'Tree = Graph khusus dipahami');
+ };
+ pairTap(v,{pair:(a,b)=>{const ex=gEdgeOf(g,a,b);if(ex)g.edges=g.edges.filter(x=>x!==ex);else g.edges.push({a,b});v.refresh(false);eval_()}});
+ v.onEdge=(a,b)=>{const ex=gEdgeOf(g,a,b);g.edges=g.edges.filter(x=>x!==ex);v.refresh(false);eval_()};
+ $('#trReset').onclick=()=>{g=cloneG(G_TR);v.g=g;v.refresh(false);eval_()};
+ eval_();
+}});
+
+/* ---------- 12. Jenis Graph ---------- */
+const G_UN=Gr([['a','Ani',110,80],['b','Budi',330,80],['c','Citra',220,235]],[['a','b'],['b','c']],{W:440,H:300});
+const G_DI=Gr([['a','Ani',100,70],['b','Budi',340,70],['c','Citra',340,235],['d','Deni',100,235]],[['a','b'],['b','c'],['d','a']],{W:440,H:300,dir:true});
+const G_WT=Gr([['s','Sekolah',70,160],['p','Pasar',230,60],['r','Rumah',380,160]],[['s','p',3],['p','r',2],['s','r',7]],{W:440,H:260,unit:'km'});
+slides.push({title:'Jenis Graph',short:'🧩 Jenis Graph',key:'jenis',
+render:()=>`
+<div class="eyebrow">12 · Jenis Graph</div>
+<h2>🧩 Tiga Jenis Graph</h2>
+${SPLIT}<div>
+ <div class="tabs" id="jnTabs"><button class="tab on" data-i="0">↔️ Undirected</button><button class="tab" data-i="1">➡️ Directed</button><button class="tab" data-i="2">🔢 Weighted</button></div>
+ <div class="infobox" id="jnInfo" style="order:2"></div>
+ <div id="jnCtl" style="order:2;margin-top:10px"></div>
+ <div class="feedback" id="jnFb" style="order:3"></div>
+</div>${panelH('jnView')}</div>`,
+init:()=>{
+ let v=null,g=null,tr=null,unit='km';const seen=new Set();
+ const info=[
+  '<h3>↔️ Undirected Graph</h3><p>Hubungan <b>tidak memiliki arah</b> (dua arah).</p><p class="tiny">Contoh: A berteman dengan B — berarti B juga berteman dengan A. Ketuk sebuah node untuk membacanya.</p>',
+  '<h3>➡️ Directed Graph</h3><p>Hubungan <b>memiliki arah</b>, ditandai <b>panah</b>.</p><p class="tiny">Contoh: A mengikuti akun B — belum tentu B mengikuti A. Ketuk node, lalu coba tombol Balik arah.</p>',
+  '<h3>🔢 Weighted Graph</h3><p>Hubungan <b>mempunyai nilai / bobot</b>: bisa berupa jarak, waktu, atau biaya.</p><p class="tiny">Ketuk Sekolah, lalu node berikutnya untuk membuat path dan melihat total bobotnya.</p>'];
+ const load=i=>{
+  seen.add(i);$$('#jnTabs .tab').forEach((t,k)=>t.classList.toggle('on',k===i));
+  g=cloneG([G_UN,G_DI,G_WT][i]);$('#jnView').innerHTML='';v=GraphView($('#jnView'),g,{scale:1.1,minRatio:.6});v.clickable(true);
+  $('#jnInfo').innerHTML=info[i];fb($('#jnFb'),null,'');$('#jnCtl').innerHTML='';
+  if(i===0)v.onNode=id=>{v.clearCls('sel','child');v.clearBadges();v.mark(id,'sel');
+   fb($('#jnFb'),null,gNb(g,id).map(n=>{v.mark(n,'child');return `✔ <b>${gLab(g,id)}</b> berteman dengan <b>${gLab(g,n)}</b> — dan <b>${gLab(g,n)}</b> berteman dengan <b>${gLab(g,id)}</b> (dua arah)`}).join('<br>'))};
+  if(i===1){
+   $('#jnCtl').innerHTML='<button class="btn" id="jnFlip">🔄 Balik arah panah Ani → Budi</button>';
+   v.onNode=id=>{v.clearCls('sel','child','parent');v.clearBadges();v.mark(id,'sel');const o=gOut(g,id),n=gIn(g,id);o.forEach(x=>v.mark(x,'child'));n.forEach(x=>v.mark(x,'parent'));
+    fb($('#jnFb'),null,`<b>${gLab(g,id)}</b> mengikuti: ${o.length?o.map(x=>gLab(g,x)).join(', '):'<i>tidak ada</i>'}<br>Diikuti oleh: ${n.length?n.map(x=>gLab(g,x)).join(', '):'<i>tidak ada</i>'}<br><span class="tiny">Arah panah penting: A mengikuti B ≠ B mengikuti A.</span>`)};
+   $('#jnFlip').onclick=()=>{const e=g.edges[0];[e.a,e.b]=[e.b,e.a];v.g=g;v.update(v.mkDefs(),[],{animate:false,noIntro:true});v.update(v.mkDefs(),v.mkEdges(),{animate:false,noIntro:true});
+    fb($('#jnFb'),null,`Sekarang <b>${gLab(g,e.a)}</b> mengikuti <b>${gLab(g,e.b)}</b>. Arah berubah, artinya hubungannya pun berubah!`)};
+  }
+  if(i===2){
+   $('#jnCtl').innerHTML='<div class="chips">'+[['km','📏 Jarak (km)'],['menit','⏱️ Waktu (menit)'],['ribu','💰 Biaya (ribu Rp)']].map(u=>`<button class="chip ${u[0]===unit?'on':''}" data-u="${u[0]}">${u[1]}</button>`).join('')+'</div>';
+   $$('#jnCtl .chip').forEach(c=>c.onclick=()=>{unit=c.dataset.u;g.unit=unit;v.g=g;v.refresh(false);$$('#jnCtl .chip').forEach(x=>x.classList.toggle('on',x===c))});
+   g.unit=unit;v.g=g;v.refresh(false);
+   tr=Tracer(v,g,{start:'s',say:m=>fb($('#jnFb'),m?false:null,m),change:p=>{if(p.length>1)fb($('#jnFb'),null,`Path: <b>${gNames(g,p)}</b><br>Total bobot = <b>${gCost(g,p)} ${unit}</b>`+(p[p.length-1]==='r'?(gCost(g,p)===5?'<br>✅ Lewat Pasar lebih hemat (5) daripada jalan langsung (7)!':'<br>ℹ️ Coba path lain: Sekolah → Pasar → Rumah.'):''))}});
+  }
+  if(seen.size===3)award('jenis',8,'Tiga jenis Graph dipelajari');
+ };
+ $$('#jnTabs .tab').forEach((t,k)=>t.onclick=()=>load(k));load(0);
+}});
+
+/* ---------- 13. Tebak Jenis Graph ---------- */
+const mini=(nodes,edges,o)=>Gr(nodes,edges,Object.assign({W:340,H:130},o));
+const KLAS=[
+ ['🤝','Ani berteman dengan Budi.',false,false,mini([['a','Ani',80,65],['b','Budi',260,65]],[['a','b']])],
+ ['📱','Ani mengikuti akun Budi di media sosial.',true,false,mini([['a','Ani',80,65],['b','Budi',260,65]],[['a','b']],{dir:true})],
+ ['🗺️','Peta jalan: Sekolah dan Pasar dihubungkan jalan sejauh 3 km.',false,true,mini([['a','Sekolah',80,65],['b','Pasar',260,65]],[['a','b',3]],{unit:'km'})],
+ ['🖧','Kabel yang menghubungkan komputer-komputer di laboratorium.',false,false,mini([['a','PC 1',80,65],['b','PC 2',260,65]],[['a','b']])],
+ ['🛵','Jalan satu arah dari Terminal ke Pasar dengan waktu tempuh 10 menit.',true,true,mini([['a','Terminal',80,65],['b','Pasar',260,65]],[['a','b',10]],{dir:true,unit:'mnt'})],
+ ['💸','Ani mengirim uang Rp50.000 kepada Budi.',true,true,mini([['a','Ani',80,65],['b','Budi',260,65]],[['a','b',50]],{dir:true,unit:'rb'})]];
+slides.push({title:'Tebak Jenis Graph',short:'🎯 Tebak Jenis',key:'klas',
+render:()=>`
+<div class="eyebrow">13 · Tebak Jenis Graph</div>
+<h2>🎯 Tebak Jenis Graph</h2>
+<p class="lead2">Jenis Graph bisa <b>digabung</b>: sebuah graph bisa berarah dan/atau berbobot. Tentukan dua hal untuk tiap kasus.</p>
+<div class="deck"><div id="kBox"></div><div class="dots" id="kDots" style="justify-content:center"></div></div>`,
+init:()=>{
+ let i=0,score=0;const res=[];
+ const dots=()=>$('#kDots').innerHTML=KLAS.map((_,k)=>`<i class="${res[k]===true?'done':k===i?'on':''}" style="${res[k]===false?'background:#F472B6':''}"></i>`).join('');
+ const show=()=>{
+  dots();
+  if(i>=KLAS.length){
+   $('#kBox').innerHTML=`<div class="hunt-card"><div class="em">🎯</div><h3>Skor: ${score} / ${KLAS.length}</h3><p>${score>=5?'🏆 Kamu paham jenis-jenis Graph!':'🌱 Ulangi lagi supaya makin mantap.'}</p><div class="row" style="justify-content:center"><button class="btn primary" id="kAgain">↺ Main Lagi</button><button class="btn" id="kNext">Lanjut →</button></div></div>`;
+   $('#kAgain').onclick=()=>{i=0;score=0;res.length=0;show()};$('#kNext').onclick=()=>goTo(current+1);if(score>0)award('klas',score*2,'Tebak Jenis selesai');return}
+  const k=KLAS[i];let dir=null,wt=null,locked=false;
+  $('#kBox').innerHTML=`<div class="hunt-card"><div class="tiny">Kasus ${i+1} dari ${KLAS.length}</div><div class="em">${k[0]}</div><h3 style="font-size:19px">${k[1]}</h3>
+   <div class="tiny" style="margin-top:8px">Apakah hubungannya <b>berarah</b>?</div><div class="toggle2" id="kDir"><button data-v="0">Tidak berarah</button><button data-v="1">Berarah (panah)</button></div>
+   <div class="tiny" style="margin-top:8px">Apakah hubungannya <b>berbobot</b> (ada nilai)?</div><div class="toggle2" id="kWt"><button data-v="0">Tanpa bobot</button><button data-v="1">Berbobot</button></div>
+   <div class="row mt" style="justify-content:center"><button class="btn primary" id="kChk">✔ Periksa</button></div><div class="feedback" id="kFb"></div><div id="kPic"></div></div>`;
+  const tog=(id,set)=>$$('#'+id+' button').forEach(b=>b.onclick=()=>{if(locked)return;$$('#'+id+' button').forEach(x=>x.classList.toggle('on',x===b));set(+b.dataset.v)});
+  tog('kDir',x=>dir=x);tog('kWt',x=>wt=x);
+  $('#kChk').onclick=()=>{
+   if(locked)return;if(dir===null||wt===null){fb($('#kFb'),false,'Pilih dulu kedua jawaban.');return}
+   const ok=(dir===+k[2])&&(wt===+k[3]);locked=true;if(ok)score++;res[i]=ok;dots();
+   const name=(k[2]?'Directed':'Undirected')+(k[3]?' + Weighted':'');
+   fb($('#kFb'),ok,(ok?'✅ Benar! ':'❌ Kurang tepat. ')+`Jenisnya: <b>${name}</b>.`);
+   GraphView($('#kPic'),k[4],{noIntro:true,scale:1,minRatio:.6});
+   $('#kChk').outerHTML=`<button class="btn primary" id="kGo">${i<KLAS.length-1?'Kasus berikutnya →':'Lihat skor 🎯'}</button>`;$('#kGo').onclick=()=>{i++;show()};
+  };
+ };
+ show();
+}});
+
+/* ---------- 14. Graph dalam kehidupan sehari-hari ---------- */
+const REALG=[
+ {k:'Pertemanan',node:'Siswa',edge:'Pertemanan',g:themeGraph(['Ani','Budi','Citra','Deni','Eka'])},
+ {k:'Jaringan komputer',node:'Komputer',edge:'Kabel / koneksi',g:themeGraph(['PC 1','PC 2','Router','Server','Printer'])},
+ {k:'Peta',node:'Kota',edge:'Jalan',g:themeGraph(['Surabaya','Gresik','Sidoarjo','Lamongan','Mojokerto'],{w:[20,25,18,30,45,35],unit:'km'})},
+ {k:'Media sosial',node:'Akun',edge:'Follow',g:themeGraph(['@ani','@budi','@citra','@deni','@eka'],{dir:true})},
+ {k:'Transportasi',node:'Stasiun',edge:'Jalur',g:themeGraph(['Bogor','Depok','Manggarai','Gambir','Kota'])}];
+slides.push({title:'Graph dalam Kehidupan Sehari-hari',short:'🌍 Graph Nyata',key:'real',
+render:()=>`
+<div class="eyebrow">14 · Graph dalam Kehidupan Sehari-hari</div>
+<h2>🌍 Graph di Sekitar Kita</h2>
+<p class="lead2">Graph bukan sekadar gambar titik dan garis! Ketuk sebuah <b>kasus</b> untuk melihat gambarnya, dan ketuk sel <b>Node / Edge</b> yang buram untuk membukanya.</p>
+<div class="tabs" id="rgTabs"><button class="tab on" data-m="a">📋 Tabel</button><button class="tab" data-m="b">🎯 Tebak Kasus</button></div>
+<div id="rgA">${SPLIT}<div>
+ <table class="tbl" id="rgTbl" style="order:2"><tr><th>Kasus</th><th>Node</th><th>Edge</th></tr>${REALG.map((r,i)=>`<tr data-i="${i}"><td>${r.k}</td><td><span class="hid" data-c="n">${r.node}</span></td><td><span class="hid" data-c="e">${r.edge}</span></td></tr>`).join('')}</table>
+ <div class="feedback" id="rgFb" style="order:3"></div>
+</div>${panelH('rgView')}</div></div>
+<div id="rgB" style="display:none"><div id="rgQ"></div></div>`,
+init:()=>{
+ let v=null;const shown=new Set();
+ const pick=i=>{
+  $$('#rgTbl tr[data-i]').forEach(r=>r.classList.toggle('sel',+r.dataset.i===i));const r=REALG[i];
+  $('#rgView').innerHTML='';v=GraphView($('#rgView'),r.g,{scale:1.1,minRatio:.6});
+  r.g.nodes.forEach(n=>{v.mark(n.id,'hl');v.badge(n.id,r.node.toLowerCase(),'blue')});v.edgesOnly('hl',r.g.edges.map(e=>[e.a,e.b]));
+  fb($('#rgFb'),null,`<b>${r.k}</b>: node = <b>${r.node}</b>, edge = <b>${r.edge}</b>.`+(r.g.dir?' Hubungannya <b>berarah</b> (panah).':'')+(r.g.edges[0].w?' Hubungannya <b>berbobot</b> (jarak).':''));
+ };
+ $$('#rgTbl tr[data-i]').forEach(tr=>tr.onclick=e=>{pick(+tr.dataset.i);const h=e.target.closest('.hid');if(h){h.classList.add('show')}
+  $$('.hid',tr).forEach(x=>{});});
+ $$('#rgTbl .hid').forEach(h=>h.addEventListener('click',()=>{h.classList.add('show');shown.add(h.parentNode.parentNode.dataset.i+h.dataset.c);if(shown.size===10)award('real',8,'Semua contoh Graph nyata dibuka')}));
+ pick(0);
+ const Q=[['Node = <b>Siswa</b>, Edge = <b>Pertemanan</b>. Ini contoh…','Pertemanan',['Peta jalan','Transportasi']],
+  ['Node = <b>Kota</b>, Edge = <b>Jalan</b>. Ini contoh…','Peta',['Media sosial','Jaringan komputer']],
+  ['Node = <b>Akun</b>, Edge = <b>Follow</b>. Ini contoh…','Media sosial',['Pertemanan','Peta']],
+  ['Node = <b>Stasiun</b>, Edge = <b>Jalur</b>. Ini contoh…','Transportasi',['Jaringan komputer','Media sosial']],
+  ['Node = <b>Komputer</b>, Edge = <b>Kabel / koneksi</b>. Ini contoh…','Jaringan komputer',['Pertemanan','Transportasi']]]
+  .map(q=>({k:'mcq',topic:'Kasus Graph',q:q[0],opts:[q[1],...q[2]],a:0,ex:`Benar: <b>${q[1]}</b>.`,hint:'Perhatikan apa yang menjadi node dan apa yang menjadi edge.'}));
+ let started=false;
+ $$('#rgTabs .tab').forEach(t=>t.onclick=()=>{$$('#rgTabs .tab').forEach(x=>x.classList.toggle('on',x===t));$('#rgA').style.display=t.dataset.m==='a'?'':'none';$('#rgB').style.display=t.dataset.m==='b'?'':'none';
+  if(t.dataset.m==='b'&&!started){started=true;runQuiz($('#rgQ'),Q,{tries:2,done:r=>award('realQ',Math.max(1,r.sum),'Tebak Kasus selesai')})}});
+}});
+
+/* ---------- 15. Membaca sebuah Graph ---------- */
+const G_DM=Gr([['B','B',220,50],['A','A',100,150],['C','C',340,150],['D','D',220,250]],[['A','B'],['B','C'],['A','D'],['D','C']],{W:440,H:300});
+slides.push({title:'Membaca Sebuah Graph',short:'👓 Membaca Graph',
+render:()=>`
+<div class="eyebrow">15 · Membaca Sebuah Graph</div>
+<h2>👓 Membaca Graph, Langkah demi Langkah</h2>
+${SPLIT}<div>
+ <div class="dots" id="rgDots"></div>
+ <div class="infobox" id="rdInfo" style="min-height:170px"></div>
+ <div class="row mt" style="order:2"><button class="btn" id="rdReveal">👀 Tampilkan jawaban</button><button class="btn" id="rdPrev">← Sebelumnya</button><button class="btn primary" id="rdNext">Berikutnya →</button></div>
+ <div class="feedback" id="rdAns" style="order:3"></div>
+</div>${panelH('rdView')}</div>`,
+init:()=>{
+ const g=G_DM;const v=GraphView($('#rdView'),g,{scale:1.1,minRatio:.6});
+ const reset=()=>{v.clearCls('sel','hl','c0','child');v.clearEdges('hl','path');v.clearNums();v.clearBadges()};
+ const S=[
+  ['1️⃣ Berapa jumlah <b>node</b>?','Hitung semua titik pada gambar.','Ada <b>4 node</b>: A, B, C, D.',()=>g.nodes.forEach((n,i)=>{v.mark(n.id,'hl');v.num(n.id,String(i+1))})],
+  ['2️⃣ Berapa jumlah <b>edge</b>?','Hitung semua garis pada gambar.','Ada <b>4 edge</b>: A–B, B–C, A–D, dan D–C.',()=>g.edges.forEach((e,i)=>{v.edgeMark(e.a,e.b,'hl');v.edgeNum(e.a,e.b,String(i+1))})],
+  ['3️⃣ Berapa <b>degree</b> node B?','Hitung garis yang menempel pada B.','Degree B = <b>2</b> (garis ke A dan ke C).',()=>{v.mark('B','sel');gInc(g,'B').forEach((e,i)=>{v.edgeMark(e.a,e.b,'hl');v.edgeNum(e.a,e.b,String(i+1))});v.badge('B','Degree = 2','gold')}],
+  ['4️⃣ Apakah Graph ini <b>connected</b>?','Adakah node yang terpisah sendirian?','<b>Ya, connected.</b> Dari node mana pun kita bisa menuju node lain.',()=>g.nodes.forEach(n=>v.mark(n.id,'c0'))],
+  ['5️⃣ Sebutkan salah satu <b>path</b> dari A ke C.','Telusuri garis dari A sampai C.','Contoh: <b>A → B → C</b>. Path lain juga benar: A → D → C.',()=>{['A','B','C'].forEach((n,i)=>{v.mark(n,'sel');v.num(n,String(i+1))});v.edgeMark('A','B','path');v.edgeMark('B','C','path')}],
+  ['6️⃣ <b>Directed</b> atau <b>undirected</b>?','Adakah panah pada garis?','<b>Undirected</b> — tidak ada panah, hubungan dua arah.',()=>{v.edgesOnly('hl',g.edges.map(e=>[e.a,e.b]))}],
+  ['7️⃣ Apakah Graph ini <b>weighted</b>?','Adakah angka (bobot) pada garis?','<b>Tidak berbobot</b> — tidak ada angka pada garis.',()=>{v.edgesOnly('hl',g.edges.map(e=>[e.a,e.b]))}]];
+ let st=0;
+ const paint=(rev)=>{reset();$('#rdInfo').innerHTML=`<h3>${S[st][0]}</h3><p>${S[st][1]}</p>`;
+  if(rev){S[st][3]();fb($('#rdAns'),true,'✅ '+S[st][2])}else fb($('#rdAns'),null,'Coba jawab dulu di kepalamu, lalu tekan <b>Tampilkan jawaban</b>.');
+  $('#rgDots').innerHTML=S.map((_,i)=>`<i class="${i<st?'done':i===st?'on':''}"></i>`).join('');
+  $('#rdPrev').disabled=st===0;$('#rdNext').textContent=st===S.length-1?'✅ Lanjut ke latihan':'Berikutnya →'};
+ $('#rdReveal').onclick=()=>paint(true);
+ $('#rdPrev').onclick=()=>{if(st>0){st--;paint(false)}};
+ $('#rdNext').onclick=()=>{if(st<S.length-1){st++;paint(false)}else goTo(current+1)};
+ paint(false);
+}});
+
+/* ---------- 16. Latihan: Detektif Graph ---------- */
+const G_DET=Gr([['A','A',70,80],['B','B',190,40],['C','C',190,150],['D','D',330,150],['E','E',330,255],['F','F',80,240]],[['A','B'],['A','C'],['B','C'],['C','D'],['D','E']],{W:420,H:300});
+slides.push({title:'Latihan: Detektif Graph',short:'🔍 Detektif Graph',key:'det',
+render:()=>`
+<div class="eyebrow">16 · Latihan sebelum Misi</div>
+<h2>🔍 Detektif Graph</h2>
+<p class="lead2">Baca gambar Graph, lalu jawab. Kamu boleh mencoba <b>2 kali</b> pada tiap soal (benar di percobaan pertama = 2 poin).</p>
+<div id="dtBox"></div>`,
+init:()=>{
+ const g=G_DET;
+ const Q=[
+  {k:'mcq',topic:'Node & Edge',g,q:'Berapa jumlah <b>node</b> pada Graph ini?',opts:['5','6','7'],a:1,ex:'Node: A, B, C, D, E, dan F → <b>6</b>.',hint:'Hitung semua bulatan, termasuk yang sendirian.'},
+  {k:'mcq',topic:'Node & Edge',g,q:'Berapa jumlah <b>edge</b>?',opts:['4','5','6'],a:1,ex:'Edge: A–B, A–C, B–C, C–D, D–E → <b>5</b>.',hint:'Hitung semua garis.'},
+  {k:'click',topic:'Degree',g,q:'Klik node yang punya <b>degree terbesar</b>.',ans:['C'],ex:'C punya 3 garis (ke A, B, D) — paling banyak.',hint:'Bandingkan jumlah garis tiap node.'},
+  {k:'mcq',topic:'Degree',g,q:'Berapa <b>degree</b> node <b>D</b>?',opts:['1','2','3'],a:1,ex:'D terhubung ke C dan E → degree <b>2</b>.',hint:'Hitung garis yang menempel pada D.'},
+  {k:'click',topic:'Degree',g,q:'Klik node yang <b>tidak punya hubungan</b> sama sekali (degree 0).',ans:['F'],ex:'F tidak punya garis satu pun, jadi degree F = 0.',hint:'Cari node yang menyendiri.'},
+  {k:'mcq',topic:'Connected',g,q:'Apakah Graph ini <b>connected</b>?',opts:['Ya, connected','Tidak, belum connected'],a:1,ex:'Node F terpisah dari yang lain, sehingga Graph belum connected.',hint:'Adakah node yang tidak bisa dicapai dari node lain?'},
+  {k:'mcq',topic:'Connected',g,q:'Ada berapa <b>kelompok</b> node yang saling terhubung (komponen)?',opts:['1','2','3'],a:1,ex:'Kelompok pertama: A, B, C, D, E. Kelompok kedua: F sendirian → <b>2</b> kelompok.',hint:'F terpisah dari kelompok lainnya.'},
+  {k:'path',topic:'Path',g,q:'Buat sebuah <b>path</b> dari <b>A</b> ke <b>E</b>.',from:'A',to:'E',ex:'Path yang valid melewati edge yang ada, misalnya A → C → D → E.',hint:'Mulai dari A, ikuti garis satu per satu sampai E.'}];
+ runQuiz($('#dtBox'),Q,{tries:2,done:r=>{if(r.full)award('det',Math.max(1,r.sum),'Detektif Graph selesai')},next:()=>goTo(current+1),nextLabel:'Mulai Misi Graph →'});
+}});
+
+/* ---------- 17. Misi 1: Jaringan Pertemanan ---------- */
+const M1=Gr([['a','Ani',90,60],['b','Budi',330,60],['c','Citra',90,175],['d','Deni',330,175],['e','Eka',90,290]],[],{W:420,H:340});
+const M1_E=[['a','b'],['a','c'],['b','d'],['c','e']];
+slides.push({title:'Misi 1: Jaringan Pertemanan',short:'🎮 Misi 1',key:'m1',
+render:()=>`
+<div class="eyebrow">17 · Misi Graph 1</div>
+<h2>🎮 Misi 1 — Jaringan Pertemanan</h2>
+${SPLIT}<div>
+ <div class="story">📖 Node sudah tersedia — kamu <b>tidak membuat node baru</b>, tetapi <b>menghubungkan</b> node sesuai instruksi. Ketuk dua node untuk membuat edge.</div>
+ <ul class="cklist" id="m1List" style="order:1"></ul>
+ <div class="hud" style="order:2"><span class="pillx" id="m1Conn">Terhubung 0/4</span><span class="pillx" id="m1Mis">Salah: 0</span><span class="pillx" id="m1Stars">☆☆☆</span></div>
+ <div class="row" style="order:2"><button class="btn" id="m1Hint">💡 Petunjuk</button><button class="btn" id="m1Reset">↺ Ulangi</button></div>
+ <div class="feedback" id="m1Fb" style="order:3"></div>
+</div>${panelH('m1View')}</div>
+<div id="m1Q" style="margin-top:14px"></div>`,
+init:()=>{
+ let g,v,done=[],mis=0,fin=false;
+ const key=(a,b)=>[a,b].sort().join('-');
+ const items=['Hubungkan <b>Ani</b> dengan <b>Budi</b>.','Hubungkan <b>Ani</b> dengan <b>Citra</b>.','Hubungkan <b>Budi</b> dengan <b>Deni</b>.','Hubungkan <b>Citra</b> dengan <b>Eka</b>.'];
+ const hud=()=>{$('#m1Conn').textContent='Terhubung '+done.filter(Boolean).length+'/4';$('#m1Mis').textContent='Salah: '+mis;const s=fin?starsOf(mis):0;$('#m1Stars').textContent='★'.repeat(s)+'☆'.repeat(3-s);
+  $('#m1List').innerHTML=items.map((t,i)=>`<li class="${done[i]?'done':''}"><i>${done[i]?'✓':''}</i><span>${t}</span></li>`).join('')};
+ const load=()=>{
+  g=cloneG(M1);done=[];mis=0;fin=false;$('#m1View').innerHTML='';$('#m1Q').innerHTML='';v=GraphView($('#m1View'),g,{scale:1.1,minRatio:.6});v.clickable(true);fb($('#m1Fb'),null,'');hud();
+  pairTap(v,{pair:(a,b)=>{
+   if(fin)return;const k=key(a,b),idx=M1_E.findIndex(e=>key(e[0],e[1])===k);
+   if(idx<0){mis++;v.shake(a);v.shake(b);fb($('#m1Fb'),false,`❌ <b>${gLab(g,a)}</b> dan <b>${gLab(g,b)}</b> tidak perlu dihubungkan menurut misi. Baca instruksinya lagi.`);hud();return}
+   if(done[idx]){fb($('#m1Fb'),null,'Kedua node itu sudah terhubung.');return}
+   done[idx]=true;g.edges.push({a,b});v.g=g;v.refresh(false);v.edgeMark(a,b,'ok');v.mark(a,'ok');v.mark(b,'ok');later(()=>{v.mark(a,'ok',false);v.mark(b,'ok',false)},600);
+   fb($('#m1Fb'),true,`✅ <b>${gLab(g,a)}</b> ─ <b>${gLab(g,b)}</b> terhubung!`);hud();
+   if(done.filter(Boolean).length===4)finish()}});
+ };
+ const finish=()=>{
+  fin=true;hud();bestXP('m1',starsOf(mis)*5,'Misi 1 selesai');burst();
+  fb($('#m1Fb'),true,'🎉 <b>Misi selesai!</b> Sekarang jawab pertanyaan tentang Graph-mu.');
+  const gd=cloneG(g);
+  const Q=[{k:'mcq',topic:'Degree',g:gd,q:'Berapa <b>degree</b> Budi?',opts:['1','2','3'],a:1,ex:'Budi terhubung ke Ani dan Deni → degree <b>2</b>.',hint:'Hitung garis yang menempel pada Budi.'},
+   {k:'click',topic:'Degree',g:gd,q:'Klik semua node yang <b>degree-nya 1</b>.',ans:['d','e'],ex:'Deni dan Eka masing-masing hanya punya satu garis.',hint:'Cari node di ujung jaringan.'},
+   {k:'path',topic:'Path',g:gd,q:'Buat <b>path</b> dari <b>Eka</b> ke <b>Deni</b>.',from:'e',to:'d',ex:'Satu-satunya path: Eka → Citra → Ani → Budi → Deni.',hint:'Ikuti garis dari Eka satu per satu.'}];
+  later(()=>{runQuiz($('#m1Q'),Q,{tries:2,done:r=>{if(r.full)award('m1q',Math.max(1,r.sum),'Pertanyaan Misi 1 selesai')},next:()=>goTo(current+1),nextLabel:'Ke Misi 2 →'});$('#m1Q').scrollIntoView({behavior:'smooth',block:'nearest'})},900);
+ };
+ $('#m1Hint').onclick=()=>{if(fin)return;const i=done.findIndex((d,k)=>!done[k]&&k<4);const idx=[0,1,2,3].find(k=>!done[k]);if(idx===undefined)return;mis++;hud();
+  M1_E[idx].forEach(id=>{v.mark(id,'pulse');later(()=>v.mark(id,'pulse',false),1800)});fb($('#m1Fb'),null,'💡 Petunjuk: '+items[idx]+' <span class="tiny">(dihitung 1 kesalahan)</span>')};
+ $('#m1Reset').onclick=load;load();
+}});
+
+/* ---------- 18. Misi 2: Jaringan Komputer ---------- */
+const M2=Gr([['p1','PC 1',90,50],['p2','PC 2',330,50],['p3','PC 3',90,175],['sv','Server',330,175],['p4','PC 4',90,295]],[],{W:420,H:345});
+slides.push({title:'Misi 2: Jaringan Komputer',short:'🎮 Misi 2',key:'m2',
+render:()=>`
+<div class="eyebrow">18 · Misi Graph 2</div>
+<h2>🎮 Misi 2 — Jaringan Komputer</h2>
+${SPLIT}<div>
+ <div class="story">📖 Sekolah ingin membuat jaringan lab. <b>Misi:</b> buat jaringan sehingga <b>seluruh komputer dapat terhubung dengan Server</b>. Ketuk dua perangkat untuk memasang kabel (ketuk lagi pasangan yang sama, atau ketuk kabelnya, untuk melepas). Kabel mahal — <b>makin hemat, makin banyak bintang!</b></div>
+ <div class="hud" style="order:2"><span class="pillx" id="m2Cab">Kabel: 0</span><span class="pillx" id="m2Con">PC terhubung: 0/4</span><span class="pillx" id="m2Stars">☆☆☆</span></div>
+ <div class="row" style="order:2"><button class="btn" id="m2Reset">↺ Cabut semua kabel</button></div>
+ <div class="feedback" id="m2Fb" style="order:3"></div>
+</div>${panelH('m2View')}</div>
+<div id="m2Q" style="margin-top:14px"></div>`,
+init:()=>{
+ const g=cloneG(M2);const v=GraphView($('#m2View'),g,{scale:1.1,minRatio:.6});v.clickable(true);v.edgeClickable(true);
+ let quizOn=false;
+ const reach=()=>{const seen=new Set(['sv']),q=['sv'];while(q.length){const x=q.pop();gNb(g,x).forEach(y=>{if(!seen.has(y)){seen.add(y);q.push(y)}})}return seen};
+ const update=msg=>{
+  v.refresh(false);const r=reach();const pcs=g.nodes.filter(n=>n.id!=='sv');
+  pcs.forEach(n=>v.mark(n.id,'ok',r.has(n.id)));v.mark('sv','root');
+  const c=pcs.filter(n=>r.has(n.id)).length,n=g.edges.length,ok=c===4,s=ok?(n===4?3:n<=6?2:1):0;
+  $('#m2Cab').textContent='Kabel: '+n;$('#m2Con').textContent='PC terhubung: '+c+'/4';$('#m2Stars').textContent='★'.repeat(s)+'☆'.repeat(3-s);
+  if(ok){
+   fb($('#m2Fb'),true,(n===4?'🏆 <b>Sempurna!</b> Hanya <b>4 kabel</b> untuk 5 perangkat — jumlah kabel minimum (node − 1). Jaringan hemat seperti ini berbentuk seperti <b>Tree</b>!':n<=6?`👍 Semua PC terhubung dengan <b>${n} kabel</b>. Masih ada kabel berlebih — bisakah cukup dengan 4?`:`✅ Semua PC terhubung, tetapi memakai <b>${n} kabel</b> (banyak yang berlebih). Coba lebih hemat!`)+' <span class="tiny">Kabel tambahan membuat <b>putaran</b> — tidak lagi seperti Tree.</span>');
+   if(bestXP('m2',s*5,'Misi 2 selesai')&&s===3)burst();
+   if(!quizOn){quizOn=true;const gd=cloneG(g);const dsv=gDeg(gd,'sv');
+    const Q=[{k:'mcq',topic:'Degree',g:gd,q:'Berapa <b>degree</b> Server pada jaringan yang kamu buat?',opts:['1','2','3','4','5'],a:dsv-1,ex:`Server terhubung dengan ${dsv} kabel → degree <b>${dsv}</b>.`,hint:'Hitung kabel yang menempel pada Server.'},
+     {k:'mcq',topic:'Konsep',q:'Berapa kabel <b>minimum</b> untuk menghubungkan <b>5 perangkat</b> agar semuanya connected?',opts:['3','4','5','10'],a:1,ex:'Minimum = jumlah node − 1 = <b>4</b> kabel (bentuknya seperti Tree).',hint:'Ingat pada Tree: jumlah edge = jumlah node − 1.'}];
+    later(()=>{runQuiz($('#m2Q'),Q,{tries:2,done:r=>{if(r.full)award('m2q',Math.max(1,r.sum),'Pertanyaan Misi 2 selesai')},next:()=>goTo(current+1),nextLabel:'Ke Misi 3 →'});$('#m2Q').scrollIntoView({behavior:'smooth',block:'nearest'})},1200)}
+  }else fb($('#m2Fb'),null,msg||`Masih ada <b>${4-c}</b> PC yang belum terhubung ke Server (node hijau = sudah terhubung).`);
+ };
+ pairTap(v,{pair:(a,b)=>{const ex=gEdgeOf(g,a,b);if(ex){g.edges=g.edges.filter(e=>e!==ex);update('Kabel '+gLab(g,a)+' – '+gLab(g,b)+' dilepas.')}else{g.edges.push({a,b});update()}}});
+ v.onEdge=(a,b)=>{const ex=gEdgeOf(g,a,b);g.edges=g.edges.filter(e=>e!==ex);update('Kabel dilepas.')};
+ $('#m2Reset').onclick=()=>{g.edges=[];update('Semua kabel dicabut. Mulai lagi!')};
+ update('Ketuk dua perangkat untuk memasang kabel.');
+}});
+
+/* ---------- 19. Misi 3: Jaringan Jalan ---------- */
+const M3=Gr([['s','Sekolah',70,170],['p','Pasar',215,55],['m','Masjid',195,275],['t','Terminal',355,265],['r','Rumah',385,115]],[['s','p',3],['s','m',2],['p','r',4],['m','r',6],['m','t',3],['t','r',1]],{W:440,H:330,unit:'km'});
+slides.push({title:'Misi 3: Jaringan Jalan',short:'🎮 Misi 3',key:'m3',
+render:()=>`
+<div class="eyebrow">19 · Misi Graph 3</div>
+<h2>🎮 Misi 3 — Jaringan Jalan</h2>
+${SPLIT}<div>
+ <div class="story" id="m3Story"></div>
+ <ul class="cklist" id="m3List" style="order:1"></ul>
+ <div class="hud" style="order:2"><span class="pillx" id="m3Conn">Jalan terhubung 0/6</span><span class="pillx" id="m3Mis">Salah: 0</span><span class="pillx" id="m3Stars">☆☆☆</span></div>
+ <div class="row" style="order:2"><button class="btn" id="m3Undo" style="display:none">↩ Batalkan</button><button class="btn" id="m3Rst" style="display:none">↺ Path baru</button><button class="btn" id="m3Reset">↺ Ulangi misi</button></div>
+ <div class="feedback" id="m3Fb" style="order:3"></div>
+ <div class="infobox" id="m3Found" style="order:3;min-height:0;margin-top:8px;display:none"></div>
+</div>${panelH('m3View')}</div>
+<div id="m3Q" style="margin-top:14px"></div>`,
+init:()=>{
+ const roads=M3.edges,key=(a,b)=>[a,b].sort().join('-');
+ let g,v,done,mis,phase,tried,tr,fin;
+ const L=id=>gLab(M3,id);
+ const items=roads.map(r=>`<b>${L(r.a)}</b> – <b>${L(r.b)}</b>: ${r.w} km`);
+ const hud=()=>{const n=done.filter(Boolean).length;$('#m3Conn').textContent='Jalan terhubung '+n+'/6';$('#m3Mis').textContent='Salah: '+mis;const s=fin?starsOf(mis+Math.max(0,tried.length-2)):0;$('#m3Stars').textContent='★'.repeat(s)+'☆'.repeat(3-s);
+  if(phase===1)$('#m3List').innerHTML=items.map((t,i)=>`<li class="${done[i]?'done':''}"><i>${done[i]?'✓':''}</i><span>${t}</span></li>`).join('')};
+ const load=()=>{
+  g=cloneG(M3);g.edges=[];done=[];mis=0;phase=1;tried=[];fin=false;
+  $('#m3Story').innerHTML='📖 <b>Tahap 1 — Bangun peta.</b> Node sudah tersedia. Hubungkan node sesuai daftar jalan di bawah (ketuk dua node). Setiap jalan punya <b>jarak</b>.';
+  $('#m3Found').style.display='none';$('#m3Q').innerHTML='';$('#m3Undo').style.display=$('#m3Rst').style.display='none';
+  $('#m3View').innerHTML='';v=GraphView($('#m3View'),g,{scale:1.1,minRatio:.6});v.clickable(true);fb($('#m3Fb'),null,'');hud();
+  pairTap(v,{pair:(a,b)=>{
+   const idx=roads.findIndex(r=>key(r.a,r.b)===key(a,b));
+   if(idx<0){mis++;v.shake(a);v.shake(b);fb($('#m3Fb'),false,`❌ Tidak ada jalan langsung <b>${L(a)}</b> – <b>${L(b)}</b> dalam daftar.`);hud();return}
+   if(done[idx]){fb($('#m3Fb'),null,'Jalan itu sudah dibuat.');return}
+   done[idx]=true;g.edges.push({a:roads[idx].a,b:roads[idx].b,w:roads[idx].w});v.g=g;v.refresh(false);v.edgeMark(a,b,'ok');later(()=>v.edgeMark(a,b,'ok',false),700);
+   fb($('#m3Fb'),true,`✅ Jalan <b>${L(a)}</b> – <b>${L(b)}</b> (${roads[idx].w} km) terbentuk!`);hud();
+   if(done.filter(Boolean).length===6)phase2()}});
+ };
+ const phase2=()=>{
+  phase=2;const best=gDijk(g,'s','r');
+  $('#m3Story').innerHTML='📖 <b>Tahap 2 — Cari path.</b> Peta selesai! Cari <b>path dari Sekolah ke Rumah</b> dengan <b>total jarak terpendek</b>. Ketuk <b>Sekolah</b>, lalu node berikutnya sampai <b>Rumah</b>. Boleh mencoba beberapa path!';
+  $('#m3List').innerHTML='';$('#m3Undo').style.display=$('#m3Rst').style.display='';fb($('#m3Fb'),true,'🗺️ Peta selesai! Sekarang cari jalur terbaik.');
+  tr=Tracer(v,g,{start:'s',say:m=>{if(m)fb($('#m3Fb'),false,m)},change:p=>{
+   if(fin)return;
+   if(p.length&&p[p.length-1]==='r'){const s=gNames(g,p),c=gCost(g,p);
+    if(!tried.includes(s)){tried.push(s);$('#m3Found').style.display='';$('#m3Found').innerHTML='<b>Path yang sudah dicoba:</b><ul style="margin:4px 0">'+tried.map(t=>`<li>${t} = <b>${gCost(g,t.split(' → ').map(x=>M3.nodes.find(n=>n.label===x).id))} km</b></li>`).join('')+'</ul>'}
+    if(c===best.cost){fin=true;hud();burst();bestXP('m3',starsOf(mis+Math.max(0,tried.length-2))*5,'Misi 3 selesai');
+     fb($('#m3Fb'),true,`🏆 <b>Path terpendek ditemukan!</b> ${s} = <b>${c} km</b>. Perhatikan: jalur dengan persinggahan lebih banyak justru lebih dekat!`);
+     const gd=cloneG(g);const Q=[{k:'mcq',topic:'Degree',g:gd,q:'Berapa <b>degree</b> node <b>Masjid</b>?',opts:['2','3','4'],a:1,ex:'Masjid terhubung ke Sekolah, Rumah, dan Terminal → degree <b>3</b>.',hint:'Hitung jalan yang menempel pada Masjid.'},
+      {k:'mcq',topic:'Path',g:gd,q:'Berapa total jarak path <b>Sekolah → Pasar → Rumah</b>?',opts:['5 km','7 km','8 km'],a:1,ex:'3 km + 4 km = <b>7 km</b> (lebih jauh daripada 6 km).',hint:'Jumlahkan bobot tiap jalan yang dilalui.'},
+      {k:'mcq',topic:'Path',g:gd,q:'Berapa jumlah <b>edge</b> pada path terpendek Sekolah → Rumah?',opts:['2','3','4'],a:1,ex:'Path: Sekolah → Masjid → Terminal → Rumah = <b>3</b> edge.',hint:'Path terpendek: Sekolah → Masjid → Terminal → Rumah.'}];
+     later(()=>{runQuiz($('#m3Q'),Q,{tries:2,done:r=>{if(r.full)award('m3q',Math.max(1,r.sum),'Pertanyaan Misi 3 selesai')},next:()=>goTo(current+1),nextLabel:'Ke Evaluasi →'});$('#m3Q').scrollIntoView({behavior:'smooth',block:'nearest'})},1300)}
+    else{fb($('#m3Fb'),null,`Path <b>${s}</b> = <b>${c} km</b>. Adakah path yang <b>lebih pendek</b>?`+(tried.length>=3?' 💡 Kadang jalur dengan <b>lebih banyak persinggahan</b> justru lebih dekat.':''))}
+   }else if(p.length>0&&p.length<2){}}});
+ };
+ $('#m3Undo').onclick=()=>tr&&tr.undo();$('#m3Rst').onclick=()=>tr&&tr.reset();$('#m3Reset').onclick=load;load();
+}});
+
+/* ---------- 20. Evaluasi ---------- */
+const sm=(nodes,edges,o)=>Gr(nodes,edges,Object.assign({W:220,H:150},o));
+const E1=Gr([['A','A',70,60],['B','B',190,60],['C','C',310,60],['D','D',70,180]],[['A','B'],['B','C'],['A','D']],{W:380,H:240});
+const E6=Gr([['a','Ani',110,80],['b','Budi',330,80],['c','Citra',330,220],['d','Deni',110,220]],[['a','b'],['a','c'],['d','a']],{W:440,H:300,dir:true});
+const E7=Gr([['r','Rumah',60,150],['t','Toko',200,55],['m','Taman',200,250],['k','Kantor',380,150]],[['r','t',2],['t','k',5],['r','m',3],['m','k',3],['t','m',4]],{W:440,H:300,unit:'km'});
+const EV=[
+ {k:'mcq',topic:'Membaca Graph',g:E1,q:'<b>Kasus:</b> perhatikan Graph berikut. Berapa jumlah <b>node</b>?',opts:['3','4','5'],a:1,ex:'Node: A, B, C, dan D → <b>4</b>.'},
+ {k:'mcq',topic:'Membaca Graph',g:E1,q:'Berapa <b>degree</b> node <b>A</b>?',opts:['1','2','3'],a:1,ex:'A terhubung ke B dan D → degree <b>2</b>.'},
+ {k:'mcq',topic:'Membaca Graph',g:E1,q:'Apakah Graph tersebut <b>connected</b>?',opts:['Ya, connected','Tidak, belum connected'],a:0,ex:'Setiap node bisa dijangkau dari node lain, sehingga Graph <b>connected</b>.'},
+ {k:'path',topic:'Membaca Graph',g:E1,q:'Buat <b>path</b> dari <b>D</b> ke <b>C</b>.',from:'D',to:'C',ex:'Satu-satunya path: D → A → B → C.'},
+ {k:'mcq',topic:'Membaca Graph',g:E1,q:'Graph tersebut termasuk <b>directed</b> atau <b>undirected</b>?',opts:['Directed','Undirected','Weighted saja'],a:1,ex:'Tidak ada panah pada garis, sehingga <b>undirected</b>.'},
+ {k:'click',topic:'Jenis & Bobot',g:E6,q:'Perhatikan panah. Klik <b>semua akun yang diikuti oleh Ani</b>.',ans:['b','c'],ex:'Panah keluar dari Ani menuju Budi dan Citra. (Deni mengikuti Ani, bukan sebaliknya.)'},
+ {k:'mcq',topic:'Jenis & Bobot',g:E7,q:'Manakah path <b>terpendek</b> dari Rumah ke Kantor?',opts:['Rumah → Toko → Kantor (7 km)','Rumah → Taman → Kantor (6 km)','Rumah → Toko → Taman → Kantor (9 km)'],a:1,ex:'Rumah → Taman → Kantor = 3 + 3 = <b>6 km</b>, yang paling pendek.'},
+ {k:'mcq',topic:'Membaca Graph',g:G_C1,q:'Apakah ada <b>path</b> dari node <b>A</b> ke node <b>E</b>?',opts:['Ya, ada','Tidak ada'],a:1,ex:'A dan E berada di dua kelompok yang terpisah, jadi tidak ada path.'},
+ {k:'mcq',topic:'Jenis & Bobot',q:'<b>Kasus:</b> di media sosial, Ani mengikuti Budi, tetapi Budi belum mengikuti Ani. Jenis Graph yang cocok?',opts:['Undirected Graph','Directed Graph','Hanya Weighted Graph'],a:1,ex:'Hubungannya <b>punya arah</b> (Ani → Budi), maka cocok Directed Graph.'},
+ {k:'img',topic:'Konsep & Kasus',q:'Manakah Graph yang <b>BUKAN connected</b>?',opts:[sm([['A','A',30,75],['B','B',110,75],['C','C',190,75]],[['A','B'],['B','C']]),sm([['A','A',30,40],['B','B',110,40],['C','C',60,115],['D','D',160,115]],[['A','B'],['C','D']]),sm([['A','A',110,30],['B','B',50,115],['C','C',170,115]],[['A','B'],['B','C'],['C','A']])],a:1,ex:'Pada gambar terpecah, {A, B} tidak terhubung dengan {C, D}, sehingga graph-nya belum connected.'},
+ {k:'img',topic:'Konsep & Kasus',q:'Manakah Graph yang <b>juga merupakan Tree</b>? (Ingat Pertemuan 2)',opts:[sm([['A','A',110,30],['B','B',50,115],['C','C',170,115]],[['A','B'],['B','C'],['C','A']]),sm([['A','A',110,30],['B','B',40,115],['C','C',110,115],['D','D',180,115]],[['A','B'],['A','C'],['A','D']]),sm([['A','A',30,40],['B','B',110,40],['C','C',60,115],['D','D',160,115]],[['A','B'],['C','D']])],a:1,ex:'Tree = Graph yang <b>terhubung</b> dan <b>tanpa putaran</b>. Gambar bintang memenuhi keduanya.'},
+ {k:'mcq',topic:'Konsep & Kasus',q:'Sebuah Graph memiliki <b>6 edge</b>. Berapa <b>jumlah semua degree</b> node-nodenya?',opts:['6','12','18'],a:1,ex:'Setiap edge menambah degree di kedua ujungnya, jadi jumlah degree = 2 × 6 = <b>12</b>.'}];
+slides.push({title:'Evaluasi: Kuis Graph',short:'🎓 Kuis Graph',key:'quiz',
+render:()=>`<div class="eyebrow">20 · Evaluasi</div><h2>🎓 Kuis Graph</h2><p class="lead2">Soal berbasis <b>gambar Graph</b> dan <b>kasus</b> — bukan sekadar hafalan definisi. Ada ${EV.length} soal, satu kali percobaan per soal.</p><div id="evBox"></div>`,
+init:()=>{
+ runQuiz($('#evBox'),EV,{tries:1,done:r=>{if(r.full){award('quiz',r.sum*3,'Kuis selesai ('+r.sum+'/'+r.tot+')');if(r.sum>=9){S.done.quizStar=true;renderNav();burst()}}},next:()=>goTo(current+1),nextLabel:'Lihat rangkuman →'});
+}});
+
+/* ---------- 21. Rangkuman ---------- */
+const CM=[
+ ['blue','🧱 Komponen',[['Node (Vertex)','Objek atau titik dalam Graph, misalnya siswa, komputer, kota.'],['Edge','Hubungan antara dua node (garis).']]],
+ ['purple','📏 Membaca Graph',[['Degree','Jumlah hubungan (garis) yang dimiliki sebuah node.'],['Path','Jalur dari satu node ke node lain melewati edge yang ada.'],['Connected','Semua node saling terjangkau lewat suatu path.']]],
+ ['green','🧩 Jenis Graph',[['Undirected','Hubungan tidak berarah (dua arah). Contoh: pertemanan.'],['Directed','Hubungan berarah (panah). Contoh: follow di media sosial.'],['Weighted','Hubungan punya bobot: jarak, waktu, atau biaya.']]],
+ ['pink','🌍 Contoh Nyata',[['Pertemanan','Node = siswa, edge = pertemanan.'],['Jaringan komputer','Node = komputer, edge = kabel/koneksi.'],['Peta','Node = kota, edge = jalan.'],['Media sosial','Node = akun, edge = follow.'],['Transportasi','Node = stasiun, edge = jalur.']]]];
+slides.push({title:'Rangkuman: Peta Konsep Graph',short:'🗺️ Rangkuman',key:'map',
+render:()=>`
+<div class="eyebrow">21 · Rangkuman</div>
+<h2>🗺️ Peta Konsep Graph</h2>
+<p class="lead2">Ketuk tiap istilah untuk mengingat artinya. Jelajahi semuanya untuk XP tambahan!</p>
+<div class="cmt"><div class="cmt-root">🕸️ GRAPH</div>
+ <div class="cmt-row">${CM.map((b,bi)=>`<div class="cmt-br br-${b[0]}"><h4>${b[1]}</h4><div class="chips">${b[2].map((c,ci)=>`<button class="chip" data-b="${bi}" data-c="${ci}">${c[0]}</button>`).join('')}</div></div>`).join('')}</div>
+ <div class="cmt-info" id="cmInfo">👆 Ketuk salah satu istilah di atas.</div>
+</div>
+<div class="highlight" style="margin-top:14px">🌳➜🕸️ <b>Tree adalah Graph khusus:</b> Graph yang terhubung dan tanpa putaran (jumlah edge = jumlah node − 1). Graph lebih bebas: node boleh punya banyak hubungan dan boleh berputar.</div>`,
+init:()=>{
+ const seen=new Set();const total=CM.reduce((a,b)=>a+b[2].length,0);
+ $$('.cmt .chip').forEach(c=>c.onclick=()=>{$$('.cmt .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');
+  const t=CM[+c.dataset.b][2][+c.dataset.c];$('#cmInfo').innerHTML=`<b>${t[0]}</b> — ${t[1]}`;seen.add(c.dataset.b+'-'+c.dataset.c);if(seen.size===total)award('map',5,'Peta konsep dijelajahi')});
+}});
+
+/* ---------- 22. Penutup ---------- */
+const BADGES=[['m1','m1','🤝','Sahabat Jaringan','Misi 1'],['m2','m2','🔧','Teknisi Jaringan','Misi 2'],['m3','m3','🧭','Navigator','Misi 3'],['det','det','🔍','Detektif Graph','Latihan Detektif'],['klas','klas','🧩','Ahli Jenis Graph','Tebak Jenis'],['quizStar','quiz','🎓','Bintang Kuis','Kuis: 9+ benar']];
+const CHECK=['Menjelaskan apa itu Graph','Membedakan node dan edge','Menghitung degree sebuah node','Menuliskan sebuah path','Menentukan Graph connected atau tidak','Membedakan undirected, directed, dan weighted','Memberi contoh Graph dalam kehidupan sehari-hari','Menjelaskan hubungan antara Tree dan Graph'];
+slides.push({title:'Selesai: Lencana dan Refleksi',short:'🏆 Selesai',
+render:()=>{
+ const got=BADGES.filter(b=>S.done[b[0]]).length;
+ const lv=S.xp>=190?['🏆','Master Graph']:S.xp>=120?['🧭','Navigator Jaringan']:S.xp>=60?['🌐','Penjelajah Jaringan']:['🌱','Pemula Jaringan'];
+ return `
+<div class="center"><div class="eyebrow">22 · Penutup</div><div style="font-size:64px">${lv[0]}</div><h2 style="margin-bottom:4px">Petualangan Graph Selesai!</h2>
+<p class="lead2" style="margin:0">Levelmu: <b>${lv[1]}</b> · <b>⭐ ${S.xp} XP</b> · Lencana: <b>${got} / ${BADGES.length}</b></p>
+<div class="tline" style="justify-content:center"><span>Pertemuan 1 · Fondasi ✓</span><span>Pertemuan 2 · Tree ✓</span><span class="cur">Pertemuan 3 · Graph ✓</span></div></div>
+<div class="badges">${BADGES.map(b=>`<div class="bdg ${S.done[b[0]]?'got':''}" data-go="${b[1]}"><div class="e">${b[2]}</div><b>${b[3]}</b><small>${S.done[b[0]]?'Diperoleh ✓':b[4]+' — ketuk untuk menuju ke sana'}</small></div>`).join('')}</div>
+<div class="grid2" style="align-items:start"><div><h3>✅ Aku sudah bisa…</h3><div id="chk">${CHECK.map((c,i)=>`<div class="check" data-i="${i}"><i>✓</i><span>${c}</span></div>`).join('')}</div></div>
+<div><h3>💬 Refleksi singkat</h3><div class="highlight" style="margin-top:6px">Tuliskan di buku catatanmu:<br>1) Satu contoh Graph di sekitarmu yang belum dibahas hari ini.<br>2) Apa node dan apa edge-nya?<br>3) Apakah Graph itu berarah / berbobot?</div>
+<div class="row mt"><button class="btn" id="goStart">↺ Kembali ke awal</button><button class="btn primary" id="goQuiz">🎓 Coba Kuis Lagi</button></div></div></div>`},
+init:()=>{
+ $$('.bdg').forEach(b=>b.onclick=()=>{const i=slides.findIndex(s=>s.key===b.dataset.go);if(i>=0)goTo(i)});
+ $$('.check').forEach(c=>c.onclick=()=>c.classList.toggle('on'));
+ $('#goStart').onclick=()=>goTo(0);$('#goQuiz').onclick=()=>goTo(slides.findIndex(s=>s.key==='quiz'));
+ if(BADGES.filter(b=>S.done[b[0]]).length>=4)burst();
+}});
+
+/* ========== Mesin slide, menu geser, tombol buka/tutup ========== */
+let current=0;
+const nav=$('#nav'),slideEl=$('#slide'),progress=$('#progress'),counter=$('#counter'),prevB=$('#prev'),nextB=$('#next'),footerInfo=$('#footerInfo'),app=$('.app');
+function bindToggle(btn,cls,hideLabel,showLabel,hideIcon,showIcon){
+ const lab=btn.querySelector('.tl'),ico=btn.querySelector('.ti');
+ btn.onclick=()=>{const hidden=app.classList.toggle(cls);btn.setAttribute('aria-pressed',String(hidden));lab.textContent=hidden?showLabel:hideLabel;ico.textContent=hidden?showIcon:hideIcon};
+}
+const sideBtn=$('#toggleSidebar');
+bindToggle(sideBtn,'no-sidebar','Sembunyikan menu','Tampilkan menu','☰','☰');
+const isPhone=window.matchMedia('(max-width:850px)');
+const desktopSideClick=sideBtn.onclick;
+function setDrawer(open){app.classList.toggle('drawer-open',open);sideBtn.setAttribute('aria-expanded',String(open));if(open){const a=$('#nav .active');if(a)a.scrollIntoView({block:'center'})}}
+sideBtn.onclick=e=>{isPhone.matches?setDrawer(!app.classList.contains('drawer-open')):desktopSideClick(e)};
+$('#scrim').onclick=()=>setDrawer(false);
+$('#drawerClose').onclick=()=>setDrawer(false);
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){setDrawer(false);return}
+ if(e.target.closest&&e.target.closest('input,textarea,select'))return;
+ if(e.key==='ArrowRight'&&!nextB.disabled)goTo(current+1);
+ if(e.key==='ArrowLeft'&&!prevB.disabled)goTo(current-1);
+});
+(isPhone.addEventListener?isPhone.addEventListener('change',()=>setDrawer(false)):isPhone.addListener(()=>setDrawer(false)));
+bindToggle($('#toggleTop'),'no-top','Sembunyikan bar atas','Tampilkan bar atas','⬆','⬇');
+
+function renderNav(){
+ nav.innerHTML=slides.map((s,i)=>`<button class="${i===current?'active':''}${s.key&&S.done[s.key]?' done':''}" data-go="${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span>${s.short}</span></button>`).join('');
+ $$('[data-go]',nav).forEach(b=>b.onclick=()=>{goTo(Number(b.dataset.go));setDrawer(false)});
+}
+function render(){
+ clearTimers();
+ const s=slides[current];
+ slideEl.innerHTML='<div class="slide-inner">'+s.render()+'</div>';
+ progress.style.width=((current+1)/slides.length*100)+'%';
+ counter.textContent=(current+1)+' / '+slides.length;
+ footerInfo.textContent=s.title;
+ prevB.disabled=current===0;
+ nextB.disabled=current===slides.length-1;
+ nextB.textContent=current===slides.length-1?'Selesai':'Berikutnya →';
+ renderNav();
+ slideEl.scrollTop=0;
+ if(s.init)s.init();
+}
+function goTo(i){if(i<0||i>=slides.length)return;current=i;render()}
+prevB.onclick=()=>goTo(current-1);
+nextB.onclick=()=>goTo(current+1);
+refreshXP(false);
+render();
+
+})();
+</script>
+</body>
+</html>
