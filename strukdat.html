@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Petualangan Struktur Data Linear</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg1:#F0F7FF;--bg2:#FFF7FC;--pn:#fff;--tx:#172554;--mu:#64748B;--tm:#475569;--ac:#3B82F6;--pu:#8B5CF6;--go:#FBBF24;--dg:#F472B6;--ok:#16A34A;--bd:rgba(37,99,235,.14);--bl:#BFDBFE;--sf:#EFF6FF;--cb:#EEF6FF;--cc:#1D4ED8;--h1:#FFFBEB;--h2:#FFF7ED;--e1:#DBEAFE;--e2:#F3E8FF;--et:#4C1D95;--sh:0 18px 50px rgba(37,99,235,.12)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg1:#0F172A;--bg2:#1E1B3A;--pn:#1E293B;--tx:#E2E8F0;--mu:#94A3B8;--tm:#CBD5E1;--ok:#4ADE80;--bd:rgba(148,163,184,.25);--bl:#334155;--sf:#1E293B;--cb:#0F1E3A;--cc:#93C5FD;--h1:#3B2F0B;--h2:#33270A;--e1:#1E3A8A;--e2:#4C1D95;--et:#E9D5FF}}
+:root[data-theme=dark]{--bg1:#0F172A;--bg2:#1E1B3A;--pn:#1E293B;--tx:#E2E8F0;--mu:#94A3B8;--tm:#CBD5E1;--ok:#4ADE80;--bd:rgba(148,163,184,.25);--bl:#334155;--sf:#1E293B;--cb:#0F1E3A;--cc:#93C5FD;--h1:#3B2F0B;--h2:#33270A;--e1:#1E3A8A;--e2:#4C1D95;--et:#E9D5FF}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:linear-gradient(135deg,var(--bg1),var(--pn) 52%,var(--bg2));color:var(--tx);overflow:hidden}
+button{font:inherit}
+.app{height:100%;display:grid;grid-template-columns:270px 1fr;grid-template-rows:64px 1fr 70px;transition:grid-template-columns .28s,grid-template-rows .28s}
+.app.no-sidebar{grid-template-columns:0 1fr}.app.no-top{grid-template-rows:0 1fr 70px}
+.topbar{grid-column:1/-1;grid-row:1;overflow:hidden;display:flex;align-items:center;gap:18px;padding:0 22px;background:var(--pn);border-bottom:1px solid var(--bd);z-index:5}
+.no-top .topbar{visibility:hidden;border:0}
+.brand{font-weight:800;white-space:nowrap}.brand span{color:var(--pu)}
+.pw{flex:1;height:8px;background:var(--e1);border-radius:99px;overflow:hidden}
+.pg{height:100%;background:linear-gradient(90deg,#3B82F6,#8B5CF6,#F472B6);border-radius:99px;transition:.3s}
+.counter{font-size:13px;color:var(--mu);white-space:nowrap}
+.sidebar{grid-column:1;grid-row:2;min-width:0;background:var(--pn);border-right:1px solid var(--bd);padding:18px 12px;overflow:auto}
+.no-sidebar .sidebar{visibility:hidden;padding:0;border:0}
+.sh{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.st{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--mu);padding:0 10px 12px}
+.nav{display:flex;flex-direction:column;gap:5px}
+.nav button{border:1px solid transparent;background:none;color:var(--tm);text-align:left;padding:10px 11px;border-radius:10px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:13px}
+.nav button:hover{background:var(--sf)}
+.nav button.active{background:linear-gradient(90deg,var(--e1),var(--e2));border-color:rgba(139,92,246,.24);color:var(--tx)}
+.num{width:25px;height:25px;border-radius:8px;background:var(--e1);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.nav button.active .num{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff}
+.dc{display:none;width:40px;height:40px;border:1px solid var(--bl);background:var(--pn);color:var(--tx);border-radius:12px;font-weight:800;cursor:pointer;place-items:center}
+.scrim{display:none}
+.stage{grid-column:2;grid-row:2;position:relative;min-width:0;min-height:0;padding:24px;background:radial-gradient(circle at 85% 10%,rgba(59,130,246,.16),transparent 30%),radial-gradient(circle at 15% 90%,rgba(244,114,182,.12),transparent 28%)}
+.slide{height:100%;width:100%;max-width:1180px;margin:auto;background:var(--pn);border:1px solid var(--bd);border-radius:24px;box-shadow:var(--sh);overflow:auto}
+.si{min-height:100%;padding:46px 56px;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{display:inline-flex;width:fit-content;max-width:100%;padding:7px 12px;border-radius:999px;background:linear-gradient(90deg,var(--e1),var(--e2));color:var(--et);font-weight:800;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px}
+h1{font-size:clamp(34px,5vw,64px);line-height:1.03;margin:0 0 18px;letter-spacing:-2px}
+h2{font-size:clamp(26px,4vw,42px);margin:0 0 14px;letter-spacing:-1px}h3{margin:0 0 8px;font-size:19px}
+p{font-size:17px;line-height:1.7;color:var(--tm);margin:8px 0}.lead{font-size:20px;max-width:800px}
+.hero{display:grid;grid-template-columns:1.3fr .7fr;gap:35px;align-items:center}
+.hero-art{min-height:330px;border-radius:24px;background:linear-gradient(145deg,#DBEAFE,#F3E8FF 52%,#FCE7F3);border:1px solid var(--bd);display:grid;place-items:center}
+.tree-art{position:relative;width:270px;height:230px}
+.dot{position:absolute;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#fff;border:3px solid var(--ac);color:#172554;font-weight:800;z-index:2;box-shadow:0 8px 18px rgba(59,130,246,.16)}
+.line{position:absolute;height:3px;background:#93C5FD;z-index:1}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.card{background:var(--pn);border:1px solid var(--bd);box-shadow:0 8px 24px rgba(37,99,235,.08);border-radius:16px;padding:20px;transition:transform .18s,border-color .18s}
+.card:hover{transform:translateY(-3px);border-color:#93C5FD}
+.card .icon{font-size:28px;margin-bottom:10px}
+.card.lin{border:2px solid #22C55E}.card.non{border:2px solid var(--dg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.highlight{border-left:5px solid var(--go);background:linear-gradient(90deg,var(--h1),var(--h2));padding:15px 18px;border-radius:0 12px 12px 0;margin:15px 0;line-height:1.6}
+.code{font-family:ui-monospace,Menlo,monospace;background:var(--cb);border:1px solid var(--bl);padding:14px;border-radius:14px;color:var(--cc);font-size:18px}
+.center{text-align:center}
+.pill{display:inline-flex;padding:7px 11px;border-radius:99px;background:var(--e2);color:var(--et);font-size:12px;margin:3px}
+.footer{grid-column:1/-1;grid-row:3;background:var(--pn);border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 22px;z-index:5}
+.fl{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.fi{font-size:13px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:6px}
+.controls{display:flex;gap:9px}
+.btn{border:1px solid var(--bl);background:var(--pn);color:var(--tx);padding:11px 17px;border-radius:11px;cursor:pointer;font-weight:700;transition:transform .15s}
+.btn:hover{background:var(--e1);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:#fff;border-color:transparent}
+.btn:disabled{opacity:.4;cursor:not-allowed}.btn.sm{padding:8px 12px;font-size:13px;white-space:nowrap;flex:none}
+.btn.toggle[aria-pressed=true]{background:var(--e2);color:var(--et)}
+.quiz-box{background:var(--pn);border:1px solid var(--bl);border-radius:18px;padding:24px;margin-top:16px}
+.question{font-size:20px;font-weight:750;line-height:1.45;margin-bottom:16px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.option{padding:14px;border:1px solid #CBD5E1;background:var(--sf);color:var(--tx);border-radius:12px;text-align:left;cursor:pointer}
+.option:hover{border-color:#60A5FA}.option.correct{border-color:var(--ac);background:rgba(59,130,246,.18)}.option.wrong{border-color:var(--dg);background:rgba(244,114,182,.14)}
+.feedback{min-height:25px;margin-top:14px;font-weight:700}
+.data-card{cursor:grab}.data-card.pick{outline:3px solid var(--go)}
+.drop-zone{border:2px dashed #93C5FD;transition:.2s}.drop-zone.over{background:var(--sf);border-color:var(--ac)}
+.drop-items .data-card{padding:7px 10px;font-size:12px;cursor:default}
+.array{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0}
+.array-item{width:72px;height:72px;background:var(--pn);color:var(--tx);border:2px solid var(--bl);border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 16px rgba(37,99,235,.08)}
+.array-item .idx{font-size:10px;color:var(--mu)}.array-item .val{font-weight:800;font-size:22px}.array-item.correct{border-color:var(--ok)}
+.lrow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin:12px 0}
+.lbox{min-width:54px;padding:10px 12px;border:2px solid var(--ac);border-radius:12px;background:var(--pn);text-align:center;font-weight:800}
+.lbox small,.ppl small{display:block;font-size:10px;color:var(--mu);font-weight:700}
+.larr{font-size:20px;color:var(--mu)}
+.demo{background:var(--cb);border:2px dashed #93C5FD;border-radius:16px;padding:16px;margin:14px 0}
+.ppl{text-align:center;min-width:62px}.ppl .em{font-size:34px}
+.stk{display:flex;flex-direction:column-reverse;align-items:center;gap:3px;min-height:160px;border-bottom:6px solid var(--mu);padding-bottom:3px;max-width:260px;margin:0 auto}
+.bk{width:210px;padding:8px;border-radius:7px;color:#fff;font-weight:800;text-align:center;font-size:14px}
+.tx{fill:var(--tx);font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:12px}th,td{padding:11px;border-bottom:1px solid var(--bd);text-align:left;color:var(--tm)}th{color:var(--ac)}
+.big{font-size:80px}
+@media(max-width:850px){
+.app{grid-template-columns:1fr;grid-template-rows:58px 1fr 66px}.app.no-sidebar{grid-template-columns:1fr}.app.no-top{grid-template-rows:0 1fr 66px}
+.stage{grid-column:1;padding:10px}.slide{border-radius:16px}.si{padding:28px 22px}
+.hero,.grid2,.cards,.grid3,.options{grid-template-columns:1fr}.fi{display:none}.topbar{padding:0 13px}.brand{font-size:13px}.footer{padding:0 12px}
+.sidebar{display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;width:min(84vw,320px);z-index:40;visibility:hidden;transform:translateX(-102%);transition:transform .28s,visibility 0s .28s;padding:14px 12px}
+.no-sidebar .sidebar{padding:14px 12px}
+.drawer-open .sidebar{transform:none;visibility:visible;box-shadow:8px 0 40px rgba(15,23,42,.28);transition:transform .28s}
+.scrim{display:block;position:fixed;inset:0;z-index:35;background:rgba(15,23,42,.45);opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-open .scrim{opacity:1;pointer-events:auto}.dc{display:grid}
+.btn.sm{min-width:44px;min-height:44px}.controls .btn{min-height:44px;padding:0 11px;font-size:13.5px}.tl{display:none}
+}
+</style></head><body>
+<div class="app" id="app">
+<header class="topbar"><div class="brand">🚀 Petualangan <span>Struktur Data Linear</span></div><div class="pw"><div class="pg" id="pg"></div></div><div class="counter" id="ct"></div></header>
+<aside class="sidebar" aria-label="Daftar slide"><div class="sh"><div class="st">Pertemuan 1 · Struktur Linear</div><button class="dc" id="dc" aria-label="Tutup menu">✕</button></div><div class="nav" id="nav"></div></aside>
+<div class="scrim" id="scrim"></div>
+<main class="stage"><div class="slide" id="slide"></div></main>
+<footer class="footer"><div class="fl">
+<button class="btn sm toggle" id="tS" aria-pressed="false"><span class="ti">☰</span> <span class="tl">Sembunyikan menu</span></button>
+<button class="btn sm toggle" id="tT" aria-pressed="false"><span class="ti">⬆</span> <span class="tl">Sembunyikan bar atas</span></button>
+<div class="fi" id="fi"></div></div>
+<div class="controls"><button class="btn" id="prev">← Sebelumnya</button><button class="btn primary" id="next">Berikutnya →</button></div></footer>
+</div>
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const lb=(a,ar)=>a.map(x=>`<div class="lbox">${x}</div>`).join(ar?'<span class="larr">→</span>':'');
+const opts=(v)=>`<div class="options" style="grid-template-columns:1fr 1fr">${[["array","📦 Array"],["queue","🚶 Queue"],["stack","📚 Stack"],["linked","🔗 Linked List"]].map(o=>`<button class="option case-option" data-value="${o[0]}">${o[1]}</button>`).join("")}</div><div class="feedback case-feedback"></div>`;
+const cs=(t,ic,txt,ans,why)=>`<div class="card case-card" data-answer="${ans}" data-why="${why}"><h3>${ic} ${t}</h3><p>${txt}</p>${opts()}</div>`;
+const slides=[
+{title:"Pembuka",short:"Pembuka",render:()=>`<div class="hero"><div>
+<div class="eyebrow">Pertemuan 1 · Informatika SMP</div><h1>Petualangan<br>Struktur Data Linear</h1>
+<p class="lead">Belajar bagaimana data disimpan dan disusun dalam satu jalur: <b>Array</b>, <b>Queue</b>, <b>Stack</b>, dan <b>Linked List</b>.</p>
+<div style="margin-top:22px"><span class="pill">💡 Belajar konsep</span><span class="pill">🎮 Bermain</span><span class="pill">🧩 Memecahkan kasus</span></div></div>
+<div class="hero-art"><div class="tree-art">
+${["A","B","C","D"].map((c,i)=>`<div class="dot" style="left:${i*72}px;top:88px">${c}</div>`).join("")}
+${[54,126,198].map(l=>`<div class="line" style="left:${l}px;top:115px;width:18px"></div>`).join("")}</div></div></div>`},
+{title:"Apa Itu Data?",short:"Apa Itu Data?",render:()=>`<div class="eyebrow">02 · Konsep Dasar</div><h2>Data ada di mana-mana!</h2>
+<p><b>Data</b> adalah fakta atau informasi yang dapat disimpan dan diolah.</p>
+<div class="grid3" style="margin-top:22px">
+<div class="card"><div class="icon">👤</div><h3>Nama</h3><p>Contoh: Ahmad, Budi, Siti.</p></div>
+<div class="card"><div class="icon">🔢</div><h3>Nilai</h3><p>Contoh: 80, 75, 92.</p></div>
+<div class="card"><div class="icon">🏫</div><h3>Kelas</h3><p>Contoh: VIII-A, VIII-B.</p></div></div>
+<div class="highlight">❓ Pertanyaan: Jika data siswa disimpan secara acak, apakah kita akan mudah mencari nama, kelas, atau nilainya?</div>
+<p class="center"><b>Data yang banyak membutuhkan cara pengorganisasian.</b></p>`},
+{title:"Jenis Data",short:"🔤 Jenis Data",render:()=>`<div class="eyebrow">03 · Konsep Dasar</div><h2>🔤 Mengenal 4 Jenis Data</h2>
+<p>Sebelum mengatur data, kita perlu mengenali <b>jenis data</b> yang sedang kita gunakan.</p>
+<div class="grid2" style="margin-top:18px">
+<div class="card"><h3>🔤 String</h3><p>Data berupa teks atau kumpulan karakter.</p><div class="code">"Ahmad"<br>"Informatika"<br>"SMP Negeri 49"</div></div>
+<div class="card"><h3>🔢 Integer</h3><p>Bilangan bulat tanpa angka di belakang koma.</p><div class="code">10<br>75<br>2026</div></div>
+<div class="card"><h3>📐 Float</h3><p>Bilangan yang memiliki nilai pecahan/desimal.</p><div class="code">3.14<br>75.5<br>98.25</div></div>
+<div class="card"><h3>✅ Boolean</h3><p>Data yang hanya memiliki dua nilai: benar atau salah.</p><div class="code">True<br>False</div></div></div>
+<div class="highlight">💡 Contoh data siswa: <b>"Ahmad"</b> adalah String, <b>15</b> adalah Integer, <b>87.5</b> adalah Float, sedangkan <b>True</b> dapat menunjukkan "sudah mengumpulkan tugas".</div>`},
+{title:"Aktivitas: Bedakan 4 Jenis Data",short:"🎮 Bedakan Jenis Data",render:()=>`<div class="eyebrow">04 · Aktivitas 1</div><h2>🎮 Bedakan 4 Jenis Data</h2>
+<p>Seret setiap kartu ke kelompok <b>String</b>, <b>Integer</b>, <b>Float</b>, atau <b>Boolean</b>. Di HP: ketuk kartu, lalu ketuk kotaknya.</p>
+<div class="quiz-box"><div id="dataCards" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+${[["Andi","string"],["85","integer"],["True","boolean"],["Surabaya","string"],["72.5","float"],["False","boolean"],["2026","integer"],["3.14","float"]].map(x=>`<button class="btn data-card" draggable="true" data-type="${x[1]}">${x[0]}</button>`).join("")}</div>
+<div class="grid2">${[["string","🔤 String"],["integer","🔢 Integer"],["float","📐 Float"],["boolean","✅ Boolean"]].map(x=>`<div class="card drop-zone" data-drop="${x[0]}" style="min-height:125px"><h3>${x[1]}</h3><div class="drop-items" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>`).join("")}</div>
+<div class="feedback" id="groupFb">💡 Petunjuk: pilih kartu, lalu tempatkan ke kotak yang sesuai.</div></div>`},
+{title:"Apa Itu Struktur Data?",short:"🧩 Apa Itu Struktur Data?",render:()=>`<div class="eyebrow">05 · Konsep Utama</div><h2>🏗️ Apa Itu Struktur Data?</h2>
+<p class="lead"><b>Struktur data</b> adalah cara mengorganisasi, menyimpan, dan mengatur data agar data dapat digunakan dan diolah dengan lebih teratur.</p>
+<div class="cards"><div class="card"><h3>📦 Mengatur</h3><p>Data disusun dengan pola tertentu sehingga tidak berantakan.</p></div>
+<div class="card"><h3>🔎 Mengakses</h3><p>Data dapat ditemukan atau diambil dengan cara yang sesuai.</p></div>
+<div class="card"><h3>⚡ Mengolah</h3><p>Program dapat bekerja dengan data secara lebih terstruktur.</p></div></div>
+<div class="card center" style="margin-top:18px"><div class="code">DATA → DIORGANISASI → MUDAH DIGUNAKAN</div></div>
+<div class="highlight">💡 Jadi, struktur data bukan sekadar "jenis data". <b>Jenis data</b> menjelaskan bentuk/nilai data, sedangkan <b>struktur data</b> menjelaskan bagaimana data diorganisasi.</div>`},
+{title:"Mengapa Data Perlu Diatur?",short:"Mengapa Data?",render:()=>`<div class="eyebrow">06 · Masalah Nyata</div><h2>🧩 Mengapa Data Perlu Diatur?</h2>
+<p class="lead">Bayangkan kamu punya banyak foto, tugas, atau nilai siswa tetapi semuanya tercampur. Mencari satu data akan menjadi sulit.</p>
+<div class="cards"><div class="card"><h3>🔎 Mudah Dicari</h3><p>Data yang tersusun rapi lebih mudah ditemukan.</p></div>
+<div class="card"><h3>⚡ Mudah Diproses</h3><p>Program dapat membaca dan mengolah data dengan lebih teratur.</p></div>
+<div class="card"><h3>🔗 Mudah Dihubungkan</h3><p>Data tertentu dapat memiliki hubungan dengan data lainnya.</p></div></div>
+<div class="highlight">💡 Karena itu kita membutuhkan cara untuk <b>mengorganisasi data</b>. Inilah salah satu alasan kita mempelajari Struktur Data.</div>`},
+{title:"Linear dan Non-Linear",short:"🧩 Jenis Struktur Data",render:()=>`<div class="eyebrow">07 · Jenis Struktur Data</div><h2>🧩 Dua Kelompok Struktur Data</h2>
+<p>Struktur data dibedakan dari cara data disusun dan dihubungkan.</p>
+<div class="grid2">
+<div class="card lin"><h3>📏 Linear</h3><p>Data tersusun <b>satu jalur</b>, satu demi satu, seperti orang yang berbaris.</p><div class="lrow">${lb(["A","B","C","D"],1)}</div><p>Contoh: <b>Array, Queue, Stack, Linked List</b></p></div>
+<div class="card non"><h3>🕸️ Non-Linear</h3><p>Data <b>bercabang</b> atau punya banyak hubungan, seperti pohon keluarga atau peta jalan.</p>
+<svg viewBox="0 0 200 90" width="200" style="display:block;margin:6px auto;max-width:100%"><g stroke="#94A3B8" stroke-width="2"><line x1="100" y1="14" x2="50" y2="46"/><line x1="100" y1="14" x2="150" y2="46"/><line x1="50" y1="46" x2="25" y2="76"/><line x1="50" y1="46" x2="75" y2="76"/><line x1="150" y1="46" x2="150" y2="76"/></g><g fill="#F472B6"><circle cx="100" cy="14" r="10"/><circle cx="50" cy="46" r="10"/><circle cx="150" cy="46" r="10"/><circle cx="25" cy="76" r="9"/><circle cx="75" cy="76" r="9"/><circle cx="150" cy="76" r="9"/></g></svg>
+<p>Contoh: <b>Tree dan Graph</b> (dipelajari nanti)</p></div></div>
+<svg viewBox="0 0 700 165" style="width:100%;height:auto;margin-top:8px" role="img" aria-label="Bagan jenis struktur data"><g stroke="#94A3B8" stroke-width="2.5" fill="none"><path d="M350 38V56H175V78M350 56H525V78M175 110V124M525 110V124"/></g>
+<rect x="250" y="4" width="200" height="34" rx="12" fill="#8B5CF6"/><text x="350" y="26" text-anchor="middle" fill="#fff" font-weight="800" font-size="15">🧩 Struktur Data</text>
+<rect x="85" y="78" width="180" height="32" rx="12" fill="#22C55E"/><text x="175" y="99" text-anchor="middle" fill="#fff" font-weight="800" font-size="14">📏 Linear (fokus kita)</text>
+<rect x="435" y="78" width="180" height="32" rx="12" fill="#F472B6"/><text x="525" y="99" text-anchor="middle" fill="#fff" font-weight="800" font-size="14">🕸️ Non-Linear</text>
+<text class="tx" x="175" y="146" text-anchor="middle" font-size="14">Array · Queue · Stack · Linked List</text><text class="tx" x="525" y="146" text-anchor="middle" font-size="14">Tree · Graph</text></svg>
+<div class="highlight">🎯 Hari ini kita <b>fokus pada struktur data linear</b>: Array, Queue, Stack, dan Linked List.</div>`},
+{title:"Array dan Indeks",short:"📦 Array & Indeks",render:()=>`<div class="eyebrow">08 · Struktur Linear</div><h2>📦 Array: Loker Sekolah</h2>
+<p class="lead">Loker berjajar rapi dan punya nomor. Nomor loker itu adalah <b>indeks</b>, dan dimulai dari <b>0</b>.</p>
+<div class="array">${["📘","👜","👟","🧥","🥤"].map((v,i)=>`<div class="array-item"><div class="idx">loker ${i}</div><div class="val">${v}</div></div>`).join("")}</div>
+<div class="code center">barang = ["📘","👜","👟","🧥","🥤"]<br>barang[3] → 🧥</div>
+<div class="highlight">💡 <b>Array</b> menyimpan data berurutan dan bisa diambil <b>langsung</b> lewat nomor indeks, tanpa mengecek satu per satu. Contoh: daftar absen, daftar nilai, daftar harga.</div>`},
+{title:"Game: Temukan Indeks",short:"🎮 Temukan Indeks",render:()=>`<div class="eyebrow">09 · Aktivitas 2</div><h2>🎮 Temukan Indeks</h2>
+<p>Klik kotak yang berisi nilai pada <b>indeks 3</b>.</p>
+<div class="array" id="arrayGame">${[72,88,95,81,76].map((v,i)=>`<button class="array-item" data-index="${i}"><div class="idx"></div><div class="val">${v}</div></button>`).join("")}</div>
+<div class="quiz-box center"><div class="question">Nilai pada indeks 3 adalah <span id="arrayAnswer">?</span></div><div class="feedback" id="arrayFb">Pilih salah satu kotak.</div></div>`},
+{title:"Queue: Antre ke Kantin",short:"🚶 Queue",render:()=>`<div class="eyebrow">10 · Struktur Linear</div><h2>🚶 Queue: Antre ke Kantin</h2>
+<p class="lead"><b>FIFO</b> (First In, First Out): yang datang <b>pertama</b> dilayani <b>pertama</b>. Siswa baru selalu berdiri di <b>belakang</b>.</p>
+<div class="demo"><div class="lrow" id="qView" style="min-height:96px"></div>
+<div class="lrow"><button class="btn primary" id="qAdd">➕ Siswa baru antre</button><button class="btn" id="qServe">🍜 Dilayani penjual</button></div>
+<div class="feedback center" id="qFb">Coba tambah dan layani antrean.</div></div>
+<div class="highlight">💡 Contoh lain: antre loket, antre kasir, antrean cetak di printer.</div>`},
+{title:"Stack: Tumpukan Buku",short:"📚 Stack",render:()=>`<div class="eyebrow">11 · Struktur Linear</div><h2>📚 Stack: Tumpukan Buku</h2>
+<p class="lead"><b>LIFO</b> (Last In, First Out): buku yang <b>terakhir</b> ditaruh, <b>pertama</b> diambil. Kita hanya bisa mengambil dari <b>atas</b>.</p>
+<div class="demo"><div class="stk" id="sView"></div>
+<div class="lrow" style="margin-top:14px"><button class="btn primary" id="sPush">📗 Taruh buku</button><button class="btn" id="sPop">✋ Ambil buku teratas</button></div>
+<div class="feedback center" id="sFb">Coba menumpuk lalu mengambil buku.</div></div>
+<div class="highlight">💡 Contoh lain: tumpukan piring, tombol <b>Undo</b>, tombol <b>Kembali</b> di browser.</div>`},
+{title:"Linked List: Gerbong Kereta",short:"🔗 Linked List",render:()=>`<div class="eyebrow">12 · Struktur Linear</div><h2>🔗 Linked List: Gerbong Kereta</h2>
+<p class="lead">Setiap gerbong (<b>node</b>) membawa penumpang (<b>data</b>) dan kaitan (<b>penunjuk</b>) ke gerbong berikutnya. Gerbong terakhir menunjuk <b>null</b>.</p>
+<div class="demo"><div class="lrow" id="lView"></div>
+<div class="lrow"><button class="btn primary" id="lIns">➕ Sisipkan gerbong di tengah</button><button class="btn" id="lReset">↻ Ulangi</button></div>
+<div class="feedback center" id="lFb">Klik tombol untuk menyisipkan gerbong.</div></div>
+<div class="highlight">💡 Beda dengan Array: tidak ada nomor loker, kita mengikuti kaitan satu per satu. Menyisipkan data cukup <b>mengubah kaitan</b>, tanpa menggeser yang lain. Contoh lain: playlist lagu.</div>`},
+{title:"Aktivitas: Cocokkan Kasus",short:"🧩 Cocokkan Kasus",render:()=>`<div class="eyebrow">13 · Aktivitas 3</div><h2>🧩 Cocokkan dengan Kehidupan Sehari-hari</h2>
+<p>Pilih struktur data linear yang paling sesuai untuk setiap situasi.</p>
+<div class="grid3">
+${cs("Kasus A","🍜","Siswa membeli bakso di kantin. Yang datang duluan dilayani duluan.","queue","Queue: pertama masuk, pertama keluar (FIFO).")}
+${cs("Kasus B","🔢","Kamu ingin membaca nama nomor 15 di daftar absen langsung, tanpa membaca dari awal.","array","Array: data diakses langsung lewat indeks.")}
+${cs("Kasus C","↩️","Tombol Kembali di browser membuka halaman yang terakhir kamu kunjungi lebih dulu.","stack","Stack: terakhir masuk, pertama keluar (LIFO).")}
+${cs("Kasus D","🎵","Setiap lagu di playlist tahu lagu berikutnya, dan lagu baru mudah disisipkan di tengah.","linked","Linked List: node saling menunjuk ke node berikutnya.")}
+${cs("Kasus E","🖨️","File pertama yang dikirim ke printer dicetak lebih dulu.","queue","Queue: file pertama masuk dicetak pertama (FIFO).")}
+${cs("Kasus F","🍽️","Piring bersih ditumpuk, dan kamu mengambil dari yang paling atas.","stack","Stack: piring terakhir ditaruh, pertama diambil.")}
+</div>`},
+{title:"Tantangan Akhir",short:"🏆 Tantangan Akhir",render:()=>`<div class="eyebrow">14 · Boss Challenge</div><h2>🏆 Tantangan Akhir</h2>
+<div class="quiz-box"><div class="question">Kamu ingin menyisipkan gerbong baru di tengah rangkaian tanpa menggeser gerbong lain. Struktur yang paling cocok adalah...</div>
+<div class="options" id="q5"><button class="option" data-correct="false">📦 Array</button><button class="option" data-correct="true">🔗 Linked List</button><button class="option" data-correct="false">📚 Stack</button><button class="option" data-correct="false">🚶 Queue</button></div><div class="feedback" id="fb5"></div></div>
+<div class="quiz-box"><div class="question">Antrean kantin menggunakan prinsip FIFO. Artinya...</div>
+<div class="options" id="q6"><button class="option" data-correct="false">Yang terakhir datang dilayani pertama</button><button class="option" data-correct="true">Yang pertama datang dilayani pertama</button><button class="option" data-correct="false">Yang dilayani dipilih acak</button><button class="option" data-correct="false">Yang tertinggi nomornya dulu</button></div><div class="feedback" id="fb6"></div></div>`},
+{title:"Rangkuman",short:"📌 Rangkuman",render:()=>`<div class="eyebrow">15 · Rekap</div><h2>📌 Rangkuman Struktur Data Linear</h2>
+<table><tr><th>Struktur</th><th>Analogi</th><th>Ciri utama</th></tr>
+<tr><td>📦 Array</td><td>Loker bernomor</td><td>Berurutan, diakses lewat indeks (mulai 0)</td></tr>
+<tr><td>🚶 Queue</td><td>Antre di kantin</td><td>FIFO: masuk belakang, keluar depan</td></tr>
+<tr><td>📚 Stack</td><td>Tumpukan buku</td><td>LIFO: masuk atas, keluar atas</td></tr>
+<tr><td>🔗 Linked List</td><td>Gerbong kereta</td><td>Node saling menunjuk, mudah disisipi</td></tr></table>
+<div class="highlight">⭐ Semuanya tersusun <b>satu jalur</b>, itulah sebabnya disebut <b>linear</b>. <b>Jenis data</b> menjelaskan bentuk data; <b>struktur data</b> menjelaskan cara data diorganisasi.</div>`},
+{title:"Hasil Belajar",short:"🎉 Selesai",render:()=>`<div class="center"><div class="big">🎉</div><div class="eyebrow">16 · Kamu Berhasil!</div><h2>Struktur Data Linear Selesai</h2>
+<p class="lead" style="margin:auto">Kamu sudah mengenal data, jenis data, struktur data, serta empat struktur data linear: Array, Queue, Stack, dan Linked List.</p>
+<div class="cards" style="text-align:left"><div class="card"><h3>✅ Saya memahami data</h3><p>Data adalah fakta/informasi yang dapat disimpan dan diolah.</p></div>
+<div class="card"><h3>✅ Saya memahami struktur linear</h3><p>Array, Queue, Stack, dan Linked List menyusun data dalam satu jalur.</p></div>
+<div class="card"><h3>🚀 Siap lanjut</h3><p>Pertemuan berikutnya: struktur data non-linear (Tree dan Graph).</p></div></div>
+<button class="btn primary" id="restart" style="margin-top:22px">↻ Mulai Lagi</button></div>`}
+];
+let cur=0;const app=$("#app"),slide=$("#slide"),nav=$("#nav");
+function toggle(id,cls,h,s,hi,si){const b=$(id);b.onclick=()=>{const x=app.classList.toggle(cls);b.setAttribute("aria-pressed",x);$(".tl",b).textContent=x?s:h;$(".ti",b).textContent=x?si:hi}}
+const ph=matchMedia("(max-width:850px)");
+function drawer(o){app.classList.toggle("drawer-open",o);if(o){const a=$("#nav .active");a&&a.scrollIntoView({block:"center"})}}
+toggle("#tT","no-top","Sembunyikan bar atas","Tampilkan bar atas","⬆","⬇");
+const sb=$("#tS");let sbFlag=false;
+sb.onclick=()=>{if(ph.matches){drawer(!app.classList.contains("drawer-open"));return}sbFlag=app.classList.toggle("no-sidebar");sb.setAttribute("aria-pressed",sbFlag);$(".tl",sb).textContent=sbFlag?"Tampilkan menu":"Sembunyikan menu"};
+$("#scrim").onclick=()=>drawer(false);$("#dc").onclick=()=>drawer(false);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")drawer(false);if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1)});
+ph.addEventListener("change",()=>drawer(false));
+function render(){
+ slide.innerHTML='<div class="si">'+slides[cur].render()+'</div>';
+ const eb=$(".eyebrow",slide);if(eb)eb.textContent=eb.textContent.replace(/^\d\d(?= ·)/,String(cur+1).padStart(2,"0"));
+ $("#pg").style.width=((cur+1)/slides.length*100)+"%";$("#ct").textContent=(cur+1)+" / "+slides.length;$("#fi").textContent=slides[cur].title;
+ $("#prev").disabled=cur===0;$("#next").disabled=cur===slides.length-1;
+ nav.innerHTML=slides.map((s,i)=>`<button class="${i===cur?"active":""}" data-go="${i}"><span class="num">${String(i+1).padStart(2,"0")}</span><span>${s.short}</span></button>`).join("");
+ $$("[data-go]",nav).forEach(b=>b.onclick=()=>{go(+b.dataset.go);drawer(false)});
+ bind();slide.scrollTop=0;
+}
+function go(i){if(i<0||i>=slides.length)return;cur=i;render()}
+$("#prev").onclick=()=>go(cur-1);$("#next").onclick=()=>go(cur+1);
+function quiz(id,fid){const b=$("#"+id),f=$("#"+fid);if(!b)return;$$(".option",b).forEach(o=>o.onclick=()=>{$$(".option",b).forEach(x=>x.disabled=true);if(o.dataset.correct==="true"){o.classList.add("correct");f.textContent="✅ Benar! Jawabanmu tepat.";f.style.color="var(--ok)"}else{o.classList.add("wrong");f.textContent="❌ Belum tepat. Perhatikan kembali konsepnya.";f.style.color="var(--dg)";$('[data-correct="true"]',b).classList.add("correct")}})}
+function bind(){
+ quiz("q5","fb5");quiz("q6","fb6");
+ // Bedakan jenis data: drag & drop + ketuk (HP)
+ const cards=$$("#dataCards .data-card"),zones=$$(".drop-zone");let dr=null;
+ const place=(z,c)=>{const f=$("#groupFb");if(c.dataset.type===z.dataset.drop){$(".drop-items",z).appendChild(c);c.draggable=false;c.classList.remove("pick");dr=null;const left=$$("#dataCards .data-card").length;f.textContent=left?"✅ Benar! Lanjutkan mengelompokkan kartu lainnya.":"🎉 Hebat! Semua data sudah dikelompokkan dengan benar.";f.style.color="var(--ok)"}else{f.textContent="❌ Belum tepat. Perhatikan bentuk/arti datanya.";f.style.color="var(--dg)"}};
+ cards.forEach(c=>{c.addEventListener("dragstart",()=>{dr=c});c.addEventListener("dragend",()=>zones.forEach(z=>z.classList.remove("over")));c.addEventListener("click",()=>{if(!c.draggable)return;cards.forEach(x=>x.classList.remove("pick"));dr=c;c.classList.add("pick")})});
+ zones.forEach(z=>{z.addEventListener("dragover",e=>{e.preventDefault();z.classList.add("over")});z.addEventListener("dragleave",()=>z.classList.remove("over"));z.addEventListener("drop",e=>{e.preventDefault();z.classList.remove("over");if(dr)place(z,dr)});z.addEventListener("click",()=>{if(dr&&dr.classList.contains("pick"))place(z,dr)})});
+ // Cocokkan kasus
+ $$(".case-card").forEach(card=>$$(".case-option",card).forEach(b=>b.onclick=()=>{const f=$(".case-feedback",card),ok=b.dataset.value===card.dataset.answer;$$(".case-option",card).forEach(x=>x.disabled=true);b.classList.add(ok?"correct":"wrong");if(!ok)$('[data-value="'+card.dataset.answer+'"]',card).classList.add("correct");f.textContent=(ok?"✅ Tepat! ":"❌ Belum tepat. ")+card.dataset.why;f.style.color=ok?"var(--ok)":"var(--dg)"}));
+ // Temukan indeks
+ const ag=$("#arrayGame");if(ag)$$(".array-item",ag).forEach(b=>b.onclick=()=>{const f=$("#arrayFb");if(b.dataset.index==="3"){$("#arrayAnswer").textContent="81";f.textContent="🎉 Benar! Indeks 3 berisi nilai 81.";f.style.color="var(--ok)";b.classList.add("correct")}else{f.textContent="❌ Belum. Ingat, indeks dimulai dari 0.";f.style.color="var(--dg)"}});
+ // Queue
+ const qv=$("#qView");if(qv){let q=["Ani","Budi","Citra"],k=0;const N=["Dewi","Eko","Fajar","Gita","Hana","Indra"],f=$("#qFb");
+  const d=()=>{qv.innerHTML=q.length?q.map((x,i)=>`<div class="ppl"><small>${i===0?"DEPAN":i===q.length-1?"BELAKANG":"&nbsp;"}</small><div class="em">🧑‍🎓</div><b>${x}</b></div>`).join('<span class="larr">←</span>'):"<i>Antrean kosong 🎉</i>"};
+  $("#qAdd").onclick=()=>{const x=N[k++%N.length];q.push(x);f.textContent=x+" masuk lewat BELAKANG antrean.";d()};
+  $("#qServe").onclick=()=>{if(!q.length){f.textContent="Tidak ada yang antre.";return}f.textContent=q.shift()+" keluar dari DEPAN (datang paling awal, dilayani paling awal).";d()};d()}
+ // Stack
+ const sv=$("#sView");if(sv){const M=["Matematika","IPA","IPS","Informatika","B. Indonesia","B. Inggris"],C=["#3B82F6","#8B5CF6","#F472B6","#22C55E","#F59E0B","#EF4444"],f=$("#sFb");let s=[0,1],k=2;
+  const d=()=>{sv.innerHTML=s.map((x,i)=>`<div class="bk" style="background:${C[x]}">${M[x]}${i===s.length-1?" ⬅ ATAS":""}</div>`).join("")};
+  $("#sPush").onclick=()=>{if(s.length>=6){f.textContent="Tumpukan sudah tinggi, ambil dulu!";return}const x=k++%6;s.push(x);f.textContent="Buku "+M[x]+" ditaruh di ATAS.";d()};
+  $("#sPop").onclick=()=>{if(!s.length){f.textContent="Tumpukan kosong.";return}f.textContent="Buku "+M[s.pop()]+" diambil (terakhir masuk, pertama keluar).";d()};d()}
+ // Linked list
+ const lv=$("#lView");if(lv){let a;const f=$("#lFb");
+  const d=()=>{lv.innerHTML=a.map(x=>`<div class="lbox" style="${x==="Baru ✨"?"border-color:#F472B6":""}">🚃 ${x}<small>data | •</small></div>`).join('<span class="larr">→</span>')+'<span class="larr">→ null</span>'};
+  const r=()=>{a=["Gerbong 1","Gerbong 2","Gerbong 3"];$("#lIns").disabled=false;f.textContent="Klik tombol untuk menyisipkan gerbong.";d()};
+  $("#lIns").onclick=()=>{a.splice(2,0,"Baru ✨");$("#lIns").disabled=true;f.textContent="Gerbong 2 kini mengait ke gerbong baru, lalu gerbong baru mengait ke Gerbong 3. Yang lain tidak bergeser!";d()};$("#lReset").onclick=r;r()}
+ const rs=$("#restart");if(rs)rs.onclick=()=>go(0);
+}
+render();
+})();
+</script></body></html>
