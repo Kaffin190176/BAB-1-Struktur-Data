@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tree Quest: Jelajah Struktur Data Tree</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--ink:#1E293B;--mu:#475569;--blue:#2563EB;--blue2:#1D4ED8;--sky:#E0F2FE;--yel:#FFC93C;--yel2:#F59E0B;--yelb:#FFF7D6;--pink:#DB2777;--grn:#15803D;--grnb:#DCFCE7;--red:#B91C1C;--redb:#FEE2E2;--bd:#CBD5E1;--soft:#F1F5F9}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Nunito,system-ui,sans-serif;font-weight:600;background-color:#fff;background-image:linear-gradient(#E6EEFB 1px,transparent 1px),linear-gradient(90deg,#E6EEFB 1px,transparent 1px);background-size:26px 26px;color:var(--ink);min-height:100vh}
+h1,h2,.tscore{font-family:Fredoka,"Trebuchet MS",sans-serif;font-weight:600}
+button{font-family:inherit}button:focus-visible,.cs:focus-visible,.ao:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+header{background:var(--blue);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:8px solid var(--yel);box-shadow:0 4px 0 var(--ink)}
+header h1{font-size:25px}header p{font-size:13px}
+.hr{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.turn{background:var(--yel);color:var(--ink);padding:9px 16px;border-radius:999px;font-weight:800;font-size:14px;border:2px solid var(--ink)}
+.sbtn{border:2px solid #fff;background:transparent;color:#fff;padding:8px 14px;border-radius:999px;cursor:pointer;font-weight:800;font-size:13px}.sbtn.on{background:var(--grn)}
+.setup{min-height:calc(100vh - 100px);display:flex;align-items:center;justify-content:center;padding:22px}
+.sc{width:100%;max-width:840px;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:28px;box-shadow:8px 8px 0 var(--yel)}
+.sc h2{text-align:center;font-size:28px;color:var(--blue)}.intro{text-align:center;color:var(--mu);font-size:14px;margin:6px 0 18px}
+.cnt{display:flex;justify-content:center;gap:10px;margin-bottom:20px}
+.cb{padding:9px 20px;border:2px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font-weight:800;cursor:pointer}.cb.sel{background:var(--blue);color:#fff}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tb{border:2px solid var(--bd);border-radius:14px;padding:12px}.tb.filled{border-color:var(--blue);background:var(--sky)}.tb label{font-size:13px;color:var(--mu);font-weight:800}
+.ag{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ao{text-align:center;padding:6px 2px;border-radius:10px;cursor:pointer;border:2px solid transparent;background:#fff;font-size:11px;font-weight:800;line-height:1.2}.ao b{display:block;font-size:24px;font-weight:400}
+.ao.sel{border-color:var(--blue);background:var(--yelb)}.ao.taken{opacity:.25;cursor:not-allowed}
+.go{width:100%;margin-top:20px;padding:14px;border:2px solid var(--ink);border-radius:14px;background:var(--grn);color:#fff;font-weight:800;font-size:17px;cursor:pointer;box-shadow:0 5px 0 var(--ink)}.go:disabled{opacity:.4;cursor:not-allowed}
+.game{display:none;padding:16px}.sb{display:grid;gap:10px;margin-bottom:16px}
+.ts{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:10px;text-align:center;transition:.2s}.ts.act{background:var(--yel);transform:translateY(-3px);box-shadow:0 5px 0 var(--ink)}
+.ts .m{font-size:32px}.ts .tn{font-size:13px;font-weight:800}.tscore{font-size:26px;color:var(--blue2)}
+.ma{display:grid;grid-template-columns:1fr 260px;gap:16px}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.cs{aspect-ratio:3/4;border-radius:14px;background:var(--blue);background-image:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px);background-size:16px 16px;border:3px solid var(--ink);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;box-shadow:0 6px 0 var(--ink);transition:transform .15s}.cs:hover{transform:translateY(-4px)}
+.cs .q{font-family:Fredoka,sans-serif;font-size:34px;background:var(--yel);color:var(--ink);width:50px;height:50px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;margin-bottom:6px}.cs .n{font-size:12px;font-weight:800}
+.cs.used{background:var(--soft);background-image:none;border-color:var(--bd);color:var(--mu);box-shadow:none;cursor:default}.cs.used:hover{transform:none}.cs.used .q{background:#fff;border-color:var(--bd);color:var(--grn);font-size:26px}
+.cs .bd{position:absolute;top:5px;right:6px;font-size:18px}
+.sp{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:12px;max-height:640px;display:flex;flex-direction:column;box-shadow:5px 5px 0 var(--sky)}.sp h3{font-size:14px;margin-bottom:8px;color:var(--blue2)}
+.log{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:7px}
+.li{font-size:12px;line-height:1.45;background:var(--soft);padding:7px 9px;border-radius:8px;border-left:4px solid var(--mu)}.li.c{border-color:var(--grn)}.li.w{border-color:var(--red)}.li.s{border-color:var(--blue)}.li.t{border-color:var(--pink)}
+.lg{margin-top:10px;font-size:12px;color:var(--mu);line-height:1.7}.rl{margin-top:10px;font-size:12px;color:var(--mu);cursor:pointer;text-decoration:underline;background:none;border:0}
+.modal{position:fixed;inset:0;background:rgba(30,41,59,.65);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.modal.show{display:flex}
+.mc{width:100%;max-width:640px;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:24px;text-align:center;max-height:90vh;overflow-y:auto;box-shadow:8px 8px 0 var(--yel)}
+.mc h2{margin-bottom:6px;color:var(--blue)}.sub{color:var(--mu);margin-bottom:16px;font-size:14px}
+.tt{display:inline-block;padding:7px 16px;border-radius:999px;font-weight:800;font-size:13px;margin-bottom:12px;color:#fff;border:2px solid var(--ink)}.tt.poin{background:var(--yel);color:var(--ink)}.tt.steal{background:var(--blue)}.tt.trap{background:var(--pink)}
+.db{display:block;width:100%;padding:13px;margin-top:9px;border:2px solid var(--bd);border-radius:12px;background:#fff;color:var(--ink);font-weight:800;cursor:pointer;font-size:14px;text-align:left}.db:hover,.db.self{border-color:var(--blue);background:var(--sky)}
+.qc{background:var(--yelb);border-left:5px solid var(--yel2);padding:10px 14px;border-radius:8px;text-align:left;margin-bottom:14px;font-size:13px}
+.qq{font-size:17px;font-weight:800;margin-bottom:10px;text-align:left;line-height:1.5}
+.qo{display:block;width:100%;text-align:left;padding:12px;margin:7px 0;border:2px solid var(--bd);border-radius:12px;background:#fff;color:var(--ink);cursor:pointer;font-size:14px}.qo:hover:not(:disabled){border-color:var(--blue);background:var(--sky)}
+.qo.correct{background:var(--grnb);border-color:var(--grn)}.qo.wrong{background:var(--redb);border-color:var(--red)}
+.rb{margin-top:10px;padding:13px;border-radius:12px;font-size:14px;line-height:1.55;text-align:left}.rb.good{background:var(--grnb);color:var(--grn)}.rb.bad{background:var(--redb);color:var(--red)}.rb.neutral{background:var(--yelb);color:var(--ink)}
+.nx{margin-top:16px;width:100%;padding:13px;border:2px solid var(--ink);border-radius:12px;background:var(--blue);color:#fff;font-weight:800;cursor:pointer;font-size:15px;box-shadow:0 4px 0 var(--ink)}
+.fr{display:flex;align-items:center;gap:12px;padding:11px;border-radius:12px;background:var(--soft);margin-bottom:8px;text-align:left}.fr .md{font-size:24px;width:30px;text-align:center}.fr .fm{font-size:26px}.fr .fn{flex:1;font-weight:800}.fr .fs{font-weight:800;color:var(--blue2);font-size:16px}
+.tvs{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;background:var(--sky);border:2px solid var(--bd);border-radius:14px;padding:10px;margin:0 0 12px}
+.tv{text-align:center}.tv svg{display:block;margin:0 auto;max-width:100%;height:auto}.tv .cap{font-size:12px;font-weight:800;color:var(--mu);margin:2px 0 4px}
+.tv text{font:800 13px Nunito,sans-serif;fill:#1E293B;text-anchor:middle;dominant-baseline:central}.tv .nd{fill:#fff;stroke:#2563EB;stroke-width:2.5}.tv .ed{stroke:#94A3B8;stroke-width:2.5}.tv .xe{stroke:#DB2777;stroke-width:2.5;stroke-dasharray:6 4}
+@media(max-width:900px){.ma{grid-template-columns:1fr}.board{grid-template-columns:repeat(4,1fr)}.tg{grid-template-columns:1fr}}
+@media(max-width:480px){.board{grid-template-columns:repeat(3,1fr)}.sb{grid-template-columns:1fr 1fr!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header><div><h1>🌳 Tree Quest: Jelajah Struktur Data Tree</h1><p>Root · Parent · Child · Leaf · Level · Subtree — 25 kartu misi berpikir kritis (HOTS).</p></div>
+<div class="hr"><button class="sbtn" id="snd">🔇 Suara: Off</button><div class="turn" id="turn">Giliran: -</div></div></header>
+<section class="setup" id="setup"><div class="sc"><h2>🦈 Siapkan Tim Anda 🐊</h2>
+<p class="intro">Pilih jumlah tim (2–4), lalu pilih satu ikon khas Surabaya untuk setiap tim (tidak boleh sama). Nama tim mengikuti ikon yang dipilih.</p>
+<div class="cnt" id="cnt"></div><div class="tg" id="tg"></div><button class="go" id="go" disabled>🚀 Mulai Misi</button></div></section>
+<main class="game" id="game"><div class="sb" id="sb"></div>
+<div class="ma"><div class="board" id="board"></div>
+<aside class="sp"><h3>📝 Catatan Misi</h3><div class="log" id="log"></div>
+<div class="lg">💰 Kartu Poin (10/20/30)<br>🦈 Kartu Suro vs Boyo (rebut poin tim lain)<br>🌶️ Kartu Sambal Pedas (salah = poin berkurang)<br><em>Jenis kartu baru terlihat setelah dibuka!</em></div>
+<button class="rl" id="rl">🔄 Mulai Ulang Permainan</button></aside></div></main>
+<div class="modal" id="modal"><div class="mc" id="mc"></div></div>
+<script>
+const ICONS=[["🦈","Suro"],["🐊","Boyo"],["🍜","Lontong Balap"],["🥗","Rujak Cingur"],["🌉","Suramadu"],["🗼","Tugu Pahlawan"],["🍢","Sate Klopo"],["🥟","Lumpia"]];
+const BADGE={poin:"💰",steal:"🦈",trap:"🌶️"};
+const E=s=>{const d=document.createElement("div");d.textContent=s;return d.innerHTML};
+const $=id=>document.getElementById(id);
+// [nilai, soal, [opsi], indeks jawaban benar, pembahasan]
+const Q={
+poin:[
+[10,"Sebuah Tree: A membawahi B, C, D. B membawahi E dan F. D membawahi G. F membawahi H dan I. Berapa jumlah leaf pada Tree ini?",["3","4","5","6"],2,"Leaf = node tanpa anak: C, E, G, H, I, jadi ada 5.","A(B(E,F(H,I)),C,D(G))"],
+[10,"Pada Tree dengan A→B,C,D; B→E,F; D→G; F→H,I, node H berada di level berapa? (Root = Level 0)",["2","3","4","5"],1,"Jalurnya A (0) → B (1) → F (2) → H (3).","A(B(E,F(H,I)),C,D(G))"],
+[10,"Sebuah Tree memiliki 15 node. Berapa jumlah edge-nya?",["13","14","15","16"],1,"Edge = jumlah node − 1 = 14, karena setiap node selain Root punya satu edge ke parent-nya."],
+[10,"Struktur folder: Drive D berisi Sekolah dan Foto; Sekolah berisi Tugas dan Materi; folder Foto masih kosong. Manakah yang BUKAN leaf?",["Tugas","Materi","Foto","Sekolah"],3,"Sekolah punya anak (Tugas dan Materi). Folder Foto yang kosong tidak punya anak, jadi ia leaf.","Drive_D(Sekolah(Tugas,Materi),Foto)"],
+[20,"Tree: K membawahi L, M, N. L membawahi O dan P. P membawahi R. Berapa node pada subtree yang berakar di L?",["3","4","5","6"],1,"Subtree L = L, O, P, R, yaitu 4 node.","K(L(O,P(R)),M,N)"],
+[20,"Tree: K→L, M; L→O, P; M→Q. Pasangan node manakah yang merupakan sibling?",["O dan Q","K dan L","O dan P","P dan M"],2,"Sibling harus punya parent yang sama. O dan P sama-sama anak L.","K(L(O,P),M(Q))"],
+[20,"Node X berada di Level 4 pada sebuah Tree. Berapa node yang dilalui dari Root sampai X (termasuk Root dan X)?",["4","5","6","3"],1,"Level 4 berarti 4 edge dari Root, sehingga ada 5 node pada jalurnya."],
+[20,"Tree: A→B, C; B→D, E. Seorang siswa menambahkan garis dari E ke C sehingga C menjadi anak E juga. Apa akibatnya?",["Tetap Tree karena jumlah node sama","Bukan Tree lagi, karena C punya dua parent (A dan E)","Tetap Tree dan E menjadi Root","Jumlah leaf bertambah"],1,"Pada Tree, setiap node selain Root punya tepat satu parent. Garis baru juga membentuk putaran A-B-E-C-A.","A(B(D,E),C)+E>C"],
+[20,"Struktur pada gambar terhubung dan memiliki 8 node dan 8 edge. Apa kesimpulan yang paling tepat?",["Pasti Tree","Bukan Tree, karena Tree dengan 8 node hanya punya 7 edge","Tree dengan dua Root","Tree dengan 8 leaf"],1,"Edge Tree = node − 1 = 7. Kelebihan satu edge berarti ada putaran.","A(B(D,E),C(F,G(H)))+H>E"],
+[30,"Struktur folder: Drive→Sekolah, Foto, Musik; Sekolah→Kelas7, Kelas8; Kelas7→Tugas, Materi; Foto→Liburan. Folder Musik dan Kelas8 kosong. Pada level berapa file Tugas, dan berapa jumlah leaf?",["Level 3, 5 leaf","Level 2, 5 leaf","Level 3, 4 leaf","Level 3, 6 leaf"],0,"Drive (0) → Sekolah (1) → Kelas7 (2) → Tugas (3). Leaf: Tugas, Materi, Kelas8, Liburan, Musik = 5 (folder kosong juga leaf).","Drive(Sekolah(Kelas7(Tugas,Materi),Kelas8),Foto(Liburan),Musik)"],
+[30,"Sekolah ingin menyimpan data jabatan (kepala sekolah, wakil, guru, staf) dan seorang siswa mengusulkan satu Array biasa. Bagaimana evaluasi yang paling tepat?",["Tepat, karena Array paling cepat","Kurang tepat, karena Array tidak menunjukkan hubungan atasan–bawahan berjenjang; Tree lebih cocok","Tepat, karena setiap jabatan punya indeks","Kurang tepat, karena Stack lebih cocok"],1,"Data berjenjang (atasan–bawahan) paling alami digambarkan sebagai Tree."],
+[30,"Tree A: R punya 3 anak yang semuanya leaf. Tree B: rantai R→S→T→U (tiap node satu anak). Keduanya 4 node. Bagaimana perbandingan tinggi (height) keduanya?",["Sama-sama 3","A = 1, B = 3","A = 3, B = 1","A = 2, B = 3"],1,"Tinggi = level tertinggi. A hanya sampai Level 1, sedangkan B sampai Level 3, sehingga mencari node terdalam di B lebih panjang.","Tree_A=R(S,T,U)|Tree_B=R(S(T(U)))"],
+[30,"Setiap node bukan-leaf pada sebuah Tree punya tepat 3 anak, dan Tree hanya sampai Level 2 (Root di Level 0, semua level terisi penuh). Berapa total node?",["9","12","13","15"],2,"1 (Level 0) + 3 (Level 1) + 9 (Level 2) = 13.",".(.(.,.,.),.(.,.,.),.(.,.,.))"],
+[30,"Tree awal berisi 12 node. Node Z dihapus beserta semua keturunannya. Z punya 2 anak, dan masing-masing anak punya 1 anak. Berapa node dan edge yang tersisa?",["7 node, 6 edge","7 node, 7 edge","9 node, 8 edge","5 node, 4 edge"],0,"Yang terhapus: Z, 2 anak, 2 cucu = 5 node. Sisa 7 node, dan edge = 7 − 1 = 6."],
+[30,"Pernyataan: 'Setiap node pada Tree pasti punya tepat satu parent.' Bagaimana evaluasinya?",["Benar tanpa kecuali","Salah, karena Root tidak punya parent","Salah, karena leaf tidak punya parent","Benar, kecuali pada leaf"],1,"Root adalah node paling atas dan tidak punya parent. Semua node lain punya tepat satu."]],
+steal:[
+[20,"Mengapa struktur folder komputer lebih cocok memakai Tree daripada Queue?",["Folder berjenjang dan bercabang, sedangkan Queue hanya satu jalur FIFO","Karena Queue tidak bisa menyimpan file","Karena Tree selalu lebih cepat dari semua struktur","Karena folder harus diambil dari yang terakhir"],0,"Folder berisi folder lain (bercabang). Queue hanya satu jalur antrean."],
+[20,"Sebuah Tree hanya terdiri dari satu node. Status node tersebut adalah...",["Root saja","Leaf saja","Root sekaligus Leaf","Bukan Tree"],2,"Node tunggal tidak punya parent (Root) dan tidak punya anak (Leaf)."],
+[20,"Seorang siswa berkata: 'Leaf tidak punya level.' Bagaimana evaluasinya?",["Benar, level hanya untuk Root","Salah, setiap node termasuk leaf punya level, yaitu jaraknya dari Root","Benar, karena leaf tidak punya anak","Salah, karena level hanya dimiliki leaf"],1,"Level adalah jarak node dari Root, jadi semua node punya level."],
+[20,"Dua node berada di level yang sama tetapi parent-nya berbeda. Apakah keduanya sibling?",["Ya, karena levelnya sama","Tidak, sibling harus punya parent yang sama","Ya, jika keduanya leaf","Tidak, karena keduanya pasti Root"],1,"Sibling ditentukan oleh parent yang sama, bukan oleh level yang sama."],
+[20,"Silsilah: Kakek→Ayah, Paman; Ayah→Aku, Adik. Bagaimana hubungan Aku dan Paman?",["Sibling, karena sama-sama keluarga","Parent dan child","Bukan sibling, karena parent mereka berbeda (Ayah dan Kakek)","Keduanya berada di level 1"],2,"Aku di Level 2 (parent: Ayah), Paman di Level 1 (parent: Kakek).","Kakek(Ayah(Aku,Adik),Paman)"]],
+trap:[
+[20,"Sebuah Tree memiliki 20 node, dan 6 di antaranya leaf. Berapa node yang bukan leaf?",["12","13","14","15"],2,"20 − 6 = 14 node yang punya anak (termasuk Root)."],
+[20,"Struktur pada gambar terhubung dan memiliki 6 node dan 6 edge. Apa kesimpulannya?",["Pasti Tree","Bukan Tree, karena ada putaran (Tree 6 node hanya punya 5 edge)","Tree dengan dua Root","Tree setinggi 6"],1,"Edge Tree = node − 1 = 5. Satu edge berlebih membentuk putaran.","A(B(D),C(E,F))+F>D"],
+[20,"Root berada di Level 0. Jalur terpanjang dari Root ke sebuah leaf melewati 5 node (termasuk Root dan leaf). Berapa tinggi (height) Tree?",["3","4","5","6"],1,"5 node berarti 4 edge, sehingga leaf terdalam ada di Level 4. Tinggi = 4."],
+[20,"Node M punya 3 sibling dan 2 child. Berapa jumlah anak yang dimiliki parent M?",["3","4","5","6"],1,"M + 3 sibling = 4 anak dari parent yang sama."],
+[20,"Node S punya subtree berisi 6 node. S punya dua anak. Subtree anak pertama berisi 1 node. Berapa node pada subtree anak kedua?",["3","4","5","6"],1,"6 = 1 (S) + 1 + x, sehingga x = 4."]]};
+const MIN=2,MAX=4;let n=4,teams=mk(n),cards=[],cur=0,pend=null,ans=null,rev=null,used=0;
+function mk(k){return Array.from({length:k},()=>({name:"",icon:"",score:0}))}
+const lbl=t=>t.icon+" "+E(t.name);
+let snd=false,ctx=null;
+function tone(f,d,ty,dl,v){if(!snd)return;try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+(dl||0);o.type=ty||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||.2,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d)}catch(e){}}
+const sfx={open:()=>tone(440,.08,"square",0,.15),dec:()=>tone(523,.15),ok:()=>{tone(660,.12,"triangle",0,.25);tone(880,.18,"triangle",.12,.25)},no:()=>tone(220,.3,"sawtooth"),
+steal:()=>[784,988,1175].forEach((f,i)=>tone(f,.12,"square",i*.1)),trap:()=>{tone(180,.4,"sawtooth",0,.25);tone(140,.5,"sawtooth",.15,.25)},win:()=>[523,659,784,1046].forEach((f,i)=>tone(f,.25,"triangle",i*.18,.25))};
+$("snd").onclick=()=>{snd=!snd;$("snd").textContent=snd?"🔊 Suara: On":"🔇 Suara: Off";$("snd").classList.toggle("on",snd);if(snd)sfx.dec()};
+function renderCount(){const b=$("cnt");b.innerHTML="";for(let i=MIN;i<=MAX;i++){const x=document.createElement("button");x.className="cb"+(i===n?" sel":"");x.textContent=i+" Tim";x.onclick=()=>{if(i===n)return;while(teams.length<i)teams.push({name:"",icon:"",score:0});teams=teams.slice(0,i);n=i;renderCount();renderSetup()};b.appendChild(x)}}
+function renderSetup(){const g=$("tg");g.innerHTML="";teams.forEach((t,i)=>{const b=document.createElement("div");b.className="tb"+(t.name&&t.icon?" filled":"");b.innerHTML=`<label>Tim ${i+1}: <b>${t.icon?t.icon+" "+E(t.name):"belum memilih ikon"}</b></label><div class="ag" style="margin-top:8px"></div>`;const ag=b.querySelector(".ag");
+ICONS.forEach(([ic,nm])=>{const tk=teams.some((o,j)=>j!==i&&o.icon===ic),o=document.createElement("div");o.className="ao"+(t.icon===ic?" sel":"")+(tk?" taken":"");o.innerHTML=`<b>${ic}</b>${nm}`;if(!tk)o.onclick=()=>{t.icon=t.icon===ic?"":ic;t.name=t.icon?nm:"";renderSetup()};ag.appendChild(o)});g.appendChild(b)});$("go").disabled=!teams.every(t=>t.icon)}
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+$("go").onclick=()=>{teams.forEach(t=>t.score=0);const pool=[];for(const ty in Q)Q[ty].forEach(([v,q,o,a,x,t])=>{const opts=shuf(o.map((z,i)=>({x:z,c:i===a})));pool.push({type:ty,value:v,question:q,options:opts.map(z=>z.x),answer:opts.findIndex(z=>z.c),ex:x,tree:t,used:false})});
+cards=shuf(pool).map((c,i)=>({...c,id:i+1}));cur=0;used=0;$("setup").style.display="none";$("game").style.display="block";$("log").innerHTML="";$("sb").style.gridTemplateColumns=`repeat(${teams.length},1fr)`;drawScore();drawBoard();turn()};
+function drawScore(){const b=$("sb");b.innerHTML="";teams.forEach((t,i)=>{const d=document.createElement("div");d.className="ts"+(i===cur?" act":"");d.innerHTML=`<div class="m">${t.icon}</div><div class="tn">${E(t.name)}</div><div class="tscore">${t.score}</div>`;b.appendChild(d)})}
+function drawBoard(){const b=$("board");b.innerHTML="";cards.forEach(c=>{const e=document.createElement("div");e.className="cs"+(c.used?" used":"");if(c.used)e.innerHTML=`<div class="bd">${BADGE[c.type]}</div><div class="q">✔</div><div class="n">Kartu ${c.id}</div>`;else{e.innerHTML=`<div class="q">?</div><div class="n">Kartu ${c.id}</div>`;e.tabIndex=0;e.onclick=()=>{pend=c.id;sfx.open();decide()};e.onkeydown=k=>{if(k.key==="Enter")e.click()}}b.appendChild(e)})}
+function turn(){$("turn").innerHTML="Giliran memilih: "+lbl(teams[cur])}
+const M=h=>{$("mc").innerHTML=h;$("modal").classList.add("show")};
+function decide(){const p=teams[cur];let h=`<h2>Kartu ${pend} Dipilih!</h2><p class="sub"><b>${lbl(p)}</b>, apakah akan menjawab sendiri atau melemparkan kartu ke tim lain? Isi kartu masih dirahasiakan.</p><button class="db self" data-i="${cur}">🙋 Jawab sendiri (${lbl(p)})</button>`;teams.forEach((t,i)=>{if(i!==cur)h+=`<button class="db" data-i="${i}">🎯 Lemparkan ke ${lbl(t)}</button>`});M(h);$("mc").querySelectorAll(".db").forEach(b=>b.onclick=()=>{ans=+b.dataset.i;rev=cards.find(c=>c.id===pend);sfx.dec();ask()})}
+const viz=sp=>`<div class="tvs">${sp.split("|").map(p=>{const m=p.split("=");return m.length>1?draw(m[0].replace(/_/g," "),m[1]):draw("",m[0])}).join("")}</div>`;
+function draw(cap,sp){const[ts,xs]=sp.split("+");let i=0;
+const P=()=>{let l="";while(i<ts.length&&"(),".indexOf(ts[i])<0)l+=ts[i++];const n={l:l==="."?"":l.replace(/_/g," "),k:[]};if(ts[i]==="("){i++;for(;;){n.k.push(P());if(ts[i]===","){i++;continue}break}i++}return n};
+const root=P(),fl=[];let lf=0,md=0;
+const lay=(n,d)=>{n.d=d;md=Math.max(md,d);if(!n.k.length)n.x=lf++;else{n.k.forEach(c=>lay(c,d+1));n.x=(n.k[0].x+n.k[n.k.length-1].x)/2}n.w=n.l===""?32:Math.max(34,n.l.length*8+18);fl.push(n)};lay(root,0);
+const mw=Math.max(...fl.map(n=>n.w)),U=mw+16,pad=14,W=Math.round((lf-1)*U+mw+pad*2),H=md*62+32+pad*2;
+fl.forEach(n=>{n.px=pad+mw/2+n.x*U;n.py=pad+16+n.d*62});
+let g="";fl.forEach(n=>n.k.forEach(c=>g+=`<line class="ed" x1="${n.px}" y1="${n.py}" x2="${c.px}" y2="${c.py}"/>`));
+if(xs)xs.split(";").forEach(z=>{const[a,b]=z.split(">"),A=fl.find(n=>n.l===a),B=fl.find(n=>n.l===b);if(A&&B)g+=`<line class="xe" x1="${A.px}" y1="${A.py}" x2="${B.px}" y2="${B.py}"/>`});
+fl.forEach(n=>{g+=`<rect class="nd" x="${n.px-n.w/2}" y="${n.py-16}" width="${n.w}" height="32" rx="16"/>`+(n.l?`<text x="${n.px}" y="${n.py}">${E(n.l)}</text>`:"")});
+return `<div class="tv">${cap?`<div class="cap">${E(cap)}</div>`:""}<svg viewBox="0 0 ${W} ${H}" width="${W}" role="img" aria-label="Gambar Tree">${g}</svg>${xs?'<div class="cap">Garis putus-putus = garis tambahan</div>':""}</div>`}
+function ask(){const c=rev,a=teams[ans];const L={poin:"💰 Kartu Poin",steal:"🦈 Kartu Suro vs Boyo",trap:"🌶️ Kartu Sambal Pedas"}[c.type];
+const D={poin:`Jika menjawab benar, tim memperoleh ${c.value} poin.`,steal:`Jika menjawab benar, tim dapat merebut hingga ${c.value} poin dari tim lain.`,trap:`Perhatian! Jika jawaban salah, poin tim ini berkurang ${c.value} dan dibagikan kepada tim lain.`}[c.type];
+let h=`<div class="tt ${c.type}">${L}</div><p class="sub">${D}</p><div class="qc"><b>Yang menjawab:</b> ${lbl(a)}</div><div class="qq">${c.question}</div>${c.tree?viz(c.tree):""}`;c.options.forEach((o,i)=>h+=`<button class="qo" data-i="${i}">${"ABCD"[i]}. ${E(o)}</button>`);M(h);$("mc").querySelectorAll(".qo").forEach(b=>b.onclick=()=>answer(+b.dataset.i))}
+function rbox(t,m){const d=document.createElement("div");d.className="rb "+t;d.innerHTML=m;$("mc").appendChild(d)}
+const expl=c=>rbox("neutral","📘 <b>Pembahasan:</b> "+E(c.ex));
+function nextBtn(){const b=document.createElement("button");b.className="nx";b.textContent="Lanjut";b.onclick=close;$("mc").appendChild(b)}
+function log(t,c){const d=document.createElement("div");d.className="li "+c;d.textContent=t;$("log").prepend(d)}
+function answer(s){const c=rev,ok=s===c.answer,a=teams[ans],nm=a.icon+" "+a.name;
+$("mc").querySelectorAll(".qo").forEach((b,i)=>{b.disabled=true;if(i===c.answer)b.classList.add("correct");if(i===s&&!ok)b.classList.add("wrong")});c.used=true;used++;
+if(c.type==="poin"){if(ok){sfx.ok();a.score+=c.value;rbox("good",`✅ Jawaban benar! ${lbl(a)} memperoleh <b>${c.value} poin</b>.`);log(`💰 ${nm} menjawab benar (+${c.value}).`,"c")}else{sfx.no();rbox("bad","❌ Jawaban kurang tepat. Tidak ada poin yang diperoleh.");log(`💰 ${nm} menjawab salah, tidak memperoleh poin.`,"w")}expl(c);nextBtn()}
+else if(c.type==="steal"){if(ok){sfx.ok();steal(c,a);return}sfx.no();rbox("neutral","😅 Jawaban salah. Suro dan Boyo batal bertarung, sehingga tidak ada poin yang berpindah.");log(`🦈 ${nm} menjawab salah pada kartu Suro vs Boyo.`,"w");expl(c);nextBtn()}
+else{if(ok){sfx.ok();rbox("good",`🛡️ Hebat! ${lbl(a)} berhasil menghadapi sambal pedas. Tidak ada poin yang hilang.`);log(`🌶️ ${nm} menjawab benar pada kartu Sambal Pedas. Aman.`,"c")}else{sfx.trap();const o=teams.filter((_,i)=>i!==ans),sh=Math.floor(c.value/o.length),rm=c.value-sh*o.length;a.score-=c.value;o.forEach((t,i)=>t.score+=sh+(i===0?rm:0));
+rbox("bad",`🌶️ Terkena sambal pedas! ${lbl(a)} kehilangan <b>${c.value} poin</b>, dibagikan kepada: ${o.map((t,i)=>lbl(t)+" (+"+(sh+(i===0?rm:0))+")").join(", ")}.`);log(`🌶️ ${nm} terkena sambal pedas, -${c.value} poin dibagikan ke tim lain.`,"t")}expl(c);nextBtn()}}
+function steal(c,a){let h=`<div class="tt steal">🦈 Suro vs Boyo 🐊</div><p class="sub">✅ Jawaban benar! ${lbl(a)} berhak merebut hingga <b>${c.value} poin</b>. Pilih tim sasaran:</p>`;teams.forEach((t,i)=>{if(i!==ans)h+=`<button class="db" data-i="${i}">🎯 ${lbl(t)} (poin: ${t.score})</button>`});M(h);
+$("mc").querySelectorAll(".db").forEach(b=>b.onclick=()=>{const t=teams[+b.dataset.i],m=Math.min(c.value,Math.max(t.score,0));t.score-=m;a.score+=m;sfx.steal();$("mc").querySelectorAll(".db").forEach(x=>x.remove());$("mc").querySelector(".sub").remove();rbox("good",`🦈 ${lbl(a)} merebut <b>${m} poin</b> dari ${lbl(t)}!`);log(`🦈 ${a.icon} ${a.name} merebut ${m} poin dari ${t.icon} ${t.name}.`,"s");expl(c);nextBtn()})}
+function close(){$("modal").classList.remove("show");cur=(cur+1)%teams.length;drawScore();drawBoard();turn();if(used>=cards.length)setTimeout(final,300)}
+function final(){sfx.win();const s=[...teams].sort((a,b)=>b.score-a.score),md=["🥇","🥈","🥉","🏅"];let h=`<h2>🎉 Misi Selesai!</h2><p class="sub">Semua ${cards.length} kartu sudah terbuka. Peringkat akhir:</p>`;s.forEach((t,i)=>h+=`<div class="fr"><div class="md">${md[i]}</div><div class="fm">${t.icon}</div><div class="fn">${E(t.name)}</div><div class="fs">${t.score} poin</div></div>`);h+=`<button class="nx" id="again">Mainkan Kembali</button>`;M(h);$("again").onclick=toSetup}
+function toSetup(){$("modal").classList.remove("show");$("game").style.display="none";$("setup").style.display="flex";teams.forEach(t=>t.score=0);renderCount();renderSetup()}
+$("rl").onclick=()=>{if(confirm("Apakah Anda yakin ingin memulai ulang permainan? Skor saat ini akan hilang."))toSetup()};
+renderCount();renderSetup();
+</script></body></html>

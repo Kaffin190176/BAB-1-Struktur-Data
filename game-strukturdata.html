@@ -1,95 +1,96 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kuis Rebutan Arek Suroboyo</title>
-<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<title>Data Quest: Jelajah Struktur Data Linear</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
---bg:#FFF4E0;--pn:#fff;--tx:#3B1212;--mu:#7C5A4E;--red:#C8102E;--red2:#8E0B21;--gold:#E8A317;--sea:#0E7C86;--bd:#E9D3B4;--ok:#15803D;--okb:#DCFCE7;--no:#B91C1C;--nob:#FEE2E2;--nt:#FFF1CC;--cardfg:#fff}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E0B0E;--pn:#2E1418;--tx:#FBEBDD;--mu:#D6AFA0;--bd:#5A2A30;--okb:#12341F;--nob:#3E1316;--nt:#3B2E0F;--ok:#4ADE80;--no:#FCA5A5}}
-:root[data-theme="dark"]{--bg:#1E0B0E;--pn:#2E1418;--tx:#FBEBDD;--mu:#D6AFA0;--bd:#5A2A30;--okb:#12341F;--nob:#3E1316;--nt:#3B2E0F;--ok:#4ADE80;--no:#FCA5A5}
+--bg:#fff;--ink:#1E293B;--mu:#475569;--blue:#2563EB;--blue2:#1D4ED8;--sky:#E0F2FE;--yel:#FFC93C;--yel2:#F59E0B;--yelb:#FFF7D6;--pink:#DB2777;--pink2:#9D174D;--grn:#15803D;--grnb:#DCFCE7;--red:#B91C1C;--redb:#FEE2E2;--bd:#CBD5E1;--soft:#F1F5F9;--grid:#E6EEFB}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{font-family:Nunito,system-ui,sans-serif;font-weight:600;background:var(--bg);color:var(--tx);min-height:100vh}
-h1,h2,.tscore,.brandf{font-family:"Bree Serif",Georgia,serif;font-weight:400}
-header{background:var(--red);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:6px solid var(--gold);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 10px,transparent 10px 20px)}
-header h1{font-size:23px}header p{font-size:12px;opacity:.9}
+body{font-family:Nunito,system-ui,sans-serif;font-weight:600;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:26px 26px;color:var(--ink);min-height:100vh}
+h1,h2,.tscore{font-family:Fredoka,"Trebuchet MS",sans-serif;font-weight:600}
+header{background:var(--blue);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:8px solid var(--yel);box-shadow:0 4px 0 var(--ink)}
+header h1{font-size:25px;letter-spacing:.2px}header p{font-size:13px;opacity:.95}
 .hr{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.turn{background:#fff;color:var(--red2);padding:9px 16px;border-radius:10px;font-weight:800;font-size:14px}
-.sbtn{border:2px solid #fff;background:transparent;color:#fff;padding:8px 14px;border-radius:10px;cursor:pointer;font:inherit;font-weight:800;font-size:13px}
-.sbtn.on{background:var(--sea);border-color:var(--sea)}
+.turn{background:var(--yel);color:var(--ink);padding:9px 16px;border-radius:999px;font-weight:800;font-size:14px;border:2px solid var(--ink)}
+.sbtn{border:2px solid #fff;background:transparent;color:#fff;padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit;font-weight:800;font-size:13px}
+.sbtn.on{background:var(--grn);border-color:#fff}
 button{font-family:inherit}
-button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.setup{min-height:calc(100vh - 80px);display:flex;align-items:center;justify-content:center;padding:22px}
-.sc{width:100%;max-width:840px;background:var(--pn);border:3px solid var(--red);border-radius:18px;padding:28px;box-shadow:8px 8px 0 var(--gold)}
-.sc h2{text-align:center;font-size:27px;color:var(--red)}
+button:focus-visible,.cs:focus-visible,.ao:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.setup{min-height:calc(100vh - 100px);display:flex;align-items:center;justify-content:center;padding:22px}
+.sc{width:100%;max-width:840px;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:28px;box-shadow:8px 8px 0 var(--yel)}
+.sc h2{text-align:center;font-size:28px;color:var(--blue)}
 .intro{text-align:center;color:var(--mu);font-size:14px;margin:6px 0 18px}
 .cnt{display:flex;justify-content:center;gap:10px;margin-bottom:20px}
-.cb{padding:9px 20px;border:2px solid var(--bd);border-radius:10px;background:transparent;color:var(--tx);font-weight:800;cursor:pointer}
-.cb.sel{border-color:var(--red);background:var(--red);color:#fff}
+.cb{padding:9px 20px;border:2px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font-weight:800;cursor:pointer}
+.cb.sel{background:var(--blue);color:#fff}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.tb{border:2px solid var(--bd);border-radius:12px;padding:12px}
-.tb.filled{border-color:var(--sea)}
-.tb label{font-size:12px;color:var(--mu);font-weight:800}
-.ti{width:100%;margin:5px 0 9px;padding:9px;border:2px solid var(--bd);border-radius:8px;font:inherit;background:var(--bg);color:var(--tx)}
+.tb{border:2px solid var(--bd);border-radius:14px;padding:12px;background:#fff}
+.tb.filled{border-color:var(--blue);background:var(--sky)}
+.tb label{font-size:13px;color:var(--mu);font-weight:800}
 .ag{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.ao{text-align:center;padding:6px 2px;border-radius:9px;cursor:pointer;border:2px solid transparent;background:var(--bg);color:var(--tx);font-size:12px;font-weight:800;line-height:1.2}
+.ao{text-align:center;padding:6px 2px;border-radius:10px;cursor:pointer;border:2px solid transparent;background:#fff;color:var(--ink);font-size:11px;font-weight:800;line-height:1.2}
 .ao b{display:block;font-size:24px;font-weight:400}
-.ao.sel{border-color:var(--red);background:var(--nt)}.ao.taken{opacity:.25;cursor:not-allowed}
-.go{width:100%;margin-top:20px;padding:14px;border:0;border-radius:12px;background:var(--red);color:#fff;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 4px 0 var(--red2)}
+.ao:hover{border-color:var(--bd)}
+.ao.sel{border-color:var(--blue);background:var(--yelb)}.ao.taken{opacity:.25;cursor:not-allowed}
+.go{width:100%;margin-top:20px;padding:14px;border:2px solid var(--ink);border-radius:14px;background:var(--grn);color:#fff;font-weight:800;font-size:17px;cursor:pointer;box-shadow:0 5px 0 var(--ink)}
+.go:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
 .go:disabled{opacity:.4;cursor:not-allowed}
 .game{display:none;padding:16px}
 .sb{display:grid;gap:10px;margin-bottom:16px}
-.ts{background:var(--pn);border:2px solid var(--bd);border-radius:12px;padding:10px;text-align:center;transition:.2s}
-.ts.act{border-color:var(--gold);background:var(--nt);transform:translateY(-3px);box-shadow:0 4px 0 var(--gold)}
-.ts .m{font-size:32px}.ts .tn{font-size:13px;font-weight:800}.tscore{font-size:24px;color:var(--red)}
-.ma{display:grid;grid-template-columns:1fr 250px;gap:16px}
+.ts{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:10px;text-align:center;transition:.2s}
+.ts.act{background:var(--yel);transform:translateY(-3px);box-shadow:0 5px 0 var(--ink)}
+.ts .m{font-size:32px}.ts .tn{font-size:13px;font-weight:800}.tscore{font-size:26px;color:var(--blue2)}
+.ma{display:grid;grid-template-columns:1fr 260px;gap:16px}
 .board{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
-.cs{aspect-ratio:3/4;border-radius:12px;background:var(--red);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.1) 0 8px,transparent 8px 16px),radial-gradient(circle at 50% 50%,rgba(232,163,23,.35),transparent 60%);border:3px solid var(--gold);color:var(--cardfg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;box-shadow:0 5px 0 var(--red2);transition:transform .15s}
+.cs{aspect-ratio:3/4;border-radius:14px;background:var(--blue);background-image:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px);background-size:16px 16px;border:3px solid var(--ink);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;box-shadow:0 6px 0 var(--ink);transition:transform .15s}
 .cs:hover{transform:translateY(-4px)}
-.cs .q{font-family:"Bree Serif",serif;font-size:34px}.cs .n{font-size:11px;opacity:.85}
-.cs.used{background:var(--pn);border-color:var(--bd);color:var(--mu);box-shadow:none;cursor:default;opacity:.6}.cs.used:hover{transform:none}
-.cs .bd{position:absolute;top:5px;right:6px;font-size:16px}
-.sp{background:var(--pn);border:2px solid var(--bd);border-radius:12px;padding:12px;max-height:640px;display:flex;flex-direction:column}
-.sp h3{font-size:14px;margin-bottom:8px}
+.cs .q{font-family:Fredoka,sans-serif;font-size:40px;background:var(--yel);color:var(--ink);width:56px;height:56px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.cs .n{font-size:12px;font-weight:800}
+.cs.used{background:var(--soft);background-image:none;border-color:var(--bd);color:var(--mu);box-shadow:none;cursor:default}.cs.used:hover{transform:none}
+.cs.used .q{background:#fff;border-color:var(--bd);color:var(--grn);font-size:28px}
+.cs .bd{position:absolute;top:5px;right:6px;font-size:18px}
+.sp{background:#fff;border:2px solid var(--ink);border-radius:14px;padding:12px;max-height:640px;display:flex;flex-direction:column;box-shadow:5px 5px 0 var(--sky)}
+.sp h3{font-size:14px;margin-bottom:8px;color:var(--blue2)}
 .log{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:7px}
-.li{font-size:12px;line-height:1.45;background:var(--bg);padding:7px 9px;border-radius:7px;border-left:4px solid var(--mu)}
-.li.c{border-color:var(--ok)}.li.w{border-color:var(--no)}.li.s{border-color:var(--sea)}.li.t{border-color:var(--gold)}
+.li{font-size:12px;line-height:1.45;background:var(--soft);padding:7px 9px;border-radius:8px;border-left:4px solid var(--mu)}
+.li.c{border-color:var(--grn)}.li.w{border-color:var(--red)}.li.s{border-color:var(--blue)}.li.t{border-color:var(--pink)}
 .lg{margin-top:10px;font-size:12px;color:var(--mu);line-height:1.7}
 .rl{margin-top:10px;text-align:center;font-size:12px;color:var(--mu);cursor:pointer;text-decoration:underline;background:none;border:0}
-.modal{position:fixed;inset:0;background:rgba(30,5,8,.8);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal{position:fixed;inset:0;background:rgba(30,41,59,.65);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
 .modal.show{display:flex}
-.mc{width:100%;max-width:620px;background:var(--pn);border:3px solid var(--red);border-radius:18px;padding:24px;text-align:center;max-height:90vh;overflow-y:auto;box-shadow:8px 8px 0 var(--gold)}
-.mc h2{margin-bottom:6px;color:var(--red)}.sub{color:var(--mu);margin-bottom:16px;font-size:14px}
-.tt{display:inline-block;padding:7px 16px;border-radius:30px;font-weight:800;font-size:13px;margin-bottom:12px;color:#fff}
-.tt.poin{background:var(--gold);color:#3B1212}.tt.steal{background:var(--sea)}.tt.trap{background:var(--red)}
-.db{display:block;width:100%;padding:13px;margin-top:9px;border:2px solid var(--bd);border-radius:11px;background:transparent;color:var(--tx);font-weight:800;cursor:pointer;font-size:14px;text-align:left}
-.db:hover{border-color:var(--red)}.db.self{border-color:var(--sea)}
-.qc{background:var(--bg);border-left:5px solid var(--red);padding:10px 14px;border-radius:8px;text-align:left;margin-bottom:14px;font-size:13px}
+.mc{width:100%;max-width:620px;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:24px;text-align:center;max-height:90vh;overflow-y:auto;box-shadow:8px 8px 0 var(--yel)}
+.mc h2{margin-bottom:6px;color:var(--blue)}.sub{color:var(--mu);margin-bottom:16px;font-size:14px}
+.tt{display:inline-block;padding:7px 16px;border-radius:999px;font-weight:800;font-size:13px;margin-bottom:12px;color:#fff;border:2px solid var(--ink)}
+.tt.poin{background:var(--yel);color:var(--ink)}.tt.steal{background:var(--blue)}.tt.trap{background:var(--pink)}
+.db{display:block;width:100%;padding:13px;margin-top:9px;border:2px solid var(--bd);border-radius:12px;background:#fff;color:var(--ink);font-weight:800;cursor:pointer;font-size:14px;text-align:left}
+.db:hover{border-color:var(--blue);background:var(--sky)}.db.self{border-color:var(--blue);background:var(--sky)}
+.qc{background:var(--yelb);border-left:5px solid var(--yel2);padding:10px 14px;border-radius:8px;text-align:left;margin-bottom:14px;font-size:13px}
 .qq{font-size:17px;font-weight:800;margin-bottom:10px;text-align:left;line-height:1.45}
-.qo{display:block;width:100%;text-align:left;padding:12px;margin:7px 0;border:2px solid var(--bd);border-radius:10px;background:transparent;color:var(--tx);cursor:pointer;font-size:14px}
-.qo:hover:not(:disabled){border-color:var(--red)}
-.qo.correct{background:var(--okb);border-color:var(--ok)}.qo.wrong{background:var(--nob);border-color:var(--no)}
-.rb{margin-top:10px;padding:13px;border-radius:10px;font-size:14px;line-height:1.55;text-align:left}
-.rb.good{background:var(--okb);color:var(--ok)}.rb.bad{background:var(--nob);color:var(--no)}.rb.neutral{background:var(--nt)}
-.nx{margin-top:16px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:800;cursor:pointer;font-size:15px}
-.fr{display:flex;align-items:center;gap:12px;padding:11px;border-radius:10px;background:var(--bg);margin-bottom:8px;text-align:left}
-.fr .md{font-size:24px;width:30px;text-align:center}.fr .fm{font-size:26px}.fr .fn{flex:1;font-weight:800}.fr .fs{font-weight:800;color:var(--red);font-size:16px}
+.qo{display:block;width:100%;text-align:left;padding:12px;margin:7px 0;border:2px solid var(--bd);border-radius:12px;background:#fff;color:var(--ink);cursor:pointer;font-size:14px}
+.qo:hover:not(:disabled){border-color:var(--blue);background:var(--sky)}
+.qo.correct{background:var(--grnb);border-color:var(--grn)}.qo.wrong{background:var(--redb);border-color:var(--red)}
+.rb{margin-top:10px;padding:13px;border-radius:12px;font-size:14px;line-height:1.55;text-align:left}
+.rb.good{background:var(--grnb);color:var(--grn)}.rb.bad{background:var(--redb);color:var(--red)}.rb.neutral{background:var(--yelb);color:var(--ink)}
+.nx{margin-top:16px;width:100%;padding:13px;border:2px solid var(--ink);border-radius:12px;background:var(--blue);color:#fff;font-weight:800;cursor:pointer;font-size:15px;box-shadow:0 4px 0 var(--ink)}
+.fr{display:flex;align-items:center;gap:12px;padding:11px;border-radius:12px;background:var(--soft);margin-bottom:8px;text-align:left}
+.fr .md{font-size:24px;width:30px;text-align:center}.fr .fm{font-size:26px}.fr .fn{flex:1;font-weight:800}.fr .fs{font-weight:800;color:var(--blue2);font-size:16px}
 @media(max-width:900px){.ma{grid-template-columns:1fr}.board{grid-template-columns:repeat(4,1fr)}.tg{grid-template-columns:1fr}}
 @media(max-width:480px){.board{grid-template-columns:repeat(3,1fr)}.sb{grid-template-columns:1fr 1fr!important}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
-<header><div><h1>🦈 Kuis Rebutan Arek Suroboyo 🐊</h1><p>Struktur Data Linear · 20 kartu soal analisis kasus: poin, rebut poin Suro vs Boyo, dan Sambal Pedas.</p></div>
+<header><div><h1>💻 Data Quest: Jelajah Struktur Data Linear</h1><p>Array · Stack · Queue · Linked List — 20 kartu misi analisis kasus untuk kelas SMP.</p></div>
 <div class="hr"><button class="sbtn" id="snd">🔇 Suara: Off</button><div class="turn" id="turn">Giliran: -</div></div></header>
 
-<section class="setup" id="setup"><div class="sc"><h2>Siapkan Tim Anda</h2>
-<p class="intro">Pilih jumlah tim (2–4), lalu pilih satu ikon khas Surabaya untuk setiap tim (tidak boleh sama). Nama tim mengikuti ikon yang dipilih.</p>
+<section class="setup" id="setup"><div class="sc"><h2>🦈 Siapkan Tim Anda 🐊</h2>
+<p class="intro">Pilih jumlah tim (2–4), lalu pilih satu ikon khas Surabaya untuk setiap tim (tidak boleh sama). Nama tim mengikuti ikon yang dipilih. Nama tim mengikuti ikon yang dipilih.</p>
 <div class="cnt" id="cnt"></div><div class="tg" id="tg"></div>
-<button class="go" id="go" disabled>Mulai Permainan</button></div></section>
+<button class="go" id="go" disabled>🚀 Mulai Misi</button></div></section>
 
 <main class="game" id="game"><div class="sb" id="sb"></div>
 <div class="ma"><div class="board" id="board"></div>
-<aside class="sp"><h3>📜 Catatan Permainan</h3><div class="log" id="log"></div>
+<aside class="sp"><h3>📝 Catatan Misi</h3><div class="log" id="log"></div>
 <div class="lg">💰 Kartu Poin (10/20/30)<br>🦈 Kartu Suro vs Boyo (rebut poin tim lain)<br>🌶️ Kartu Sambal Pedas (jawaban salah mengurangi poin)<br><em>Jenis kartu baru terlihat setelah dibuka!</em></div>
 <button class="rl" id="rl">🔄 Mulai Ulang Permainan</button></aside></div></main>
 <div class="modal" id="modal"><div class="mc" id="mc"></div></div>
@@ -101,13 +102,13 @@ const E=s=>{const d=document.createElement("div");d.textContent=s;return d.inner
 const $=id=>document.getElementById(id);
 // [nilai, soal, [opsi], indeks jawaban benar]
 const Q={
-poin:[[10,"Daftar absen disimpan dalam Array: indeks 0 Ani, indeks 1 Budi, indeks 2 Citra, indeks 3 Dedi, indeks 4 Eka. Guru memanggil siswa pada indeks 3. Siapa yang dipanggil?",["Citra","Dedi","Eka","Budi"],1],
+poin:[[10,"Daftar absen disimpan dalam Array: {Ani, Budi, Citra, Dedi, Eka}. Guru memanggil siswa pada indeks 3. Siapa yang dipanggil?",["Citra","Dedi","Eka","Budi"],1],
 [10,"Tiga piring (merah, biru, hijau) ditumpuk berurutan dalam sebuah Stack. Piring manakah yang harus diambil lebih dulu?",["Merah","Biru","Hijau","Bebas, semuanya sama"],2],
 [10,"Saat tombol Kembali di browser ditekan, halaman yang terakhir dikunjungi muncul lebih dulu. Perilaku ini menyerupai struktur data...",["Queue","Stack","Array","Linked List"],1],
 [10,"Tiga dokumen dikirim ke printer berurutan: Laporan, Tugas, Poster. Dokumen apa yang dicetak lebih dulu, dan struktur apa yang bekerja?",["Poster, Stack","Laporan, Queue","Poster, Queue","Laporan, Stack"],1],
 [20,"Antrean loket berisi Rina, Salsa, Tono (Rina paling depan). Rina selesai dilayani, Umar datang, lalu Salsa selesai dilayani. Bagaimana urutan antrean sekarang dari depan ke belakang?",["Tono, Umar","Umar, Tono","Salsa, Tono","Tono, Salsa, Umar"],0],
 [20,"Sebuah tumpukan buku kosong. Matematika, IPA, dan IPS ditaruh berurutan. Lalu satu buku diambil, buku Seni ditaruh, dan dua buku diambil. Buku apa yang tersisa?",["Matematika","IPA","Seni","Tidak ada yang tersisa"],0],
-[20,"Array buah: indeks 0 Apel, indeks 1 Jeruk, indeks 2 Mangga, indeks 3 Pisang, indeks 4 Anggur. Isi indeks 1 dan indeks 4 saling ditukar. Berapa isi indeks 1 dan indeks 4 sekarang?",["Indeks 1 Anggur, indeks 4 Jeruk","Indeks 1 Jeruk, indeks 4 Anggur","Indeks 1 Pisang, indeks 4 Apel","Indeks 1 Mangga, indeks 4 Jeruk"],0],
+[20,"Array buah: {Apel, Jeruk, Mangga, Pisang, Anggur}. Isi indeks 1 dan indeks 4 saling ditukar. Berapa isi indeks 1 dan indeks 4 sekarang?",["Indeks 1 Anggur, indeks 4 Jeruk","Indeks 1 Jeruk, indeks 4 Anggur","Indeks 1 Pisang, indeks 4 Apel","Indeks 1 Mangga, indeks 4 Jeruk"],0],
 [20,"Rangkaian Linked List: Gerbong 1 → Gerbong 2 → Gerbong 3 → null. Gerbong 2 akan dilepas. Apa yang harus dilakukan agar rangkaian tetap utuh?",["Gerbong 1 diarahkan ke Gerbong 3","Gerbong 3 diarahkan ke Gerbong 1","Semua gerbong digeser satu tempat","Gerbong 1 diarahkan ke null"],0],
 [30,"Sebuah galeri menyimpan 1.000 foto bernomor, dan pengguna sering langsung membuka foto nomor 500. Seorang siswa mengusulkan Linked List. Bagaimana evaluasi yang paling tepat?",["Tepat, karena setiap foto menunjuk foto berikutnya","Kurang tepat, karena Linked List harus ditelusuri dari awal satu per satu; Array lebih cocok","Kurang tepat, karena Queue lebih cepat untuk akses langsung","Tepat, karena Linked List memakai indeks"],1],
 [30,"Kantin sekolah salah memakai prinsip Stack: siswa yang datang terakhir dilayani lebih dulu. Apa dampaknya dan apa solusinya?",["Tidak ada dampak, semua siswa tetap diperlakukan adil","Siswa yang datang awal bisa menunggu sangat lama; gunakan Queue (FIFO)","Antrean menjadi lebih cepat; pertahankan Stack","Siswa terakhir menunggu lama; gunakan Array"],1],
@@ -159,7 +160,7 @@ rbox("bad",`🌶️ Terkena sambal pedas! ${lbl(a)} kehilangan <b>${c.value} poi
 function steal(c,a){let h=`<div class="tt steal">🦈 Suro vs Boyo 🐊</div><p class="sub">✅ Jawaban benar! ${lbl(a)} berhak merebut hingga <b>${c.value} poin</b>. Pilih tim sasaran:</p>`;teams.forEach((t,i)=>{if(i!==ans)h+=`<button class="db" data-i="${i}">🎯 ${lbl(t)} (poin: ${t.score})</button>`});M(h);
 $("mc").querySelectorAll(".db").forEach(b=>b.onclick=()=>{const t=teams[+b.dataset.i],m=Math.min(c.value,Math.max(t.score,0));t.score-=m;a.score+=m;sfx.steal();$("mc").querySelectorAll(".db").forEach(x=>x.remove());$("mc").querySelector(".sub").remove();rbox("good",`🦈 ${lbl(a)} merebut <b>${m} poin</b> dari ${lbl(t)}!`);log(`🦈 ${a.icon} ${a.name} merebut ${m} poin dari ${t.icon} ${t.name}.`,"s");nextBtn()})}
 function close(){$("modal").classList.remove("show");cur=(cur+1)%teams.length;drawScore();drawBoard();turn();if(used>=cards.length)setTimeout(final,300)}
-function final(){sfx.win();const s=[...teams].sort((a,b)=>b.score-a.score),md=["🥇","🥈","🥉","🏅"];let h=`<h2>Permainan Selesai</h2><p class="sub">Semua 20 kartu sudah terbuka. Peringkat akhir:</p>`;s.forEach((t,i)=>h+=`<div class="fr"><div class="md">${md[i]}</div><div class="fm">${t.icon}</div><div class="fn">${E(t.name)}</div><div class="fs">${t.score} poin</div></div>`);h+=`<button class="nx" id="again">Mainkan Kembali</button>`;M(h);$("again").onclick=toSetup}
+function final(){sfx.win();const s=[...teams].sort((a,b)=>b.score-a.score),md=["🥇","🥈","🥉","🏅"];let h=`<h2>🎉 Misi Selesai!</h2><p class="sub">Semua 20 kartu sudah terbuka. Peringkat akhir:</p>`;s.forEach((t,i)=>h+=`<div class="fr"><div class="md">${md[i]}</div><div class="fm">${t.icon}</div><div class="fn">${E(t.name)}</div><div class="fs">${t.score} poin</div></div>`);h+=`<button class="nx" id="again">Mainkan Kembali</button>`;M(h);$("again").onclick=toSetup}
 function toSetup(){$("modal").classList.remove("show");$("game").style.display="none";$("setup").style.display="flex";teams.forEach(t=>t.score=0);renderCount();renderSetup()}
 $("rl").onclick=()=>{if(confirm("Apakah Anda yakin ingin memulai ulang permainan? Skor saat ini akan hilang."))toSetup()};
 renderCount();renderSetup();
