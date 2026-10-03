@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuis Rebutan Arek Suroboyo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#FFF4E0;--pn:#fff;--tx:#3B1212;--mu:#7C5A4E;--red:#C8102E;--red2:#8E0B21;--gold:#E8A317;--sea:#0E7C86;--bd:#E9D3B4;--ok:#15803D;--okb:#DCFCE7;--no:#B91C1C;--nob:#FEE2E2;--nt:#FFF1CC;--cardfg:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E0B0E;--pn:#2E1418;--tx:#FBEBDD;--mu:#D6AFA0;--bd:#5A2A30;--okb:#12341F;--nob:#3E1316;--nt:#3B2E0F;--ok:#4ADE80;--no:#FCA5A5}}
+:root[data-theme="dark"]{--bg:#1E0B0E;--pn:#2E1418;--tx:#FBEBDD;--mu:#D6AFA0;--bd:#5A2A30;--okb:#12341F;--nob:#3E1316;--nt:#3B2E0F;--ok:#4ADE80;--no:#FCA5A5}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:Nunito,system-ui,sans-serif;font-weight:600;background:var(--bg);color:var(--tx);min-height:100vh}
+h1,h2,.tscore,.brandf{font-family:"Bree Serif",Georgia,serif;font-weight:400}
+header{background:var(--red);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-bottom:6px solid var(--gold);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.06) 0 10px,transparent 10px 20px)}
+header h1{font-size:23px}header p{font-size:12px;opacity:.9}
+.hr{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.turn{background:#fff;color:var(--red2);padding:9px 16px;border-radius:10px;font-weight:800;font-size:14px}
+.sbtn{border:2px solid #fff;background:transparent;color:#fff;padding:8px 14px;border-radius:10px;cursor:pointer;font:inherit;font-weight:800;font-size:13px}
+.sbtn.on{background:var(--sea);border-color:var(--sea)}
+button{font-family:inherit}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.setup{min-height:calc(100vh - 80px);display:flex;align-items:center;justify-content:center;padding:22px}
+.sc{width:100%;max-width:840px;background:var(--pn);border:3px solid var(--red);border-radius:18px;padding:28px;box-shadow:8px 8px 0 var(--gold)}
+.sc h2{text-align:center;font-size:27px;color:var(--red)}
+.intro{text-align:center;color:var(--mu);font-size:14px;margin:6px 0 18px}
+.cnt{display:flex;justify-content:center;gap:10px;margin-bottom:20px}
+.cb{padding:9px 20px;border:2px solid var(--bd);border-radius:10px;background:transparent;color:var(--tx);font-weight:800;cursor:pointer}
+.cb.sel{border-color:var(--red);background:var(--red);color:#fff}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tb{border:2px solid var(--bd);border-radius:12px;padding:12px}
+.tb.filled{border-color:var(--sea)}
+.tb label{font-size:12px;color:var(--mu);font-weight:800}
+.ti{width:100%;margin:5px 0 9px;padding:9px;border:2px solid var(--bd);border-radius:8px;font:inherit;background:var(--bg);color:var(--tx)}
+.ag{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ao{text-align:center;padding:6px 2px;border-radius:9px;cursor:pointer;border:2px solid transparent;background:var(--bg);color:var(--tx);font-size:12px;font-weight:800;line-height:1.2}
+.ao b{display:block;font-size:24px;font-weight:400}
+.ao.sel{border-color:var(--red);background:var(--nt)}.ao.taken{opacity:.25;cursor:not-allowed}
+.go{width:100%;margin-top:20px;padding:14px;border:0;border-radius:12px;background:var(--red);color:#fff;font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 4px 0 var(--red2)}
+.go:disabled{opacity:.4;cursor:not-allowed}
+.game{display:none;padding:16px}
+.sb{display:grid;gap:10px;margin-bottom:16px}
+.ts{background:var(--pn);border:2px solid var(--bd);border-radius:12px;padding:10px;text-align:center;transition:.2s}
+.ts.act{border-color:var(--gold);background:var(--nt);transform:translateY(-3px);box-shadow:0 4px 0 var(--gold)}
+.ts .m{font-size:32px}.ts .tn{font-size:13px;font-weight:800}.tscore{font-size:24px;color:var(--red)}
+.ma{display:grid;grid-template-columns:1fr 250px;gap:16px}
+.board{display:grid;grid-template-columns:repeat(5,1fr);gap:11px}
+.cs{aspect-ratio:3/4;border-radius:12px;background:var(--red);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.1) 0 8px,transparent 8px 16px),radial-gradient(circle at 50% 50%,rgba(232,163,23,.35),transparent 60%);border:3px solid var(--gold);color:var(--cardfg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;box-shadow:0 5px 0 var(--red2);transition:transform .15s}
+.cs:hover{transform:translateY(-4px)}
+.cs .q{font-family:"Bree Serif",serif;font-size:34px}.cs .n{font-size:11px;opacity:.85}
+.cs.used{background:var(--pn);border-color:var(--bd);color:var(--mu);box-shadow:none;cursor:default;opacity:.6}.cs.used:hover{transform:none}
+.cs .bd{position:absolute;top:5px;right:6px;font-size:16px}
+.sp{background:var(--pn);border:2px solid var(--bd);border-radius:12px;padding:12px;max-height:640px;display:flex;flex-direction:column}
+.sp h3{font-size:14px;margin-bottom:8px}
+.log{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:7px}
+.li{font-size:12px;line-height:1.45;background:var(--bg);padding:7px 9px;border-radius:7px;border-left:4px solid var(--mu)}
+.li.c{border-color:var(--ok)}.li.w{border-color:var(--no)}.li.s{border-color:var(--sea)}.li.t{border-color:var(--gold)}
+.lg{margin-top:10px;font-size:12px;color:var(--mu);line-height:1.7}
+.rl{margin-top:10px;text-align:center;font-size:12px;color:var(--mu);cursor:pointer;text-decoration:underline;background:none;border:0}
+.modal{position:fixed;inset:0;background:rgba(30,5,8,.8);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}
+.modal.show{display:flex}
+.mc{width:100%;max-width:620px;background:var(--pn);border:3px solid var(--red);border-radius:18px;padding:24px;text-align:center;max-height:90vh;overflow-y:auto;box-shadow:8px 8px 0 var(--gold)}
+.mc h2{margin-bottom:6px;color:var(--red)}.sub{color:var(--mu);margin-bottom:16px;font-size:14px}
+.tt{display:inline-block;padding:7px 16px;border-radius:30px;font-weight:800;font-size:13px;margin-bottom:12px;color:#fff}
+.tt.poin{background:var(--gold);color:#3B1212}.tt.steal{background:var(--sea)}.tt.trap{background:var(--red)}
+.db{display:block;width:100%;padding:13px;margin-top:9px;border:2px solid var(--bd);border-radius:11px;background:transparent;color:var(--tx);font-weight:800;cursor:pointer;font-size:14px;text-align:left}
+.db:hover{border-color:var(--red)}.db.self{border-color:var(--sea)}
+.qc{background:var(--bg);border-left:5px solid var(--red);padding:10px 14px;border-radius:8px;text-align:left;margin-bottom:14px;font-size:13px}
+.qq{font-size:17px;font-weight:800;margin-bottom:10px;text-align:left;line-height:1.45}
+.qo{display:block;width:100%;text-align:left;padding:12px;margin:7px 0;border:2px solid var(--bd);border-radius:10px;background:transparent;color:var(--tx);cursor:pointer;font-size:14px}
+.qo:hover:not(:disabled){border-color:var(--red)}
+.qo.correct{background:var(--okb);border-color:var(--ok)}.qo.wrong{background:var(--nob);border-color:var(--no)}
+.rb{margin-top:10px;padding:13px;border-radius:10px;font-size:14px;line-height:1.55;text-align:left}
+.rb.good{background:var(--okb);color:var(--ok)}.rb.bad{background:var(--nob);color:var(--no)}.rb.neutral{background:var(--nt)}
+.nx{margin-top:16px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:800;cursor:pointer;font-size:15px}
+.fr{display:flex;align-items:center;gap:12px;padding:11px;border-radius:10px;background:var(--bg);margin-bottom:8px;text-align:left}
+.fr .md{font-size:24px;width:30px;text-align:center}.fr .fm{font-size:26px}.fr .fn{flex:1;font-weight:800}.fr .fs{font-weight:800;color:var(--red);font-size:16px}
+@media(max-width:900px){.ma{grid-template-columns:1fr}.board{grid-template-columns:repeat(4,1fr)}.tg{grid-template-columns:1fr}}
+@media(max-width:480px){.board{grid-template-columns:repeat(3,1fr)}.sb{grid-template-columns:1fr 1fr!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header><div><h1>🦈 Kuis Rebutan Arek Suroboyo 🐊</h1><p>Struktur Data Linear · 20 kartu soal analisis kasus: poin, rebut poin Suro vs Boyo, dan Sambal Pedas.</p></div>
+<div class="hr"><button class="sbtn" id="snd">🔇 Suara: Off</button><div class="turn" id="turn">Giliran: -</div></div></header>
+
+<section class="setup" id="setup"><div class="sc"><h2>Siapkan Tim Anda</h2>
+<p class="intro">Pilih jumlah tim (2–4), lalu pilih satu ikon khas Surabaya untuk setiap tim (tidak boleh sama). Nama tim mengikuti ikon yang dipilih.</p>
+<div class="cnt" id="cnt"></div><div class="tg" id="tg"></div>
+<button class="go" id="go" disabled>Mulai Permainan</button></div></section>
+
+<main class="game" id="game"><div class="sb" id="sb"></div>
+<div class="ma"><div class="board" id="board"></div>
+<aside class="sp"><h3>📜 Catatan Permainan</h3><div class="log" id="log"></div>
+<div class="lg">💰 Kartu Poin (10/20/30)<br>🦈 Kartu Suro vs Boyo (rebut poin tim lain)<br>🌶️ Kartu Sambal Pedas (jawaban salah mengurangi poin)<br><em>Jenis kartu baru terlihat setelah dibuka!</em></div>
+<button class="rl" id="rl">🔄 Mulai Ulang Permainan</button></aside></div></main>
+<div class="modal" id="modal"><div class="mc" id="mc"></div></div>
+
+<script>
+const ICONS=[["🦈","Suro"],["🐊","Boyo"],["🍜","Lontong Balap"],["🥗","Rujak Cingur"],["🌉","Suramadu"],["🗼","Tugu Pahlawan"],["🍢","Sate Klopo"],["🥟","Lumpia"]];
+const BADGE={poin:"💰",steal:"🦈",trap:"🌶️"};
+const E=s=>{const d=document.createElement("div");d.textContent=s;return d.innerHTML};
+const $=id=>document.getElementById(id);
+// [nilai, soal, [opsi], indeks jawaban benar]
+const Q={
+poin:[[10,"Daftar absen disimpan dalam Array: indeks 0 Ani, indeks 1 Budi, indeks 2 Citra, indeks 3 Dedi, indeks 4 Eka. Guru memanggil siswa pada indeks 3. Siapa yang dipanggil?",["Citra","Dedi","Eka","Budi"],1],
+[10,"Tiga piring (merah, biru, hijau) ditumpuk berurutan dalam sebuah Stack. Piring manakah yang harus diambil lebih dulu?",["Merah","Biru","Hijau","Bebas, semuanya sama"],2],
+[10,"Saat tombol Kembali di browser ditekan, halaman yang terakhir dikunjungi muncul lebih dulu. Perilaku ini menyerupai struktur data...",["Queue","Stack","Array","Linked List"],1],
+[10,"Tiga dokumen dikirim ke printer berurutan: Laporan, Tugas, Poster. Dokumen apa yang dicetak lebih dulu, dan struktur apa yang bekerja?",["Poster, Stack","Laporan, Queue","Poster, Queue","Laporan, Stack"],1],
+[20,"Antrean loket berisi Rina, Salsa, Tono (Rina paling depan). Rina selesai dilayani, Umar datang, lalu Salsa selesai dilayani. Bagaimana urutan antrean sekarang dari depan ke belakang?",["Tono, Umar","Umar, Tono","Salsa, Tono","Tono, Salsa, Umar"],0],
+[20,"Sebuah tumpukan buku kosong. Matematika, IPA, dan IPS ditaruh berurutan. Lalu satu buku diambil, buku Seni ditaruh, dan dua buku diambil. Buku apa yang tersisa?",["Matematika","IPA","Seni","Tidak ada yang tersisa"],0],
+[20,"Array buah: indeks 0 Apel, indeks 1 Jeruk, indeks 2 Mangga, indeks 3 Pisang, indeks 4 Anggur. Isi indeks 1 dan indeks 4 saling ditukar. Berapa isi indeks 1 dan indeks 4 sekarang?",["Indeks 1 Anggur, indeks 4 Jeruk","Indeks 1 Jeruk, indeks 4 Anggur","Indeks 1 Pisang, indeks 4 Apel","Indeks 1 Mangga, indeks 4 Jeruk"],0],
+[20,"Rangkaian Linked List: Gerbong 1 → Gerbong 2 → Gerbong 3 → null. Gerbong 2 akan dilepas. Apa yang harus dilakukan agar rangkaian tetap utuh?",["Gerbong 1 diarahkan ke Gerbong 3","Gerbong 3 diarahkan ke Gerbong 1","Semua gerbong digeser satu tempat","Gerbong 1 diarahkan ke null"],0],
+[30,"Sebuah galeri menyimpan 1.000 foto bernomor, dan pengguna sering langsung membuka foto nomor 500. Seorang siswa mengusulkan Linked List. Bagaimana evaluasi yang paling tepat?",["Tepat, karena setiap foto menunjuk foto berikutnya","Kurang tepat, karena Linked List harus ditelusuri dari awal satu per satu; Array lebih cocok","Kurang tepat, karena Queue lebih cepat untuk akses langsung","Tepat, karena Linked List memakai indeks"],1],
+[30,"Kantin sekolah salah memakai prinsip Stack: siswa yang datang terakhir dilayani lebih dulu. Apa dampaknya dan apa solusinya?",["Tidak ada dampak, semua siswa tetap diperlakukan adil","Siswa yang datang awal bisa menunggu sangat lama; gunakan Queue (FIFO)","Antrean menjadi lebih cepat; pertahankan Stack","Siswa terakhir menunggu lama; gunakan Array"],1],
+[30,"Tim pengembang editor teks ingin membuat fitur Undo dengan Queue. Bagaimana evaluasi yang paling tepat?",["Tepat, karena Queue mengeluarkan aksi paling awal","Kurang tepat, karena Undo harus membatalkan aksi paling akhir, sehingga Stack lebih cocok","Tepat, karena Queue memakai prinsip LIFO","Kurang tepat, karena Undo membutuhkan Array dengan indeks"],1],
+[30,"Sebuah game menyimpan riwayat langkah agar pemain dapat mundur satu langkah demi satu langkah, dan menyimpan daftar unduhan file yang diproses sesuai urutan masuk. Pasangan struktur data yang paling tepat adalah...",["Riwayat langkah: Queue; unduhan: Stack","Riwayat langkah: Stack; unduhan: Queue","Keduanya memakai Stack","Keduanya memakai Queue"],1]],
+steal:[[20,"Sebuah aplikasi musik sering menyisipkan lagu baru di tengah daftar putar. Mengapa Linked List lebih efisien daripada Array untuk kebutuhan ini?",["Cukup mengubah penunjuk antar node tanpa menggeser data lain","Karena Linked List memakai indeks","Karena Linked List tidak menyimpan data","Karena lagu diambil dari bagian atas"],0],
+[20,"Data seorang siswa: nama \"Ahmad\", umur 15, rata-rata nilai 87.5, dan status mengumpulkan tugas (ya/tidak). Pasangan jenis data yang benar secara berurutan adalah...",["String, Integer, Float, Boolean","Integer, String, Boolean, Float","String, Float, Integer, Boolean","Boolean, Integer, Float, String"],0],
+[20,"Mengapa pada Stack, buku di tengah tumpukan tidak dapat langsung diambil tanpa mengangkat buku di atasnya?",["Karena akses hanya dilakukan dari bagian atas (LIFO)","Karena Stack memakai indeks acak","Karena Stack bekerja dengan FIFO","Karena buku di tengah tidak berisi data"],0],
+[20,"Seorang siswa menyerobot ke bagian depan antrean kantin. Prinsip Queue manakah yang dilanggar?",["LIFO","FIFO","Indeks dimulai dari 0","Node menunjuk null"],1]],
+trap:[[15,"Daftar putar lagu yang setiap lagunya 'menunjuk' ke lagu berikutnya paling menyerupai...",["Array","Stack","Linked List","Queue"],2],
+[15,"Loker sekolah bernomor 0, 1, 2, dan seterusnya sehingga dapat dibuka langsung lewat nomornya paling menyerupai...",["Queue","Array","Stack","Linked List"],1],
+[15,"Kendaraan yang tiba lebih dulu di gerbang tol keluar lebih dulu pula. Situasi ini menyerupai...",["Stack","Array","Queue","Linked List"],2],
+[15,"Baju yang selesai dilipat ditaruh di atas tumpukan, dan baju paling atas diambil lebih dulu saat dipakai. Situasi ini menyerupai...",["Queue","Stack","Array","Linked List"],1]]};
+const MIN=2,MAX=4;let n=4,teams=mk(n),cards=[],cur=0,pend=null,ans=null,rev=null,used=0;
+function mk(k){return Array.from({length:k},()=>({name:"",icon:"",score:0}))}
+const lbl=t=>t.icon+" "+E(t.name);
+/* ---- suara (sintesis, tanpa file) ---- */
+let snd=false,ctx=null;
+function tone(f,d,ty,dl,v){if(!snd)return;try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+(dl||0);o.type=ty||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||.2,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d)}catch(e){}}
+const sfx={open:()=>tone(440,.08,"square",0,.15),dec:()=>tone(523,.15),ok:()=>{tone(660,.12,"triangle",0,.25);tone(880,.18,"triangle",.12,.25)},no:()=>tone(220,.3,"sawtooth"),
+steal:()=>[784,988,1175].forEach((f,i)=>tone(f,.12,"square",i*.1)),trap:()=>{tone(180,.4,"sawtooth",0,.25);tone(140,.5,"sawtooth",.15,.25)},win:()=>[523,659,784,1046].forEach((f,i)=>tone(f,.25,"triangle",i*.18,.25))};
+$("snd").onclick=()=>{snd=!snd;$("snd").textContent=snd?"🔊 Suara: On":"🔇 Suara: Off";$("snd").classList.toggle("on",snd);if(snd)sfx.dec()};
+/* ---- setup ---- */
+function renderCount(){const b=$("cnt");b.innerHTML="";for(let i=MIN;i<=MAX;i++){const x=document.createElement("button");x.className="cb"+(i===n?" sel":"");x.textContent=i+" Tim";x.onclick=()=>{if(i===n)return;while(teams.length<i)teams.push({name:"",icon:"",score:0});teams=teams.slice(0,i);n=i;renderCount();renderSetup()};b.appendChild(x)}}
+function renderSetup(){const g=$("tg");g.innerHTML="";teams.forEach((t,i)=>{const b=document.createElement("div");b.className="tb"+(t.name&&t.icon?" filled":"");b.innerHTML=`<label>Tim ${i+1}: <b>${t.icon?t.icon+" "+E(t.name):"belum memilih ikon"}</b></label><div class="ag" style="margin-top:8px"></div>`;const ag=b.querySelector(".ag");
+ICONS.forEach(([ic,nm])=>{const tk=teams.some((o,j)=>j!==i&&o.icon===ic),o=document.createElement("div");o.className="ao"+(t.icon===ic?" sel":"")+(tk?" taken":"");o.innerHTML=`<b>${ic}</b>${nm}`;if(!tk)o.onclick=()=>{t.icon=t.icon===ic?"":ic;t.name=t.icon?nm:"";renderSetup()};ag.appendChild(o)});g.appendChild(b)});ready()}
+function ready(){$("go").disabled=!teams.every(t=>t.icon)}
+/* ---- game ---- */
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+$("go").onclick=()=>{teams.forEach(t=>t.score=0);const pool=[];for(const ty in Q)Q[ty].forEach(([v,q,o,a])=>{const opts=shuf(o.map((x,i)=>({x,c:i===a})));pool.push({type:ty,value:v,question:q,options:opts.map(z=>z.x),answer:opts.findIndex(z=>z.c),used:false})});
+cards=shuf(pool).map((c,i)=>({...c,id:i+1}));cur=0;used=0;$("setup").style.display="none";$("game").style.display="block";$("log").innerHTML="";$("sb").style.gridTemplateColumns=`repeat(${teams.length},1fr)`;drawScore();drawBoard();turn()};
+function drawScore(){const b=$("sb");b.innerHTML="";teams.forEach((t,i)=>{const d=document.createElement("div");d.className="ts"+(i===cur?" act":"");d.innerHTML=`<div class="m">${t.icon}</div><div class="tn">${E(t.name)}</div><div class="tscore">${t.score}</div>`;b.appendChild(d)})}
+function drawBoard(){const b=$("board");b.innerHTML="";cards.forEach(c=>{const e=document.createElement("div");e.className="cs"+(c.used?" used":"");if(c.used)e.innerHTML=`<div class="bd">${BADGE[c.type]}</div><div class="q">✔</div><div class="n">Kartu ${c.id}</div>`;else{e.innerHTML=`<div class="q">?</div><div class="n">Kartu ${c.id}</div>`;e.tabIndex=0;e.onclick=()=>{pend=c.id;sfx.open();decide()};e.onkeydown=k=>{if(k.key==="Enter")e.click()}}b.appendChild(e)})}
+function turn(){$("turn").innerHTML="Giliran memilih: "+lbl(teams[cur])}
+const M=h=>{$("mc").innerHTML=h;$("modal").classList.add("show")};
+function decide(){const p=teams[cur];let h=`<h2>Kartu ${pend} Dipilih!</h2><p class="sub"><b>${lbl(p)}</b>, apakah akan menjawab sendiri atau melemparkan kartu ke tim lain? Isi kartu masih dirahasiakan.</p><button class="db self" data-i="${cur}">🙋 Jawab sendiri (${lbl(p)})</button>`;teams.forEach((t,i)=>{if(i!==cur)h+=`<button class="db" data-i="${i}">🎯 Lemparkan ke ${lbl(t)}</button>`});M(h);$("mc").querySelectorAll(".db").forEach(b=>b.onclick=()=>{ans=+b.dataset.i;rev=cards.find(c=>c.id===pend);sfx.dec();ask()})}
+function ask(){const c=rev,a=teams[ans];const L={poin:"💰 Kartu Poin",steal:"🦈 Kartu Suro vs Boyo",trap:"🌶️ Kartu Sambal Pedas"}[c.type];
+const D={poin:`Jika menjawab benar, tim memperoleh ${c.value} poin.`,steal:`Jika menjawab benar, tim dapat merebut hingga ${c.value} poin dari tim lain.`,trap:`Perhatian! Jika jawaban salah, poin tim ini berkurang ${c.value} dan dibagikan kepada tim lain.`}[c.type];
+let h=`<div class="tt ${c.type}">${L}</div><p class="sub">${D}</p><div class="qc"><b>Yang menjawab:</b> ${lbl(a)}</div><div class="qq">${c.question}</div>`;c.options.forEach((o,i)=>h+=`<button class="qo" data-i="${i}">${"ABCD"[i]}. ${E(o)}</button>`);M(h);$("mc").querySelectorAll(".qo").forEach(b=>b.onclick=()=>answer(+b.dataset.i))}
+function rbox(t,m){const d=document.createElement("div");d.className="rb "+t;d.innerHTML=m;$("mc").appendChild(d)}
+function nextBtn(){const b=document.createElement("button");b.className="nx";b.textContent="Lanjut";b.onclick=close;$("mc").appendChild(b)}
+function log(t,c){const d=document.createElement("div");d.className="li "+c;d.textContent=t;$("log").prepend(d)}
+function answer(s){const c=rev,ok=s===c.answer,a=teams[ans],nm=a.icon+" "+a.name;
+$("mc").querySelectorAll(".qo").forEach((b,i)=>{b.disabled=true;if(i===c.answer)b.classList.add("correct");if(i===s&&!ok)b.classList.add("wrong")});c.used=true;used++;
+if(c.type==="poin"){if(ok){sfx.ok();a.score+=c.value;rbox("good",`✅ Jawaban benar! ${lbl(a)} memperoleh <b>${c.value} poin</b>.`);log(`💰 ${nm} menjawab benar (+${c.value}).`,"c")}else{sfx.no();rbox("bad","❌ Jawaban kurang tepat. Tidak ada poin yang diperoleh.");log(`💰 ${nm} menjawab salah, tidak memperoleh poin.`,"w")}nextBtn()}
+else if(c.type==="steal"){if(ok){sfx.ok();steal(c,a);return}sfx.no();rbox("neutral","😅 Jawaban salah. Suro dan Boyo batal bertarung, sehingga tidak ada poin yang berpindah.");log(`🦈 ${nm} menjawab salah pada kartu Suro vs Boyo.`,"w");nextBtn()}
+else{if(ok){sfx.ok();rbox("good",`🛡️ Hebat! ${lbl(a)} berhasil menghadapi sambal pedas. Tidak ada poin yang hilang.`);log(`🌶️ ${nm} menjawab benar pada kartu Sambal Pedas. Aman.`,"c")}else{sfx.trap();const o=teams.filter((_,i)=>i!==ans),sh=Math.floor(c.value/o.length),rm=c.value-sh*o.length;a.score-=c.value;o.forEach((t,i)=>t.score+=sh+(i===0?rm:0));
+rbox("bad",`🌶️ Terkena sambal pedas! ${lbl(a)} kehilangan <b>${c.value} poin</b>, dibagikan kepada: ${o.map((t,i)=>lbl(t)+" (+"+(sh+(i===0?rm:0))+")").join(", ")}.`);log(`🌶️ ${nm} terkena sambal pedas, -${c.value} poin dibagikan ke tim lain.`,"t")}nextBtn()}}
+function steal(c,a){let h=`<div class="tt steal">🦈 Suro vs Boyo 🐊</div><p class="sub">✅ Jawaban benar! ${lbl(a)} berhak merebut hingga <b>${c.value} poin</b>. Pilih tim sasaran:</p>`;teams.forEach((t,i)=>{if(i!==ans)h+=`<button class="db" data-i="${i}">🎯 ${lbl(t)} (poin: ${t.score})</button>`});M(h);
+$("mc").querySelectorAll(".db").forEach(b=>b.onclick=()=>{const t=teams[+b.dataset.i],m=Math.min(c.value,Math.max(t.score,0));t.score-=m;a.score+=m;sfx.steal();$("mc").querySelectorAll(".db").forEach(x=>x.remove());$("mc").querySelector(".sub").remove();rbox("good",`🦈 ${lbl(a)} merebut <b>${m} poin</b> dari ${lbl(t)}!`);log(`🦈 ${a.icon} ${a.name} merebut ${m} poin dari ${t.icon} ${t.name}.`,"s");nextBtn()})}
+function close(){$("modal").classList.remove("show");cur=(cur+1)%teams.length;drawScore();drawBoard();turn();if(used>=cards.length)setTimeout(final,300)}
+function final(){sfx.win();const s=[...teams].sort((a,b)=>b.score-a.score),md=["🥇","🥈","🥉","🏅"];let h=`<h2>Permainan Selesai</h2><p class="sub">Semua 20 kartu sudah terbuka. Peringkat akhir:</p>`;s.forEach((t,i)=>h+=`<div class="fr"><div class="md">${md[i]}</div><div class="fm">${t.icon}</div><div class="fn">${E(t.name)}</div><div class="fs">${t.score} poin</div></div>`);h+=`<button class="nx" id="again">Mainkan Kembali</button>`;M(h);$("again").onclick=toSetup}
+function toSetup(){$("modal").classList.remove("show");$("game").style.display="none";$("setup").style.display="flex";teams.forEach(t=>t.score=0);renderCount();renderSetup()}
+$("rl").onclick=()=>{if(confirm("Apakah Anda yakin ingin memulai ulang permainan? Skor saat ini akan hilang."))toSetup()};
+renderCount();renderSetup();
+</script></body></html>
