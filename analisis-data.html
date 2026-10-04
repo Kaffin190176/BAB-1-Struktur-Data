@@ -5,6 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Petualangan Struktur Data — Pertemuan 4: Analisis Data</title>
 <style>
+    /* ===== Perbaikan simetri ===== */
+
+/* Slide Pembuka */
+.hero-tbl{margin:0 auto}
+.hero-art{padding:18px 14px 44px}
+.hero-art .tiny{position:absolute;left:0;right:0;bottom:14px;text-align:center;margin:0}
+
+/* Kartu statistik: baris terakhir ikut melebar */
+.statcards{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.statcard{flex:1 1 96px;min-width:0}
+
+/* Kartu balik di HP: 1 kolom */
+@media(max-width:850px){
+  .grid3x{grid-template-columns:1fr!important}
+  .statcards{display:flex}
+}
+
+/* Slide Mengumpulkan Data */
+.deck{margin:0 auto}
+.hunt-card{background:#fff;border:1px solid #BFDBFE;border-radius:18px;padding:20px;box-shadow:0 10px 28px rgba(37,99,235,.08)}
+.hunt-card .em{font-size:44px;line-height:1.2;margin-bottom:6px}
+.hunt-card h3{margin:6px 0 10px}
+
+/* Kolom kiri & kanan sama tinggi */
+.split.even:not(.tf){align-items:stretch}
+.split.even:not(.tf)>.panel{height:100%}
 *{box-sizing:border-box}
 :root{
   --bg:#F0F7FF;

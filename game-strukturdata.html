@@ -81,7 +81,7 @@ button:focus-visible,.cs:focus-visible,.ao:focus-visible{outline:3px solid var(-
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style></head><body>
 <header><div><h1>💻 Data Quest: Jelajah Struktur Data Linear</h1><p>Array · Stack · Queue · Linked List — 20 kartu misi analisis kasus untuk kelas SMP.</p></div>
-<div class="hr"><button class="sbtn" id="snd">🔇 Suara: Off</button><div class="turn" id="turn">Giliran: -</div></div></header>
+<div class="hr"><button class="sbtn on" id="mus">🎵 Musik: On</button><button class="sbtn on" id="snd">🔊 Efek: On</button><div class="turn" id="turn">Giliran: -</div></div></header>
 
 <section class="setup" id="setup"><div class="sc"><h2>🦈 Siapkan Tim Anda 🐊</h2>
 <p class="intro">Pilih jumlah tim (2–4), lalu pilih satu ikon khas Surabaya untuk setiap tim (tidak boleh sama). Nama tim mengikuti ikon yang dipilih. Nama tim mengikuti ikon yang dipilih.</p>
@@ -126,11 +126,47 @@ const MIN=2,MAX=4;let n=4,teams=mk(n),cards=[],cur=0,pend=null,ans=null,rev=null
 function mk(k){return Array.from({length:k},()=>({name:"",icon:"",score:0}))}
 const lbl=t=>t.icon+" "+E(t.name);
 /* ---- suara (sintesis, tanpa file) ---- */
-let snd=false,ctx=null;
-function tone(f,d,ty,dl,v){if(!snd)return;try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();if(ctx.state==="suspended")ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+(dl||0);o.type=ty||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||.2,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d)}catch(e){}}
-const sfx={open:()=>tone(440,.08,"square",0,.15),dec:()=>tone(523,.15),ok:()=>{tone(660,.12,"triangle",0,.25);tone(880,.18,"triangle",.12,.25)},no:()=>tone(220,.3,"sawtooth"),
-steal:()=>[784,988,1175].forEach((f,i)=>tone(f,.12,"square",i*.1)),trap:()=>{tone(180,.4,"sawtooth",0,.25);tone(140,.5,"sawtooth",.15,.25)},win:()=>[523,659,784,1046].forEach((f,i)=>tone(f,.25,"triangle",i*.18,.25))};
-$("snd").onclick=()=>{snd=!snd;$("snd").textContent=snd?"🔊 Suara: On":"🔇 Suara: Off";$("snd").classList.toggle("on",snd);if(snd)sfx.dec()};
+let sfxOn=true,musOn=true,ctx=null,masterG=null,musG=null,nbuf=null,want="off",playing="off",mStep=0,mNext=0,mTimer=null;
+const mf=n=>440*Math.pow(2,(n-69)/12);
+function AC(){if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C();const cp=ctx.createDynamicsCompressor();masterG=ctx.createGain();masterG.gain.value=.9;masterG.connect(cp);cp.connect(ctx.destination);nbuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=nbuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1}if(ctx.state==="suspended")ctx.resume();return ctx}
+function nt(f,t,d,ty,v,dst,o){o=o||{};const c=ctx,os=c.createOscillator(),g=c.createGain();os.type=ty||"sine";os.frequency.setValueAtTime(f,t);if(o.f2)os.frequency.exponentialRampToValueAtTime(o.f2,t+d);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+(o.a||.008));g.gain.exponentialRampToValueAtTime(.0001,t+d);let n=os;if(o.lp){const fl=c.createBiquadFilter();fl.type="lowpass";fl.frequency.value=o.lp;os.connect(fl);n=fl}n.connect(g);g.connect(dst);os.start(t);os.stop(t+d+.05)}
+function nz(t,d,v,dst,hp,lp){const c=ctx,s=c.createBufferSource(),g=c.createGain();s.buffer=nbuf;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);let n=s;if(hp){const f=c.createBiquadFilter();f.type="highpass";f.frequency.value=hp;n.connect(f);n=f}if(lp){const f=c.createBiquadFilter();f.type="lowpass";f.frequency.value=lp;n.connect(f);n=f}n.connect(g);g.connect(dst);s.start(t);s.stop(t+d+.05)}
+/* ---- musik latar: "board" = ceria, "quiz" = menegangkan ala kuis ---- */
+const MU={quiz:{bpm:134,bars:[[57,60,64,33],[57,60,64,33],[53,57,60,29],[52,56,59,28]]},board:{bpm:104,bars:[[60,64,67,36],[57,60,64,33],[53,57,60,29],[55,59,62,31]]}};
+function mStepPlay(mode,st,t){const M=MU[mode],bi=Math.floor(st/16)%4,bar=M.bars[bi],s=st%16,ch=bar.slice(0,3),r=bar[3],bl=60/M.bpm*4,o=musG;
+if(mode==="quiz"){
+if(s%4===0)nt(120,t,.18,"sine",.6,o,{f2:42});
+if(s%2===0)nt(mf(r+(s===6||s===14?12:0)),t,.2,"sawtooth",.3,o,{lp:420});
+nz(t,.04,s%2?.04:.08,o,7000);
+if(s===4||s===12)nz(t,.14,.2,o,1500);
+if(bi===3&&s>=8)nz(t,.07,.05+(s-8)*.02,o,2500);
+if(s%2===1||s%4===2)nt(mf(ch[(s>>1)%3]+12),t,.14,"square",.06,o,{lp:2200});
+if(s===0)ch.forEach(n=>nt(mf(n),t,bl,"triangle",.07,o,{a:.3}));
+if(s%4===0)nt(1800,t,.03,"square",.03,o)
+}else{
+if(s%4===0)nt(mf(r),t,.35,"triangle",.4,o);
+if(s%2===0)nt(mf(ch[(s/2)%3]+12),t,.2,"square",.05,o,{lp:1800});
+if(s%4===2)nz(t,.03,.04,o,8000);
+if(s===0)ch.forEach(n=>nt(mf(n),t,bl,"sine",.05,o,{a:.2}))}}
+function mTick(){if(!ctx||playing==="off")return;const sd=60/MU[playing].bpm/4;while(mNext<ctx.currentTime+.15){mStepPlay(playing,mStep,mNext);mNext+=sd;mStep++}}
+function applyMusic(){const m=musOn?want:"off";if(m===playing)return;
+if(musG&&ctx){const old=musG;old.gain.setTargetAtTime(0,ctx.currentTime,.06);setTimeout(()=>{try{old.disconnect()}catch(e){}},500)}
+clearInterval(mTimer);playing=m;if(m==="off"||!AC())return;
+musG=ctx.createGain();musG.gain.value=.55;musG.connect(masterG);mStep=0;mNext=ctx.currentTime+.08;mTimer=setInterval(mTick,30)}
+function setMusic(m){want=m;applyMusic()}
+/* ---- efek suara ---- */
+const ST=()=>sfxOn&&AC()?ctx.currentTime:null;
+const sfx={
+open(){const t=ST();if(t===null)return;nz(t,.18,.22,masterG,500,4000);nt(300,t,.16,"triangle",.25,masterG,{f2:900})},
+dec(){const t=ST();if(t===null)return;nt(660,t,.09,"triangle",.3,masterG);nt(990,t+.07,.12,"triangle",.3,masterG)},
+ok(){const t=ST();if(t===null)return;[784,988,1319].forEach((f,i)=>{nt(f,t+i*.1,.35,"triangle",.32,masterG);nt(f*2,t+i*.1,.25,"sine",.1,masterG)});nz(t+.2,.3,.05,masterG,6000)},
+no(){const t=ST();if(t===null)return;nt(196,t,.28,"sawtooth",.3,masterG,{lp:900,f2:150});nt(147,t+.24,.45,"sawtooth",.3,masterG,{lp:700,f2:95})},
+steal(){const t=ST();if(t===null)return;nt(1800,t,.25,"sawtooth",.16,masterG,{f2:200,lp:3000});nz(t+.2,.2,.28,masterG,2000);[523,659,784,1047].forEach((f,i)=>nt(f,t+.35+i*.08,.2,"square",.12,masterG,{lp:3000}))},
+trap(){const t=ST();if(t===null)return;nt(150,t,.5,"sine",.9,masterG,{f2:35});nz(t,.4,.3,masterG,null,1200);nt(500,t+.15,.5,"sawtooth",.1,masterG,{f2:120,lp:1500})},
+win(){const t=ST();if(t===null)return;[[523,0],[659,.15],[784,.3],[1047,.45]].forEach(([f,d])=>{nt(f,t+d,.3,"triangle",.32,masterG);nt(f*2,t+d,.2,"sine",.08,masterG)});[523,659,784,1047].forEach(f=>nt(f,t+.65,1.3,"triangle",.16,masterG,{a:.02}));nz(t+.65,.8,.06,masterG,5000)}};
+$("snd").onclick=()=>{sfxOn=!sfxOn;$("snd").textContent=sfxOn?"🔊 Efek: On":"🔇 Efek: Off";$("snd").classList.toggle("on",sfxOn);sfx.dec()};
+$("mus").onclick=()=>{musOn=!musOn;$("mus").textContent=musOn?"🎵 Musik: On":"🎵 Musik: Off";$("mus").classList.toggle("on",musOn);if(musOn)AC();applyMusic()};
+document.addEventListener("visibilitychange",()=>{if(!ctx)return;document.hidden?ctx.suspend():ctx.resume()});
 /* ---- setup ---- */
 function renderCount(){const b=$("cnt");b.innerHTML="";for(let i=MIN;i<=MAX;i++){const x=document.createElement("button");x.className="cb"+(i===n?" sel":"");x.textContent=i+" Tim";x.onclick=()=>{if(i===n)return;while(teams.length<i)teams.push({name:"",icon:"",score:0});teams=teams.slice(0,i);n=i;renderCount();renderSetup()};b.appendChild(x)}}
 function renderSetup(){const g=$("tg");g.innerHTML="";teams.forEach((t,i)=>{const b=document.createElement("div");b.className="tb"+(t.name&&t.icon?" filled":"");b.innerHTML=`<label>Tim ${i+1}: <b>${t.icon?t.icon+" "+E(t.name):"belum memilih ikon"}</b></label><div class="ag" style="margin-top:8px"></div>`;const ag=b.querySelector(".ag");
@@ -138,20 +174,20 @@ ICONS.forEach(([ic,nm])=>{const tk=teams.some((o,j)=>j!==i&&o.icon===ic),o=docum
 function ready(){$("go").disabled=!teams.every(t=>t.icon)}
 /* ---- game ---- */
 const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-$("go").onclick=()=>{teams.forEach(t=>t.score=0);const pool=[];for(const ty in Q)Q[ty].forEach(([v,q,o,a])=>{const opts=shuf(o.map((x,i)=>({x,c:i===a})));pool.push({type:ty,value:v,question:q,options:opts.map(z=>z.x),answer:opts.findIndex(z=>z.c),used:false})});
+$("go").onclick=()=>{AC();setMusic("board");teams.forEach(t=>t.score=0);const pool=[];for(const ty in Q)Q[ty].forEach(([v,q,o,a])=>{const opts=shuf(o.map((x,i)=>({x,c:i===a})));pool.push({type:ty,value:v,question:q,options:opts.map(z=>z.x),answer:opts.findIndex(z=>z.c),used:false})});
 cards=shuf(pool).map((c,i)=>({...c,id:i+1}));cur=0;used=0;$("setup").style.display="none";$("game").style.display="block";$("log").innerHTML="";$("sb").style.gridTemplateColumns=`repeat(${teams.length},1fr)`;drawScore();drawBoard();turn()};
 function drawScore(){const b=$("sb");b.innerHTML="";teams.forEach((t,i)=>{const d=document.createElement("div");d.className="ts"+(i===cur?" act":"");d.innerHTML=`<div class="m">${t.icon}</div><div class="tn">${E(t.name)}</div><div class="tscore">${t.score}</div>`;b.appendChild(d)})}
 function drawBoard(){const b=$("board");b.innerHTML="";cards.forEach(c=>{const e=document.createElement("div");e.className="cs"+(c.used?" used":"");if(c.used)e.innerHTML=`<div class="bd">${BADGE[c.type]}</div><div class="q">✔</div><div class="n">Kartu ${c.id}</div>`;else{e.innerHTML=`<div class="q">?</div><div class="n">Kartu ${c.id}</div>`;e.tabIndex=0;e.onclick=()=>{pend=c.id;sfx.open();decide()};e.onkeydown=k=>{if(k.key==="Enter")e.click()}}b.appendChild(e)})}
 function turn(){$("turn").innerHTML="Giliran memilih: "+lbl(teams[cur])}
 const M=h=>{$("mc").innerHTML=h;$("modal").classList.add("show")};
 function decide(){const p=teams[cur];let h=`<h2>Kartu ${pend} Dipilih!</h2><p class="sub"><b>${lbl(p)}</b>, apakah akan menjawab sendiri atau melemparkan kartu ke tim lain? Isi kartu masih dirahasiakan.</p><button class="db self" data-i="${cur}">🙋 Jawab sendiri (${lbl(p)})</button>`;teams.forEach((t,i)=>{if(i!==cur)h+=`<button class="db" data-i="${i}">🎯 Lemparkan ke ${lbl(t)}</button>`});M(h);$("mc").querySelectorAll(".db").forEach(b=>b.onclick=()=>{ans=+b.dataset.i;rev=cards.find(c=>c.id===pend);sfx.dec();ask()})}
-function ask(){const c=rev,a=teams[ans];const L={poin:"💰 Kartu Poin",steal:"🦈 Kartu Suro vs Boyo",trap:"🌶️ Kartu Sambal Pedas"}[c.type];
+function ask(){setMusic("quiz");const c=rev,a=teams[ans];const L={poin:"💰 Kartu Poin",steal:"🦈 Kartu Suro vs Boyo",trap:"🌶️ Kartu Sambal Pedas"}[c.type];
 const D={poin:`Jika menjawab benar, tim memperoleh ${c.value} poin.`,steal:`Jika menjawab benar, tim dapat merebut hingga ${c.value} poin dari tim lain.`,trap:`Perhatian! Jika jawaban salah, poin tim ini berkurang ${c.value} dan dibagikan kepada tim lain.`}[c.type];
 let h=`<div class="tt ${c.type}">${L}</div><p class="sub">${D}</p><div class="qc"><b>Yang menjawab:</b> ${lbl(a)}</div><div class="qq">${c.question}</div>`;c.options.forEach((o,i)=>h+=`<button class="qo" data-i="${i}">${"ABCD"[i]}. ${E(o)}</button>`);M(h);$("mc").querySelectorAll(".qo").forEach(b=>b.onclick=()=>answer(+b.dataset.i))}
 function rbox(t,m){const d=document.createElement("div");d.className="rb "+t;d.innerHTML=m;$("mc").appendChild(d)}
 function nextBtn(){const b=document.createElement("button");b.className="nx";b.textContent="Lanjut";b.onclick=close;$("mc").appendChild(b)}
 function log(t,c){const d=document.createElement("div");d.className="li "+c;d.textContent=t;$("log").prepend(d)}
-function answer(s){const c=rev,ok=s===c.answer,a=teams[ans],nm=a.icon+" "+a.name;
+function answer(s){setMusic("off");const c=rev,ok=s===c.answer,a=teams[ans],nm=a.icon+" "+a.name;
 $("mc").querySelectorAll(".qo").forEach((b,i)=>{b.disabled=true;if(i===c.answer)b.classList.add("correct");if(i===s&&!ok)b.classList.add("wrong")});c.used=true;used++;
 if(c.type==="poin"){if(ok){sfx.ok();a.score+=c.value;rbox("good",`✅ Jawaban benar! ${lbl(a)} memperoleh <b>${c.value} poin</b>.`);log(`💰 ${nm} menjawab benar (+${c.value}).`,"c")}else{sfx.no();rbox("bad","❌ Jawaban kurang tepat. Tidak ada poin yang diperoleh.");log(`💰 ${nm} menjawab salah, tidak memperoleh poin.`,"w")}nextBtn()}
 else if(c.type==="steal"){if(ok){sfx.ok();steal(c,a);return}sfx.no();rbox("neutral","😅 Jawaban salah. Suro dan Boyo batal bertarung, sehingga tidak ada poin yang berpindah.");log(`🦈 ${nm} menjawab salah pada kartu Suro vs Boyo.`,"w");nextBtn()}
@@ -159,9 +195,9 @@ else{if(ok){sfx.ok();rbox("good",`🛡️ Hebat! ${lbl(a)} berhasil menghadapi s
 rbox("bad",`🌶️ Terkena sambal pedas! ${lbl(a)} kehilangan <b>${c.value} poin</b>, dibagikan kepada: ${o.map((t,i)=>lbl(t)+" (+"+(sh+(i===0?rm:0))+")").join(", ")}.`);log(`🌶️ ${nm} terkena sambal pedas, -${c.value} poin dibagikan ke tim lain.`,"t")}nextBtn()}}
 function steal(c,a){let h=`<div class="tt steal">🦈 Suro vs Boyo 🐊</div><p class="sub">✅ Jawaban benar! ${lbl(a)} berhak merebut hingga <b>${c.value} poin</b>. Pilih tim sasaran:</p>`;teams.forEach((t,i)=>{if(i!==ans)h+=`<button class="db" data-i="${i}">🎯 ${lbl(t)} (poin: ${t.score})</button>`});M(h);
 $("mc").querySelectorAll(".db").forEach(b=>b.onclick=()=>{const t=teams[+b.dataset.i],m=Math.min(c.value,Math.max(t.score,0));t.score-=m;a.score+=m;sfx.steal();$("mc").querySelectorAll(".db").forEach(x=>x.remove());$("mc").querySelector(".sub").remove();rbox("good",`🦈 ${lbl(a)} merebut <b>${m} poin</b> dari ${lbl(t)}!`);log(`🦈 ${a.icon} ${a.name} merebut ${m} poin dari ${t.icon} ${t.name}.`,"s");nextBtn()})}
-function close(){$("modal").classList.remove("show");cur=(cur+1)%teams.length;drawScore();drawBoard();turn();if(used>=cards.length)setTimeout(final,300)}
-function final(){sfx.win();const s=[...teams].sort((a,b)=>b.score-a.score),md=["🥇","🥈","🥉","🏅"];let h=`<h2>🎉 Misi Selesai!</h2><p class="sub">Semua 20 kartu sudah terbuka. Peringkat akhir:</p>`;s.forEach((t,i)=>h+=`<div class="fr"><div class="md">${md[i]}</div><div class="fm">${t.icon}</div><div class="fn">${E(t.name)}</div><div class="fs">${t.score} poin</div></div>`);h+=`<button class="nx" id="again">Mainkan Kembali</button>`;M(h);$("again").onclick=toSetup}
-function toSetup(){$("modal").classList.remove("show");$("game").style.display="none";$("setup").style.display="flex";teams.forEach(t=>t.score=0);renderCount();renderSetup()}
+function close(){$("modal").classList.remove("show");setMusic("board");cur=(cur+1)%teams.length;drawScore();drawBoard();turn();if(used>=cards.length)setTimeout(final,300)}
+function final(){setMusic("off");sfx.win();const s=[...teams].sort((a,b)=>b.score-a.score),md=["🥇","🥈","🥉","🏅"];let h=`<h2>🎉 Misi Selesai!</h2><p class="sub">Semua 20 kartu sudah terbuka. Peringkat akhir:</p>`;s.forEach((t,i)=>h+=`<div class="fr"><div class="md">${md[i]}</div><div class="fm">${t.icon}</div><div class="fn">${E(t.name)}</div><div class="fs">${t.score} poin</div></div>`);h+=`<button class="nx" id="again">Mainkan Kembali</button>`;M(h);$("again").onclick=toSetup}
+function toSetup(){setMusic("off");$("modal").classList.remove("show");$("game").style.display="none";$("setup").style.display="flex";teams.forEach(t=>t.score=0);renderCount();renderSetup()}
 $("rl").onclick=()=>{if(confirm("Apakah Anda yakin ingin memulai ulang permainan? Skor saat ini akan hilang."))toSetup()};
 renderCount();renderSetup();
 </script></body></html>
