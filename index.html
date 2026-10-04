@@ -2,292 +2,302 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Petualangan Berpikir Komputasional — Karya Inovasi Pembelajaran</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Petualangan Berpikir Komputasional | Informatika Kelas IX</title>
+<meta name="description" content="Media pembelajaran interaktif Informatika Kelas IX, Bab 1 Berpikir Komputasional: struktur data, pohon, graf, analisis dan visualisasi data.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}
-:root{
-  --bg:#F0F7FF; --text:#172554; --muted:#64748B;
-  --accent:#3B82F6; --accent2:#8B5CF6; --pink:#F472B6; --gold:#F59E0B; --green:#22C55E;
-  --border:rgba(37,99,235,.14); --shadow:0 18px 50px rgba(37,99,235,.12);
-}
-html,body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  background:linear-gradient(135deg,#F0F7FF 0%,#FDFBFF 50%,#FFF7FC 100%);color:var(--text)}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 70px}
-
-/* ===== Hero ===== */
-.hero{position:relative;border-radius:28px;overflow:hidden;padding:46px 40px;
-  background:linear-gradient(135deg,#3B82F6,#8B5CF6 55%,#F472B6);color:#fff;box-shadow:var(--shadow)}
-.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;filter:blur(2px);opacity:.25;background:#fff}
-.hero:before{width:260px;height:260px;top:-100px;right:-60px}
-.hero:after{width:200px;height:200px;bottom:-90px;left:-50px}
-.hero-inner{position:relative;z-index:2}
-.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.18);
-  border:1px solid rgba(255,255,255,.35);padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase}
-.hero h1{font-size:clamp(28px,4.2vw,46px);line-height:1.08;margin:16px 0 10px;letter-spacing:-1px}
-.hero p.lead{font-size:17px;max-width:720px;color:rgba(255,255,255,.92);line-height:1.7;margin:0 0 22px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);padding:7px 13px;border-radius:999px;font-size:13px;font-weight:700}
-
-/* ===== Identitas ===== */
-.id-card{margin-top:-34px;position:relative;z-index:3;background:#fff;border-radius:22px;
-  box-shadow:0 14px 34px rgba(37,99,235,.14);border:1px solid var(--border);
-  padding:22px 28px;display:flex;flex-wrap:wrap;gap:24px;align-items:center}
-.id-avatar{width:64px;height:64px;border-radius:18px;flex:none;display:grid;place-items:center;
-  font-size:28px;color:#fff;background:linear-gradient(135deg,#3B82F6,#8B5CF6)}
-.id-info{flex:1;min-width:220px}
-.id-info .name{font-size:19px;font-weight:800;margin:0}
-.id-info .role{color:var(--muted);font-size:14px;margin-top:3px}
-.id-meta{display:flex;flex-wrap:wrap;gap:10px 22px;font-size:13.5px;color:#475569}
-.id-meta span{display:flex;align-items:center;gap:6px;font-weight:600}
-
-/* ===== Sections ===== */
-.section{margin-top:52px}
-.section-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;flex-wrap:wrap}
-.section-num{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase}
-.section h2{font-size:clamp(22px,2.6vw,30px);margin:4px 0 6px;letter-spacing:-.5px}
-.section p.sub{color:var(--muted);font-size:15px;margin:0 0 22px;max-width:760px;line-height:1.6}
-
-/* ===== Cards grid (materi & game) ===== */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
-.card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:22px;
-  box-shadow:0 8px 24px rgba(37,99,235,.07);transition:transform .18s ease,box-shadow .18s ease;
-  display:flex;flex-direction:column;min-height:100%}
-.card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(37,99,235,.15)}
-.card .tag{display:inline-block;width:max-content;font-size:11px;font-weight:800;letter-spacing:.6px;
-  text-transform:uppercase;color:var(--accent);background:#EFF6FF;border-radius:999px;padding:4px 10px;margin-bottom:12px}
-.card .icon{font-size:34px;margin-bottom:6px}
-.card h3{font-size:17px;margin:0 0 6px;line-height:1.3}
-.card p{font-size:13.5px;color:var(--muted);line-height:1.6;margin:0 0 16px;flex:1}
-.card a.btn{margin-top:auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  text-decoration:none;font-weight:800;font-size:13.5px;color:#fff;background:linear-gradient(135deg,#3B82F6,#8B5CF6);
-  padding:10px 16px;border-radius:12px;box-shadow:0 6px 16px rgba(59,130,246,.25);transition:transform .15s ease}
-.card a.btn:hover{transform:translateY(-1px)}
-.card.blooket{background:linear-gradient(160deg,#FFF7ED,#fff);border-color:#FDE68A}
-.card.blooket a.btn{background:linear-gradient(135deg,#F59E0B,#F97316);box-shadow:0 6px 16px rgba(245,158,11,.28)}
-.card.disabled{opacity:.55}
-.card.disabled a.btn{background:#CBD5E1;box-shadow:none;pointer-events:none}
-
-/* ===== Dokumen lists (modul ajar, lkpd & soal) ===== */
-.doclist{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 8px 24px rgba(37,99,235,.07);overflow:hidden}
-.doc-row{display:flex;align-items:center;gap:16px;padding:16px 22px;border-bottom:1px solid #EEF2FF}
-.doc-row:last-child{border-bottom:none}
-.doc-row:hover{background:#FAFBFF}
-.doc-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:19px;flex:none;color:#fff}
-.doc-icon.blue{background:linear-gradient(135deg,#3B82F6,#60A5FA)}
-.doc-icon.purple{background:linear-gradient(135deg,#8B5CF6,#A78BFA)}
-.doc-info{flex:1;min-width:0}
-.doc-info b{display:block;font-size:14.5px}
-.doc-info span{font-size:12.5px;color:var(--muted)}
-.doc-pill{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#5B21B6;background:#F3E8FF;
-  border-radius:999px;padding:4px 10px;flex:none;white-space:nowrap}
-.doc-row a.dl{flex:none;text-decoration:none;font-weight:800;font-size:13px;color:var(--accent);
-  border:1.5px solid #BFDBFE;padding:8px 14px;border-radius:10px;white-space:nowrap}
-.doc-row a.dl:hover{background:#EFF6FF}
-.doc-row.muted .doc-info b{color:#94A3B8}
-.doc-row.muted .doc-info span{color:#CBD5E1}
-
-/* ===== Footer ===== */
-.footer{margin-top:60px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.8;padding-top:26px;border-top:1px solid var(--border)}
-.footer b{color:var(--text)}
-
-@media(max-width:700px){
- .hero{padding:34px 22px}
- .id-card{padding:20px}
- .doc-row{flex-wrap:wrap}
- .doc-row a.dl{margin-left:58px}
-}
+:root{--f:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;--d:"Bricolage Grotesque","Figtree",system-ui,sans-serif;--bg:#fff;--s2:#f5f8fe;--ln:#e0e7f3;--tx:#0e1a44;--mu:#56638a;--ac:#2f5bea;--c:#2f5bea;--sh:0 1px 2px rgba(14,26,68,.04),0 10px 28px rgba(14,26,68,.07);box-sizing:border-box}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;font:400 16px/1.65 var(--f);background:var(--bg);color:var(--tx);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:8px}
+.w{max-width:1120px;margin:0 auto;padding:0 20px}
+#prog{position:fixed;inset:0 0 auto 0;height:3px;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#2f5bea,#7c4dff,#e8438f,#f59e0b,#0ea5a4);z-index:70}
+.top{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--ln)}
+.top .w{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font:800 17px var(--d);letter-spacing:-.01em;justify-self:start}
+.logo{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:16px;background:linear-gradient(135deg,#2f5bea,#7c4dff 60%,#e8438f)}
+.links{display:flex;gap:2px}
+.links a{padding:8px 15px;border-radius:9px;font-weight:600;font-size:14.5px;color:var(--mu);transition:color .2s,background .2s}
+.links a:hover,.links a.on{color:var(--ac);background:#eef2ff}
+.bi{justify-self:end;height:38px;padding:0 14px;border-radius:10px;border:1px solid var(--ln);background:#fff;color:var(--tx);font:600 13.5px var(--f);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.bi:hover{border-color:var(--ac)}
+kbd{font:600 11px var(--f);padding:1px 6px;border-radius:5px;border:1px solid var(--ln);color:var(--mu)}
+.hero{position:relative;text-align:center;padding:44px 0 56px;overflow:hidden;border-bottom:1px solid var(--ln);background:radial-gradient(620px 320px at 14% 0,rgba(47,91,234,.13),transparent 70%),radial-gradient(620px 320px at 86% 0,rgba(232,67,143,.11),transparent 70%),radial-gradient(520px 280px at 50% 100%,rgba(124,77,255,.09),transparent 70%)}
+.hero:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#cdd8ee 1px,transparent 1px);background-size:24px 24px;-webkit-mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 70% 80% at 50% 40%,#000 20%,transparent 75%);opacity:.7}
+.hero .w{position:relative}
+.hc>*{animation:up .9s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i)*90ms)}
+@keyframes up{from{opacity:0;transform:translateY(18px)}}
+.au{display:inline-flex;align-items:center;gap:10px;padding:5px 16px 5px 5px;border-radius:999px;background:#fff;border:1px solid var(--ln);box-shadow:var(--sh);font-weight:600;font-size:14px;margin:0 0 18px}
+.ai{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font:800 11px var(--d);background:linear-gradient(135deg,#2f5bea,#7c4dff 60%,#e8438f)}
+.hero h1{font:800 clamp(36px,5.4vw,62px)/1.06 var(--d);letter-spacing:-.035em;margin:0 auto 20px;max-width:13em;color:var(--tx);background:linear-gradient(100deg,#0e1a44 15%,#2f5bea 55%,#7c4dff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lead{max-width:620px;margin:0 auto 24px;color:var(--mu);font-size:17px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.bp,.bg{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:12px;font:700 15px var(--f);cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
+.bp{border:0;color:#fff;background:linear-gradient(135deg,#2f5bea,#6b4dff);box-shadow:0 8px 20px rgba(47,91,234,.3)}
+.bp:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(47,91,234,.38)}
+.bg{border:1px solid var(--ln);background:#fff;color:var(--tx)}
+.bg:hover{border-color:var(--ac);transform:translateY(-2px)}
+.stage{position:relative;height:300px;margin:34px 0 0;border-radius:24px;border:1px solid var(--ln);overflow:hidden;background:#fff radial-gradient(#e4eaf7 1px,transparent 1px) 0 0/18px 18px;box-shadow:var(--sh)}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y}
+.hint{margin:12px 0 0;font-size:13.5px;color:var(--mu)}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:860px;margin:26px auto 0}
+.facts div{background:#fff;border:1px solid var(--ln);border-radius:14px;padding:14px 10px;box-shadow:var(--sh)}
+.facts b{display:block;font:800 30px/1.1 var(--d);color:var(--ac)}.facts span{font-size:14px;color:var(--mu)}
+.how ol{list-style:none;margin:0;padding:34px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.how li{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:14px;background:var(--s2);border:1px solid var(--ln)}
+.how li>span{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--ac);color:#fff;font:800 15px var(--d)}
+.how b{display:block;line-height:1.3}.how small{color:var(--mu);font-size:14px}
+.sec{padding:84px 0 8px}
+.sh{max-width:640px;margin:0 auto 40px;text-align:center}
+.sh h2{font:800 clamp(28px,3.6vw,42px)/1.1 var(--d);letter-spacing:-.025em;margin:0 0 10px}
+.sh p{margin:0;color:var(--mu)}
+.tl{list-style:none;margin:0 auto;padding:0;position:relative;--fill:0;max-width:1000px}
+.tl:before,.tl:after{content:"";position:absolute;left:50%;margin-left:-1px;top:24px;bottom:0;width:2px;background:var(--ln)}
+.tl:after{background:linear-gradient(#2f5bea,#7c4dff,#e8438f,#f59e0b,#0ea5a4);transform-origin:top;transform:scaleY(var(--fill))}
+.step{display:grid;grid-template-columns:1fr 48px 1fr;column-gap:26px;padding-bottom:36px}
+.dot{grid-column:2;grid-row:1;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font:800 19px var(--d);background:var(--c);color:#fff;border:4px solid #fff;box-shadow:0 0 0 2px var(--c);position:relative;z-index:1}
+.sc{grid-column:1;grid-row:1;position:relative;background:#fff;border:1px solid var(--ln);border-top:3px solid var(--c);border-radius:16px;padding:22px 24px;box-shadow:var(--sh);overflow:hidden}
+.step:nth-child(even) .sc{grid-column:3}
+.step:last-child{display:flex;flex-direction:column;align-items:center;row-gap:16px;padding-bottom:0}
+.step:last-child .sc{width:min(100%,700px);text-align:center}
+.step:last-child .rcs{justify-content:center}.step:last-child .sc p{margin-left:auto;margin-right:auto}
+.sc:before,.row:before{content:"";position:absolute;inset:0;opacity:0;transition:opacity .3s;background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--c) 14%,transparent),transparent 70%);pointer-events:none}
+.sc:hover:before,.row:hover:before{opacity:1}
+.fl .sc{animation:fl 1.8s}
+@keyframes fl{20%,60%{box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 30%,transparent)}}
+.sc h3{font:800 23px/1.2 var(--d);letter-spacing:-.015em;margin:0 0 6px}
+.sc p{margin:0 0 16px;color:var(--mu);max-width:520px}
+.rcs{display:flex;flex-wrap:wrap;gap:8px}
+.rc{display:inline-flex;gap:7px;align-items:center;min-height:42px;padding:0 14px;border-radius:10px;border:1px solid var(--ln);background:var(--s2);font-weight:700;font-size:13.5px;transition:border-color .2s,background .2s}
+a.rc:hover{border-color:var(--c);background:color-mix(in srgb,var(--c) 10%,#fff)}
+.rc.off{opacity:.55;border-style:dashed}
+.qz{display:flex;align-items:center;gap:16px;margin:0 0 16px;padding:16px 18px;border-radius:14px;text-align:left;background:color-mix(in srgb,var(--c) 9%,#fff);border:1.5px solid var(--c);transition:transform .2s,box-shadow .2s}
+.qz:hover{transform:translateY(-2px);box-shadow:0 10px 24px color-mix(in srgb,var(--c) 28%,transparent)}
+.qi{font-size:30px}.qt{flex:1}.qt b{display:block;font:800 18px var(--d)}.qt small{color:var(--mu);font-size:14px;line-height:1.4;display:block}
+.qb{background:var(--c);color:#fff;font-weight:800;padding:10px 18px;border-radius:10px;white-space:nowrap}
+.tb{display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:26px}
+#fl{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.fc{font:600 14px var(--f);color:var(--mu);background:#fff;border:1px solid var(--ln);border-radius:999px;padding:8px 16px;cursor:pointer;transition:all .2s}
+.fc small{opacity:.7;margin-left:4px}
+.fc:hover{color:var(--tx);border-color:var(--ac)}
+.fc[aria-pressed=true]{background:var(--ac);border-color:var(--ac);color:#fff}
+#q{font:400 15px var(--f);color:var(--tx);background:var(--s2);border:1px solid var(--ln);border-radius:12px;padding:12px 16px;width:min(100%,380px);text-align:center}
+#q::placeholder{color:var(--mu)}
+.lib{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.row{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:14px;background:#fff;border:1px solid var(--ln);box-shadow:var(--sh);transition:border-color .2s,transform .2s}
+a.row:hover{border-color:var(--c);transform:translateY(-2px)}
+.row.off{opacity:.55;border-style:dashed}
+.pop{animation:up .45s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i)*28ms)}
+.ri{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:color-mix(in srgb,var(--c) 13%,#fff);flex:none}
+.rt{flex:1;min-width:0}.rt b{display:block;font-size:15px;line-height:1.3}.rt small{color:var(--mu);font-size:13px}
+.ra{font-weight:700;font-size:13.5px;color:var(--c);white-space:nowrap;display:flex;gap:8px;align-items:center}
+.ra em{font:700 11px var(--f);font-style:normal;color:var(--mu);border:1px solid var(--ln);border-radius:6px;padding:1px 6px}
+.off .ra{color:var(--mu)}
+.em{padding:36px 0;color:var(--mu);grid-column:1/-1;text-align:center}.em button{margin-left:8px;min-height:40px;padding:0 16px}
+.ab{max-width:760px;margin:0 auto;text-align:center;background:#fff;border:1px solid var(--ln);border-radius:22px;padding:34px 28px;box-shadow:var(--sh)}
+.av{width:84px;height:84px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font:800 30px var(--d);color:#fff;background:linear-gradient(135deg,#2f5bea,#7c4dff 60%,#e8438f)}
+.ab h3{font:800 24px var(--d);margin:0}.ab>p{margin:2px 0 22px;color:var(--mu)}
+.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.ig div{background:var(--s2);border:1px solid var(--ln);border-radius:14px;padding:14px 10px}
+.ig small{display:block;color:var(--mu);font-size:13px}.ig b{font-size:15px}
+footer{margin-top:90px;border-top:1px solid var(--ln);padding:28px 0 40px;color:var(--mu);font-size:14px;text-align:center;background:var(--s2)}
+#pal{position:fixed;inset:0;z-index:100;display:none;align-items:flex-start;justify-content:center;padding:12vh 16px;background:rgba(14,26,68,.38);backdrop-filter:blur(6px)}
+#pal.open{display:flex}
+.pb{width:min(580px,100%);background:#fff;border:1px solid var(--ln);border-radius:16px;box-shadow:0 30px 80px rgba(14,26,68,.3);overflow:hidden;animation:up .25s both}
+#pi{width:100%;border:0;border-bottom:1px solid var(--ln);background:transparent;color:var(--tx);font:500 17px var(--f);padding:18px 20px;outline:0}
+#pl{list-style:none;margin:0;padding:8px;max-height:320px;overflow:auto}
+#pl a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px}
+#pl a.on{background:#eef2ff}
+#pl em{margin-left:auto;font-style:normal;font-size:13px;color:var(--mu)}
+#pl .no{padding:18px;color:var(--mu)}
+.ph{margin:0;padding:10px 18px;border-top:1px solid var(--ln);font-size:12.5px;color:var(--mu)}
+#ts{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);opacity:0;background:var(--tx);color:#fff;padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;z-index:120;transition:all .35s;pointer-events:none}
+#ts.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:820px){.lib{grid-template-columns:1fr}.facts{grid-template-columns:repeat(2,1fr)}.how ol{grid-template-columns:1fr}}
+.ai{flex:none}.au{text-align:left}
+@media(max-width:760px){.au{font-size:13px;line-height:1.35}.cta .bp,.cta .bg{width:100%;max-width:340px}.links{display:none}.top .w{grid-template-columns:1fr auto}.bi kbd{display:none}.stage{height:270px}.ig{grid-template-columns:1fr}
+.tl:before,.tl:after{left:20px;margin-left:-1px}.step,.step:last-child{display:grid;grid-template-columns:40px 1fr;column-gap:14px;padding-bottom:26px}.step:last-child{padding-bottom:0}
+.dot{width:40px;height:40px;font-size:16px}.sc,.step:nth-child(even) .sc{grid-column:2}.step:last-child .sc{width:auto;text-align:left}.step:last-child .rcs{justify-content:flex-start}
+.qz{flex-wrap:wrap}.qb{width:100%;text-align:center}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div id="prog"></div>
+<header class="top"><div class="w">
+  <a class="brand" href="#top"><span class="logo" aria-hidden="true">🚀</span>Berpikir Komputasional</a>
+  <nav class="links" aria-label="Navigasi utama"><a href="#path">Jalur belajar</a><a href="#pustaka">Pustaka</a><a href="#tentang">Tentang</a></nav>
+  <button class="bi" id="sb" aria-label="Cari sumber belajar">Cari <kbd>Ctrl K</kbd></button>
+</div></header>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="hero-inner">
-      <span class="badge">🏆 Karya Inovasi Pembelajaran</span>
-      <h1>🚀 Petualangan Berpikir Komputasional</h1>
-      <p class="lead">Media pembelajaran interaktif untuk mata pelajaran <b>Informatika Kelas IX</b> — Bab 1: <b>Berpikir Komputasional</b>. Disusun dalam lima pertemuan yang membawa peserta didik menjelajah dari Struktur Data, Pohon (Tree) dan Graf, hingga Analisis dan Visualisasi Data melalui materi interaktif, permainan, dan lembar kerja.</p>
-      <div class="chips">
-        <span class="chip">📦 Struktur Data</span>
-        <span class="chip">🌳 Pohon (Tree)</span>
-        <span class="chip">🕸️ Graf (Graph)</span>
-        <span class="chip">📊 Analisis Data</span>
-        <span class="chip">📈 Visualisasi Data</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== IDENTITAS ===== -->
-  <div class="id-card">
-    <div class="id-avatar">👨‍🏫</div>
-    <div class="id-info">
-      <p class="name">Kaffin Ahmad Mukhtasor, S.Kom.</p>
-      <p class="role">Mahasiswa PPL · Mata Pelajaran Informatika</p>
-    </div>
-    <div class="id-meta">
-      <span>🏫 SMP Negeri 49 Surabaya</span>
-      <span>📘 Informatika — Kelas IX</span>
-      <span>📂 Bab 1 · Berpikir Komputasional</span>
-    </div>
+<main id="top">
+<section class="hero" aria-label="Pengantar">
+  <div class="w hc">
+    <p class="au" style="--i:0"><span class="ai" aria-hidden="true">KA</span>Kaffin Ahmad Mukhtasor, S.Kom. di SMP Negeri 49 Surabaya</p>
+    <h1 style="--i:1">Petualangan Berpikir Komputasional</h1>
+    <p class="lead" style="--i:2">Media belajar Informatika Kelas IX, Bab 1. Lima pertemuan membawa kelas dari struktur data, pohon, dan graf sampai analisis dan visualisasi data, lalu ditutup dengan kuis Blooket yang merangkum semuanya.</p>
+    <div class="cta" style="--i:3"><a class="bp" href="#path">Mulai dari pertemuan 1</a><button class="bg" id="sb2">Cari sumber belajar</button><a class="bg" href="#m5">Langsung ke kuis akhir</a></div>
   </div>
-
-  <!-- ===== 1. MATERI INTERAKTIF ===== -->
-  <section class="section">
-    <div class="section-head"><span class="section-num">01</span></div>
-    <h2>📘 Materi Interaktif</h2>
-    <p class="sub">Lima halaman web interaktif yang digunakan di tiap pertemuan untuk membahas materi secara langsung di kelas.</p>
-    <div class="grid">
-      <div class="card">
-        <span class="tag">Pertemuan 1</span>
-        <div class="icon">📦</div>
-        <h3>Struktur Data</h3>
-        <p>Mengenal data, jenis data, dan konsep dasar struktur data linear.</p>
-        <a class="btn" href="strukturdata.html" target="_blank">Buka Materi →</a>
-      </div>
-      <div class="card">
-        <span class="tag">Pertemuan 2</span>
-        <div class="icon">🌳</div>
-        <h3>Pohon (Tree)</h3>
-        <p>Istilah dan struktur Tree: root, node, parent, child, hingga subtree.</p>
-        <a class="btn" href="tree.html" target="_blank">Buka Materi →</a>
-      </div>
-      <div class="card">
-        <span class="tag">Pertemuan 3</span>
-        <div class="icon">🕸️</div>
-        <h3>Graf (Graph)</h3>
-        <p>Node, edge, degree, path, hingga jenis-jenis Graph.</p>
-        <a class="btn" href="graph.html" target="_blank">Buka Materi →</a>
-      </div>
-      <div class="card">
-        <span class="tag">Pertemuan 4</span>
-        <div class="icon">📊</div>
-        <h3>Analisis Data</h3>
-        <p>Proses mengumpulkan, membersihkan, dan mengeksplorasi data.</p>
-        <a class="btn" href="analisis-data.html" target="_blank">Buka Materi →</a>
-      </div>
-      <div class="card">
-        <span class="tag">Pertemuan 5</span>
-        <div class="icon">📈</div>
-        <h3>Visualisasi Data</h3>
-        <p>Mengubah data menjadi diagram batang, garis, dan lingkaran.</p>
-        <a class="btn" href="visualisasidata.html" target="_blank">Buka Materi →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 2. QUIZ / GAME ===== -->
-  <section class="section">
-    <div class="section-head"><span class="section-num">02</span></div>
-    <h2>🎮 Kuis &amp; Game Interaktif</h2>
-    <p class="sub">Permainan dan kuis untuk menguji pemahaman peserta didik dengan cara yang menyenangkan dan kompetitif.</p>
-    <div class="grid">
-      <div class="card blooket">
-        <span class="tag">Blooket</span>
-        <div class="icon">🎯</div>
-        <h3>Kuis Blooket</h3>
-        <p>Kuis interaktif berbasis Blooket untuk latihan dan penguatan materi secara berkelompok.</p>
-        <a class="btn" href="https://dashboard.blooket.com/set/6ac1fff66afa20506b23752c" target="_blank">Mainkan di Blooket →</a>
-      </div>
-      <div class="card">
-        <span class="tag">Pertemuan 1</span>
-        <div class="icon">📦</div>
-        <h3>Game Struktur Data</h3>
-        <p>Permainan interaktif seputar jenis data dan struktur data linear.</p>
-        <a class="btn" href="game-strukturdata.html" target="_blank">Mainkan →</a>
-      </div>
-      <div class="card">
-        <span class="tag">Pertemuan 2</span>
-        <div class="icon">🌳</div>
-        <h3>Tree Quest</h3>
-        <p>Game misi menghubungkan node dan menyusun struktur Tree.</p>
-        <a class="btn" href="game-tree.html" target="_blank">Mainkan →</a>
-      </div>
-      <div class="card">
-        <span class="tag">Pertemuan 4</span>
-        <div class="icon">🕵️</div>
-        <h3>Game Analisis Data</h3>
-        <p>Aktivitas Detektif Data: menemukan dan membersihkan data bermasalah.</p>
-        <a class="btn" href="game-analisisdata.html" target="_blank">Mainkan →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 3. MODUL AJAR ===== -->
-  <section class="section">
-    <div class="section-head"><span class="section-num">03</span></div>
-    <h2>📄 Modul Ajar Pertemuan 1–5</h2>
-    <p class="sub">Perangkat pembelajaran resmi berisi tujuan pembelajaran, alur kegiatan, dan asesmen tiap pertemuan.</p>
-    <div class="doclist">
-      <div class="doc-row">
-        <div class="doc-icon blue">📘</div>
-        <div class="doc-info"><b>Modul Ajar — Struktur Data</b><span>Pertemuan 1 · Informatika Kelas IX</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="Modul_Ajar_Struktur_Data_IX.docx" download>⬇ Unduh</a>
-      </div>
-      <div class="doc-row">
-        <div class="doc-icon blue">📘</div>
-        <div class="doc-info"><b>Modul Ajar — Pohon (Tree)</b><span>Pertemuan 2 · Informatika Kelas IX</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="Modul_Ajar_Tree_IX.docx" download>⬇ Unduh</a>
-      </div>
-      <div class="doc-row">
-        <div class="doc-icon blue">📘</div>
-        <div class="doc-info"><b>Modul Ajar — Graf (Graph)</b><span>Pertemuan 3 · Informatika Kelas IX</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="Modul_Ajar_Graph_IX.docx" download>⬇ Unduh</a>
-      </div>
-      <div class="doc-row">
-        <div class="doc-icon blue">📘</div>
-        <div class="doc-info"><b>Modul Ajar — Analisis Data</b><span>Pertemuan 4 · Informatika Kelas IX</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="Modul_Ajar_Analisis_Data_IX.docx" download>⬇ Unduh</a>
-      </div>
-      <div class="doc-row muted">
-        <div class="doc-icon blue" style="background:#E2E8F0;color:#94A3B8">📘</div>
-        <div class="doc-info"><b>Modul Ajar — Visualisasi Data</b><span>Pertemuan 5 · belum tersedia</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 4. LKPD & SOAL ===== -->
-  <section class="section">
-    <div class="section-head"><span class="section-num">04</span></div>
-    <h2>📝 LKPD &amp; Soal</h2>
-    <p class="sub">Lembar Kerja Peserta Didik dan kumpulan soal yang digunakan selama kegiatan pembelajaran maupun kuis.</p>
-    <div class="doclist">
-      <div class="doc-row">
-        <div class="doc-icon purple">📝</div>
-        <div class="doc-info"><b>LKPD — Struktur Data</b><span>Pertemuan 1</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="LKPD%20Struktur%20Data.docx" download>⬇ Unduh</a>
-      </div>
-      <div class="doc-row">
-        <div class="doc-icon purple">📝</div>
-        <div class="doc-info"><b>LKPD — Pohon dan Graf</b><span>Pertemuan 3 · membahas Tree &amp; Graph</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="LKPD-Pertemuan-3-Pohon-dan-Graf%20(1).docx" download>⬇ Unduh</a>
-      </div>
-      <div class="doc-row">
-        <div class="doc-icon purple">🧾</div>
-        <div class="doc-info"><b>Soal — Struktur Data</b><span>Pertemuan 1</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="soal%20struktur%20data.docx" download>⬇ Unduh</a>
-      </div>
-      <div class="doc-row">
-        <div class="doc-icon purple">🧾</div>
-        <div class="doc-info"><b>Soal &amp; Jawaban — Tree Quest</b><span>Pertemuan 2</span></div>
-        <span class="doc-pill">DOCX</span>
-        <a class="dl" href="Soal-dan-Jawaban-Tree-Quest%20(1).docx" download>⬇ Unduh</a>
-      </div>
-    </div>
-  </section>
-
-  <div class="footer">
-    Disusun oleh <b>Kaffin Ahmad Mukhtasor, S.Kom.</b> — Mahasiswa PPL Informatika<br>
-    SMP Negeri 49 Surabaya · Karya Inovasi Pembelajaran Bab 1 Berpikir Komputasional
+  <div class="w">
+    <div class="stage" id="stage"><canvas id="net" aria-hidden="true"></canvas></div>
+    <p class="hint">Klik salah satu simpul untuk melompat ke pertemuannya.</p>
+    <div class="facts" id="facts"></div>
   </div>
+</section>
 
-</div>
+<section class="how w" aria-label="Cara menggunakan"><ol>
+  <li><span>1</span><div><b>Pilih pertemuan</b><small>Mulai dari pertemuan 1 dan lanjut berurutan.</small></div></li>
+  <li><span>2</span><div><b>Buka materi, lalu mainkan game</b><small>Tiap pertemuan punya materi interaktif.</small></div></li>
+  <li><span>3</span><div><b>Unduh modul, LKPD, dan soal</b><small>Dokumen tersedia dalam format Word.</small></div></li>
+</ol></section>
+
+<section class="sec w" id="path">
+  <div class="sh"><h2>Jalur belajar lima pertemuan</h2><p>Ikuti urutannya dari atas ke bawah. Pertemuan 5 ditutup dengan kuis yang berisi semua materi.</p></div>
+  <ol class="tl" id="tl"></ol>
+</section>
+
+<section class="sec w" id="pustaka">
+  <div class="sh"><h2>Pustaka sumber belajar</h2><p>Semua materi, game, dan dokumen di satu tempat. Pilih jenisnya atau ketik untuk mencari.</p></div>
+  <div class="tb"><div id="fl" role="group" aria-label="Filter jenis"></div><input id="q" type="search" placeholder="Cari di pustaka" aria-label="Cari di pustaka"></div>
+  <div class="lib" id="lib" aria-live="polite"></div>
+</section>
+
+<section class="sec w" id="tentang">
+  <div class="sh"><h2>Tentang karya ini</h2></div>
+  <div class="ab"><div class="av" aria-hidden="true">KA</div>
+    <h3>Kaffin Ahmad Mukhtasor, S.Kom.</h3><p>Mahasiswa PPL, mata pelajaran Informatika</p>
+    <div class="ig"><div><small>Sekolah</small><b>SMP Negeri 49 Surabaya</b></div><div><small>Kelas</small><b>IX, Informatika</b></div><div><small>Bab</small><b>1, Berpikir Komputasional</b></div></div>
+  </div>
+</section>
+</main>
+
+<footer><div class="w">Karya inovasi pembelajaran Bab 1 Berpikir Komputasional, disusun oleh Kaffin Ahmad Mukhtasor, S.Kom. Tahun <span id="yr"></span>.</div></footer>
+
+<div id="pal" role="dialog" aria-modal="true" aria-label="Cari sumber belajar"><div class="pb">
+  <input id="pi" placeholder="Cari materi, game, atau dokumen" autocomplete="off" aria-label="Kata kunci">
+  <ul id="pl"></ul><p class="ph">Panah untuk memilih, Enter untuk membuka, Esc untuk menutup.</p>
+</div></div>
+<div id="ts" role="status" aria-live="polite"></div>
+<noscript><p style="padding:20px">Halaman ini membutuhkan JavaScript untuk menampilkan materi.</p></noscript>
+
+<script>
+(()=>{
+"use strict";
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RM=matchMedia("(prefers-reduced-motion:reduce)").matches,root=document.documentElement;
+
+/* ---------- Data ---------- */
+const PAL=["#2f5bea","#7c4dff","#e8438f","#f59e0b","#0ea5a4"];
+const TY={materi:["📘","Materi","Buka"],game:["🎮","Game","Mainkan"],modul:["📄","Modul ajar","Unduh"],lkpd:["📝","LKPD","Unduh"],soal:["🧾","Soal","Unduh"]};
+const M=[{t:"Umum"},
+ {t:"Struktur Data",s:"Struktur data",d:"Mengenal data, jenis data, dan konsep dasar struktur data linear."},
+ {t:"Pohon (Tree)",s:"Pohon",d:"Istilah dan struktur Tree: root, node, parent, child, hingga subtree."},
+ {t:"Graf (Graph)",s:"Graf",d:"Node, edge, degree, path, hingga jenis-jenis Graph."},
+ {t:"Analisis Data",s:"Analisis data",d:"Proses mengumpulkan, membersihkan, dan mengeksplorasi data."},
+ {t:"Visualisasi Data",s:"Visualisasi",d:"Mengubah data menjadi diagram batang, garis, dan lingkaran. Ditutup dengan kuis Blooket yang merangkum semua materi."}];
+const R=[
+ [1,"materi","strukturdata.html"],[2,"materi","tree.html"],[3,"materi","graph.html"],[4,"materi","analisis-data.html"],[5,"materi","visualisasidata.html"],
+ [1,"game","game-strukturdata.html","Game Struktur Data"],[2,"game","game-tree.html","Tree Quest"],[4,"game","game-analisisdata.html","Game Analisis Data"],
+ [5,"game","https://dashboard.blooket.com/set/6ac1fff66afa20506b23752c","Kuis Blooket: semua materi 1 sampai 5"],
+ [1,"modul","Modul_Ajar_Struktur_Data_IX.docx"],[2,"modul","Modul_Ajar_Tree_IX.docx"],[3,"modul","Modul_Ajar_Graph_IX.docx"],[4,"modul","Modul_Ajar_Analisis_Data_IX.docx"],[5,"modul",null],
+ [1,"lkpd","LKPD%20Struktur%20Data.docx"],[3,"lkpd","LKPD-Pertemuan-3-Pohon-dan-Graf%20(1).docx","LKPD Pohon dan Graf"],
+ [1,"soal","soal%20struktur%20data.docx"],[2,"soal","Soal-dan-Jawaban-Tree-Quest%20(1).docx","Soal dan Jawaban Tree Quest"]
+].map(([p,t,h,n])=>({p,t,h,n:n||(t==="materi"?M[p].t:TY[t][1]+": "+M[p].t)}));
+const isDoc=t=>t==="modul"||t==="lkpd"||t==="soal";
+const attr=r=>isDoc(r.t)?`href="${r.h}" download`:`href="${r.h}" target="_blank" rel="noopener"`;
+const cnt=t=>R.filter(r=>r.h&&(Array.isArray(t)?t.includes(r.t):r.t===t)).length;
+
+/* ---------- Toast ---------- */
+const ts=$("#ts");let tt;
+const toast=m=>{ts.textContent=m;ts.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>ts.classList.remove("show"),2400)};
+document.addEventListener("click",e=>{const a=e.target.closest("a[data-dl]");if(a&&a.hasAttribute("download"))toast("Mengunduh "+a.dataset.dl)});
+
+/* ---------- Fakta (count-up) ---------- */
+$("#facts").innerHTML=[[5,"pertemuan"],[cnt("materi"),"materi interaktif"],[cnt("game"),"game dan kuis"],[cnt(["modul","lkpd","soal"]),"dokumen siap unduh"]].map(([n,l])=>`<div><b data-c="${n}">0</b><span>${l}</span></div>`).join("");
+const cu=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;cu.unobserve(e.target);const el=e.target,to=+el.dataset.c;if(RM){el.textContent=to;return}const t0=performance.now();(function f(t){const k=Math.min((t-t0)/1100,1);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(f)})(t0)}),{threshold:.8});
+$$("[data-c]").forEach(el=>cu.observe(el));
+
+/* ---------- Jalur belajar ---------- */
+const chip=r=>{const[ic,lb]=TY[r.t];return r.h?`<a class="rc" ${attr(r)} data-dl="${r.n}">${ic} ${lb}</a>`:`<span class="rc off" title="Belum tersedia">${ic} ${lb}, segera hadir</span>`};
+const BK=R.find(r=>r.p===5&&r.t==="game");
+const quiz=`<a class="qz" href="${BK.h}" target="_blank" rel="noopener"><span class="qi" aria-hidden="true">🎯</span><span class="qt"><b>Kuis Blooket akhir</b><small>Berisi semua materi dari pertemuan 1 sampai 5. Mainkan setelah materi selesai.</small></span><span class="qb">Mainkan</span></a>`;
+$("#tl").innerHTML=[1,2,3,4,5].map(p=>{const ch=["materi","game","modul","lkpd","soal"].flatMap(t=>R.filter(r=>r.p===p&&r.t===t&&r!==BK)).map(chip).join("");
+ return `<li class="step" id="m${p}" style="--c:${PAL[p-1]}"><span class="dot">${p}</span><article class="sc"><h3>${M[p].t}</h3><p>${M[p].d}</p>${p===5?quiz:""}<div class="rcs">${ch}</div></article></li>`}).join("");
+
+/* ---------- Pustaka ---------- */
+let F="all",Q="";
+const FT=[["all","Semua"],["materi","Materi"],["game","Game"],["modul","Modul ajar"],["lkpd","LKPD"],["soal","Soal"]];
+$("#fl").innerHTML=FT.map(([k,l])=>`<button class="fc" data-k="${k}" aria-pressed="${k==="all"}">${l}<small>${k==="all"?R.length:R.filter(r=>r.t===k).length}</small></button>`).join("");
+const row=(r,i)=>{const[ic,lb,ac]=TY[r.t],st=`--i:${i%14};--c:${PAL[r.p-1]}`;const s=`<span class="ri" aria-hidden="true">${ic}</span><span class="rt"><b>${r.n}</b><small>Pertemuan ${r.p}, ${lb}</small></span><span class="ra">${r.h?(isDoc(r.t)?"<em>DOCX</em>":"")+ac:"Segera hadir"}</span>`;
+ return r.h?`<a class="row pop" style="${st}" ${attr(r)} data-dl="${r.n}">${s}</a>`:`<div class="row off pop" style="${st}">${s}</div>`};
+function lib(){const l=R.filter(r=>(F==="all"||r.t===F)&&(`${r.n} ${TY[r.t][1]} pertemuan ${r.p} ${M[r.p].t}`).toLowerCase().includes(Q));
+ $("#lib").innerHTML=l.length?l.map(row).join(""):`<p class="em">Tidak ada hasil untuk “${Q.replace(/[<>&"]/g,"")||FT.find(f=>f[0]===F)[1]}”. <button class="bg" id="rs">Tampilkan semua</button></p>`;
+ const rs=$("#rs");if(rs)rs.onclick=()=>{F="all";Q="";$("#q").value="";sync();lib()}}
+function sync(){$$(".fc").forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===F))}
+$("#fl").onclick=e=>{const b=e.target.closest(".fc");if(!b)return;F=b.dataset.k;sync();lib()};
+$("#q").oninput=e=>{Q=e.target.value.toLowerCase().trim();lib()};
+lib();
+
+/* ---------- Palet pencarian (Ctrl+K atau /) ---------- */
+const pal=$("#pal"),pi=$("#pi"),pl=$("#pl");let ai=0;
+function pr(){const q=pi.value.toLowerCase().trim();ai=0;
+ const l=R.filter(r=>r.h&&(`${r.n} ${TY[r.t][1]} ${M[r.p].t}`).toLowerCase().includes(q)).slice(0,8);
+ pl.innerHTML=l.map((r,i)=>`<li><a ${attr(r)} data-dl="${r.n}" class="${i?"":"on"}"><span aria-hidden="true">${TY[r.t][0]}</span><b>${r.n}</b><em>Pertemuan ${r.p}</em></a></li>`).join("")||`<li class="no">Tidak ada hasil. Coba kata lain.</li>`}
+function op(o){pal.classList.toggle("open",o);document.body.style.overflow=o?"hidden":"";if(o){pi.value="";pr();pi.focus()}}
+const mv=d=>{const it=$$("#pl a");if(!it.length)return;it[ai].classList.remove("on");ai=(ai+d+it.length)%it.length;it[ai].classList.add("on");it[ai].scrollIntoView({block:"nearest"})};
+pi.oninput=pr;
+pal.onclick=e=>{if(e.target===pal||e.target.closest("#pl a"))op(false)};
+$("#sb").onclick=$("#sb2").onclick=()=>op(true);
+document.addEventListener("keydown",e=>{const typing=/INPUT|TEXTAREA/.test(document.activeElement.tagName);
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"||(e.key==="/"&&!typing)){e.preventDefault();op(true)}
+ else if(pal.classList.contains("open")){if(e.key==="Escape")op(false);else if(e.key==="ArrowDown"){e.preventDefault();mv(1)}else if(e.key==="ArrowUp"){e.preventDefault();mv(-1)}else if(e.key==="Enter"){const a=$$("#pl a")[ai];if(a){e.preventDefault();a.click()}}}});
+
+/* ---------- Sorotan kartu mengikuti kursor ---------- */
+if(matchMedia("(hover:hover) and (pointer:fine)").matches)document.addEventListener("pointermove",e=>{const c=e.target.closest&&e.target.closest(".sc,.row");if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty("--mx",e.clientX-r.left+"px");c.style.setProperty("--my",e.clientY-r.top+"px")});
+
+/* ---------- Scroll: progress, rel garis waktu, penanda menu ---------- */
+const pg=$("#prog"),tl=$("#tl");let tk=false;
+function onScroll(){tk=false;const h=root.scrollHeight-innerHeight;pg.style.transform=`scaleX(${h>0?scrollY/h:0})`;const r=tl.getBoundingClientRect();tl.style.setProperty("--fill",Math.max(0,Math.min(1,(innerHeight*.6-r.top)/r.height)).toFixed(3))}
+addEventListener("scroll",()=>{if(!tk){tk=true;requestAnimationFrame(onScroll)}},{passive:true});onScroll();
+const spy=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)$$(".links a").forEach(a=>a.classList.toggle("on",a.hash==="#"+e.target.id))}),{rootMargin:"-45% 0px -50% 0px"});
+["path","pustaka","tentang"].forEach(id=>spy.observe($("#"+id)));
+$("#yr").textContent=new Date().getFullYear();
+
+/* ---------- Hero: graf simetris, simpul = lima pertemuan ---------- */
+(()=>{const st=$("#stage"),c=$("#net"),x=c.getContext("2d");
+ const FX=[[.1,.3,.5,.7,.9],[.13,.315,.5,.685,.87]],FY=[.7,.42,.2,.42,.7];
+ let w,h,H=[],P=[],mx=-1e3,my=-1e3,hv=-1,run=true,t=0;
+ function fit(){const dp=Math.min(devicePixelRatio||1,2);w=c.clientWidth;h=c.clientHeight;c.width=w*dp;c.height=h*dp;x.setTransform(dp,0,0,dp,0,0);
+  const mob=w<640,F=FX[+mob];H=[0,1,2,3,4].map(i=>({i,n:M[i+1].s,fx:F[i],fy:FY[i],r:mob?17:24,c:PAL[i],x:0,y:0,mob}));
+  P=Array.from({length:Math.max(20,Math.min(56,Math.round(w*h/6500)))},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3}));if(RM)draw()}
+ function draw(){t+=16;x.clearRect(0,0,w,h);
+  H.forEach(q=>{q.x=q.fx*w+(RM?0:Math.sin(t*.0007+q.i*1.3)*4);q.y=q.fy*h+(RM?0:Math.cos(t*.0006+q.i*1.9)*5)});
+  hv=-1;H.forEach((q,i)=>{if(Math.hypot(mx-q.x,my-q.y)<q.r+8)hv=i});st.style.cursor=hv>-1?"pointer":"";
+  const ln=(a,b,al,wd)=>{x.strokeStyle=`rgba(47,91,234,${al})`;x.lineWidth=wd;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()};
+  P.forEach((p,i)=>{if(!RM){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1}
+   for(let j=i+1;j<P.length;j++){const d=Math.hypot(p.x-P[j].x,p.y-P[j].y);if(d<90)ln(p,P[j],.16*(1-d/90),1)}
+   H.forEach(q=>{const d=Math.hypot(p.x-q.x,p.y-q.y);if(d<130)ln(p,q,.28*(1-d/130),1)});
+   const d=Math.hypot(p.x-mx,p.y-my);if(d<140)ln(p,{x:mx,y:my},.5*(1-d/140),1.2);
+   x.fillStyle="rgba(47,91,234,.45)";x.beginPath();x.arc(p.x,p.y,1.8,0,7);x.fill()});
+  for(let i=0;i<4;i++){const a=H[i],b=H[i+1],g=x.createLinearGradient(a.x,a.y,b.x,b.y);g.addColorStop(0,a.c);g.addColorStop(1,b.c);x.strokeStyle=g;x.lineWidth=3;x.globalAlpha=.85;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();x.globalAlpha=1}
+  H.forEach((q,i)=>{const on=i===hv,r=q.r+(on?4:0);x.save();if(on){x.shadowColor=q.c;x.shadowBlur=18}
+   x.fillStyle=on?q.c:"#fff";x.strokeStyle=q.c;x.lineWidth=3.5;x.beginPath();x.arc(q.x,q.y,r,0,7);x.fill();x.stroke();x.restore();
+   x.textBaseline="middle";x.textAlign="center";x.font=`800 ${q.mob?15:18}px Figtree,system-ui,sans-serif`;x.fillStyle=on?"#fff":q.c;x.fillText(i+1,q.x,q.y+1);
+   const ls=q.mob?q.n.split(" "):[q.n];x.font=`700 ${q.mob?11.5:13.5}px Figtree,system-ui,sans-serif`;x.lineJoin="round";x.lineWidth=4;
+   ls.forEach((s,k)=>{const yy=q.y+r+15+k*14;x.strokeStyle="#fff";x.strokeText(s,q.x,yy);x.fillStyle=on?q.c:"#0e1a44";x.fillText(s,q.x,yy)})})}
+ function pt(e){const r=c.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;if(RM)draw()}
+ st.addEventListener("pointermove",pt);st.addEventListener("pointerdown",pt);
+ st.addEventListener("pointerleave",()=>{mx=my=-1e3;if(RM)draw()});
+ st.addEventListener("click",()=>{if(hv<0)return;const el=$("#m"+(hv+1));el.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});el.classList.remove("fl");void el.offsetWidth;el.classList.add("fl")});
+ new IntersectionObserver(es=>{run=es[0].isIntersecting}).observe(st);
+ addEventListener("resize",fit);fit();
+ if(!RM)(function loop(){if(run&&!document.hidden)draw();requestAnimationFrame(loop)})();
+})();
+})();
+</script>
 </body>
 </html>
