@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futuristic Knowledge Graph - Masteri Pedagogi PPG Informatika</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        code, pre { font-family: 'Fira Code', monospace; }
+        
+        .futuristic-bg {
+            background-color: #030712;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%),
+                linear-gradient(rgba(30, 41, 59, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 41, 59, 0.4) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+        }
+
+        .glow-node {
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        .glow-node:hover {
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.9));
+            cursor: pointer;
+        }
+
+        .pulse-line {
+            stroke-dasharray: 6 6;
+            animation: dash 20s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -400; }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #030712; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 h-full overflow-hidden flex flex-col futuristic-bg select-none">
+
+    <!-- Top Navigation Header -->
+    <header class="h-16 border-b border-cyan-500/20 bg-slate-950/90 backdrop-blur-md px-6 flex items-center justify-between z-30 shrink-0">
+        <div class="flex items-center space-x-3.5">
+            <div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+                <i data-lucide="cpu" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h1 class="font-orbitron font-bold text-slate-100 text-sm tracking-wide flex items-center gap-2">
+                    PEDAGOGY KNOWLEDGE MATRIX <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-mono">FIXED v2.1</span>
+                </h1>
+                <p class="text-xs text-slate-400">Jaring Konsep Interaktif Masteri PPG Prajabatan Informatika (Semester 1 & 2)</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="flex items-center gap-4 text-xs font-mono text-slate-400 border-r border-slate-800 pr-4">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]"></span> Core Pedagogi</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8]"></span> Asesmen & Model</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span> Informatika & PTK</span>
+            </div>
+
+            <button onclick="zoomReset()" class="bg-slate-900 border border-cyan-500/30 text-cyan-300 px-3.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-cyan-500/20 transition flex items-center gap-1.5 shadow-[0_0_10px_rgba(6,182,212,0.1)]">
+                <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Reset Camera
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Canvas Viewport -->
+    <div class="flex-1 relative overflow-hidden" id="viewport">
+        
+        <!-- Interactive Drawer / Modal (Z-Index Fixed) -->
+        <div id="nodeModal" class="absolute right-6 top-6 bottom-6 w-96 bg-slate-900/95 border border-cyan-500/40 rounded-2xl backdrop-blur-2xl p-6 z-50 transform translate-x-[115%] transition-transform duration-300 ease-out flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.9)]">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+                <div class="flex items-center gap-2">
+                    <span id="modalCategory" class="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md uppercase">CORE CONCEPT</span>
+                    <span id="modalSks" class="text-[10px] font-mono text-slate-400">Semester 1 & 2</span>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-100 p-1.5 rounded-lg hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
+                <h2 id="modalTitle" class="font-orbitron font-bold text-lg text-slate-100 leading-snug">Nama Node Konsep</h2>
+                <div id="modalDescription" class="text-xs text-slate-300 leading-relaxed space-y-3">
+                    <!-- Dynamic Info -->
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-4 mt-4 text-[11px] font-mono text-slate-500 flex justify-between">
+                <span>PPG Prajabatan Informatika</span>
+                <span>Kemendikbudristek</span>
+            </div>
+        </div>
+
+        <!-- SVG Futuristic Graph Network with Pan/Zoom Container -->
+        <svg id="networkSvg" class="w-full h-full cursor-grab active:cursor-grabbing">
+            <g id="graphGroup"></g>
+        </svg>
+    </div>
+
+    <!-- Interactive Logic & Fixed Graph Script -->
+    <script>
+        const nodesData = [
+            // Center Master Node
+            { id: "root", label: "PPG INFORMATIKA", cat: "ROOT MODULE", x: 600, y: 350, r: 42, color: "#06b6d4",
+              desc: "Kurikulum Masteri 38 SKS PPG Prajabatan Informatika Semester 1 & 2. Mengintegrasikan pedagogi mendalam, teknologi abad 21, dan riset tindakan kelas." },
+
+            // Main Category Nodes
+            { id: "cat-ppp", label: "Peserta Didik (PPP)", cat: "SEMESTER 1", x: 360, y: 200, r: 28, color: "#38bdf8",
+              desc: "Memahami profil keragaman murid, teori perkembangan kognitif, sosio-emosional, dan pendekatan instruksional adaptif (TaRL, CRT, Diferensiasi)." },
+            { id: "cat-fppn", label: "Filosofi KHD (FPPN)", cat: "SEMESTER 1", x: 840, y: 200, r: 28, color: "#38bdf8",
+              desc: "Landasan epistemologi Ki Hadjar Dewantara: Menuntun Kodrat Alam & Kodrat Zaman, Asas Trikon, Sistem Among, dan Growth Mindset." },
+            { id: "cat-pmad", label: "Desain UbD & Asesmen", cat: "SEMESTER 1", x: 300, y: 480, r: 28, color: "#818cf8",
+              desc: "Kerangka Understanding by Design (UbD / Backward Design), Taksonomi Bloom Revisi (C1-C6 HOTS), Taksonomi SOLO, dan UDL." },
+            { id: "cat-modern", label: "Teori Kognitif Modern", cat: "SEMESTER 2", x: 900, y: 480, r: 28, color: "#818cf8",
+              desc: "Cognitive Load Theory (John Sweller), Dual-Coding Theory (Allan Paivio), Andragogi vs Heutagogi, dan Teori Atribusi." },
+            { id: "cat-info", label: "Model & Lab Coding", cat: "SEMESTER 2", x: 600, y: 560, r: 28, color: "#34d399",
+              desc: "Pedagogi spesifik komputer: Pair Programming (Driver-Navigator), 4 Pilar Computational Thinking (CT), TPACK, dan SAMR Model." },
+
+            // Leaf Nodes
+            { id: "piaget", label: "Piaget & Vygotsky", cat: "TEORI KOGNITIF", x: 180, y: 140, r: 20, color: "#38bdf8", parent: "cat-ppp",
+              desc: "<strong>Jean Piaget:</strong> Skema, Asimilasi, Akomodasi, Ekuilibrasi.<br><br><strong>Lev Vygotsky:</strong> Zone of Proximal Development (ZPD), Scaffolding, dan Fading bantuan." },
+            { id: "tarl", label: "TaRL & CRT", cat: "PENDEKATAN ADAPTIF", x: 180, y: 260, r: 20, color: "#38bdf8", parent: "cat-ppp",
+              desc: "<strong>TaRL (Teaching at the Right Level):</strong> Pengelompokan intervensi berbasis kemampuan kognitif faktual.<br><br><strong>CRT (Culturally Responsive Teaching):</strong> Mengintegrasikan budaya lokal murid." },
+
+            { id: "ubd", label: "Backward Design (UbD)", cat: "KERANGKA KURIKULUM", x: 130, y: 440, r: 20, color: "#818cf8", parent: "cat-pmad",
+              desc: "Alur mundur 3 Tahap:<br>1. Menentukan Hasil Akhir (Tujuan)<br>2. Menentukan Bukti Asesmen<br>3. Merancang Kegiatan Belajar Instruksional." },
+            { id: "hots", label: "Bloom HOTS & SOLO", cat: "HIERARKI KOGNITIF", x: 150, y: 560, r: 20, color: "#818cf8", parent: "cat-pmad",
+              desc: "<strong>HOTS:</strong> C4 Analisis (Debugging), C5 Evaluasi (Algoritma), C6 Kreasi (Aplikasi Web).<br><br><strong>Taksonomi SOLO:</strong> Prastruktural hingga Extended Abstract." },
+
+            { id: "clt", label: "Cognitive Load Theory", cat: "TEORI BEBAN MEMORI", x: 1050, y: 420, r: 20, color: "#818cf8", parent: "cat-modern",
+              desc: "<strong>Intrinsic Load:</strong> Kerumitan materi.<br><strong>Extraneous Load:</strong> Beban instruksi buruk (harus diminimalkan).<br><strong>Germane Load:</strong> Pembentukan skema baru." },
+            { id: "dualcoding", label: "Dual-Coding Theory", cat: "MULTIMEDIA LEARNING", x: 1070, y: 540, r: 20, color: "#818cf8", parent: "cat-modern",
+              desc: "Memproses informasi via 2 jalur independen (Verbal & Visual). Menghubungkan kode sintaksis dengan diagram alur Flowgorithm secara simultan." },
+
+            { id: "pair", label: "Pair Programming", cat: "LAB PEDAGOGY", x: 450, y: 670, r: 20, color: "#34d399", parent: "cat-info",
+              desc: "<strong>Driver:</strong> Mengetik kode & sintaksis.<br><strong>Navigator:</strong> Meninjau logika & arsitektur algoritma. Peran dipertukarkan secara berkala." },
+            { id: "ct", label: "4 Pilar CT", cat: "COMPUTATIONAL THINKING", x: 600, y: 700, r: 20, color: "#34d399", parent: "cat-info",
+              desc: "1. Dekomposisi (memecah masalah)<br>2. Pengenalan Pola<br>3. Abstraksi (fokus inti)<br>4. Perancangan Algoritma." },
+            { id: "ptk", label: "PTK Spiral & Gibbs", cat: "RISET & REFLEKSI", x: 750, y: 670, r: 20, color: "#34d399", parent: "cat-info",
+              desc: "<strong>PTK Kemmis & McTaggart:</strong> Planning -> Acting & Observing -> Reflecting.<br><br><strong>Siklus Gibbs:</strong> Portofolio Digital Reflektif berbasis bukti karya." }
+        ];
+
+        const linksData = [
+            { source: "root", target: "cat-ppp" },
+            { source: "root", target: "cat-fppn" },
+            { source: "root", target: "cat-pmad" },
+            { source: "root", target: "cat-modern" },
+            { source: "root", target: "cat-info" },
+            { source: "cat-ppp", target: "piaget" },
+            { source: "cat-ppp", target: "tarl" },
+            { source: "cat-pmad", target: "ubd" },
+            { source: "cat-pmad", target: "hots" },
+            { source: "cat-modern", target: "clt" },
+            { source: "cat-modern", target: "dualcoding" },
+            { source: "cat-info", target: "pair" },
+            { source: "cat-info", target: "ct" },
+            { source: "cat-info", target: "ptk" }
+        ];
+
+        let scale = 1;
+        let pointX = 0;
+        let pointY = 0;
+        let startX = 0;
+        let startY = 0;
+        let isPanning = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderNetwork();
+            setupPanZoom();
+            lucide.createIcons();
+        });
+
+        function renderNetwork() {
+            const group = document.getElementById("graphGroup");
+            group.innerHTML = "";
+
+            // Render Connection Lines
+            linksData.forEach(link => {
+                const src = nodesData.find(n => n.id === link.source);
+                const tgt = nodesData.find(n => n.id === link.target);
+
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", src.x);
+                line.setAttribute("y1", src.y);
+                line.setAttribute("x2", tgt.x);
+                line.setAttribute("y2", tgt.y);
+                line.setAttribute("stroke", src.color || "#334155");
+                line.setAttribute("stroke-width", "1.5");
+                line.setAttribute("stroke-opacity", "0.45");
+                line.setAttribute("class", "pulse-line");
+                group.appendChild(line);
+            });
+
+            // Render Node Elements
+            nodesData.forEach(node => {
+                const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                g.setAttribute("class", "glow-node");
+                g.onclick = (e) => {
+                    e.stopPropagation();
+                    openModal(node);
+                };
+
+                // Outer Dashed Ring
+                const ring = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                ring.setAttribute("cx", node.x);
+                ring.setAttribute("cy", node.y);
+                ring.setAttribute("r", node.r + 5);
+                ring.setAttribute("fill", "none");
+                ring.setAttribute("stroke", node.color);
+                ring.setAttribute("stroke-width", "1");
+                ring.setAttribute("stroke-dasharray", "3 3");
+                ring.setAttribute("stroke-opacity", "0.7");
+
+                // Inner Main Circle Node
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", node.x);
+                circle.setAttribute("cy", node.y);
+                circle.setAttribute("r", node.r);
+                circle.setAttribute("fill", "#030712");
+                circle.setAttribute("stroke", node.color);
+                circle.setAttribute("stroke-width", "2.5");
+
+                // Label Text Below Node
+                const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                text.setAttribute("x", node.x);
+                text.setAttribute("y", node.y + node.r + 16);
+                text.setAttribute("text-anchor", "middle");
+                text.setAttribute("fill", "#f1f5f9");
+                text.setAttribute("font-size", "11");
+                text.setAttribute("font-weight", "600");
+                text.textContent = node.label;
+
+                g.appendChild(ring);
+                g.appendChild(circle);
+                g.appendChild(text);
+                group.appendChild(g);
+            });
+        }
+
+        // Setup Interactive Pan & Zoom
+        function setupPanZoom() {
+            const svg = document.getElementById("networkSvg");
+            const group = document.getElementById("graphGroup");
+
+            svg.onmousedown = (e) => {
+                if (e.target.tagName === "svg" || e.target.tagName === "line") {
+                    isPanning = true;
+                    startX = e.clientX - pointX;
+                    startY = e.clientY - pointY;
+                }
+            };
+
+            window.onmousemove = (e) => {
+                if (!isPanning) return;
+                pointX = e.clientX - startX;
+                pointY = e.clientY - startY;
+                setTransform();
+            };
+
+            window.onmouseup = () => {
+                isPanning = false;
+            };
+
+            svg.onwheel = (e) => {
+                e.preventDefault();
+                const xs = (e.clientX - pointX) / scale;
+                const ys = (e.clientY - pointY) / scale;
+                const delta = e.deltaY < 0 ? 1.1 : 0.9;
+                
+                if (scale * delta > 0.4 && scale * delta < 3) {
+                    scale *= delta;
+                    pointX = e.clientX - xs * scale;
+                    pointY = e.clientY - ys * scale;
+                    setTransform();
+                }
+            };
+        }
+
+        function setTransform() {
+            const group = document.getElementById("graphGroup");
+            group.setAttribute("transform", `translate(${pointX}, ${pointY}) scale(${scale})`);
+        }
+
+        function openModal(node) {
+            const modal = document.getElementById("nodeModal");
+            document.getElementById("modalTitle").innerText = node.label;
+            document.getElementById("modalCategory").innerText = node.cat;
+            document.getElementById("modalDescription").innerHTML = node.desc;
+            modal.classList.remove("translate-x-[115%]");
+        }
+
+        function closeModal() {
+            document.getElementById("nodeModal").classList.add("translate-x-[115%]");
+        }
+
+        function zoomReset() {
+            scale = 1;
+            pointX = 0;
+            pointY = 0;
+            setTransform();
+            closeModal();
+        }
+    </script>
+</body>
+</html>
