@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Mind Mapping Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #020617; color: #f8fafc; font-family: sans-serif; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body class="relative h-screen w-screen">
+
+    <!-- Header Overlay -->
+    <header class="absolute top-4 left-4 z-10 bg-slate-900/80 backdrop-blur border border-indigo-500/30 p-4 rounded-xl shadow-lg">
+        <h1 class="font-bold text-indigo-400 text-lg flex items-center gap-2">
+            🧠 Neural Mind Mapper
+        </h1>
+        <p class="text-xs text-slate-400 mt-1">Klik node untuk melihat isi • Drag node untuk memindahkan</p>
+    </header>
+
+    <!-- Modal Detail Node -->
+    <div id="infoDrawer" class="absolute right-4 top-4 bottom-4 w-80 bg-slate-900/90 border border-indigo-500/30 rounded-xl p-6 backdrop-blur z-20 hidden flex-col justify-between shadow-2xl">
+        <div>
+            <span id="nodeTag" class="text-[10px] font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded">NEURON SKS</span>
+            <h2 id="nodeTitle" class="text-xl font-bold text-slate-100 mt-3">Nama Topik</h2>
+            <p id="nodeDesc" class="text-xs text-slate-300 mt-2 leading-relaxed">Deskripsi mendalam materi...</p>
+        </div>
+        <button onclick="closeDrawer()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold rounded-lg transition">Tutup Signals</button>
+    </div>
+
+    <!-- Canvas Utama -->
+    <canvas id="neuralCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById("neuralCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Data Node Saraf
+        const nodes = [
+            { id: 1, label: "Pusat Ide", desc: "Inti dari seluruh konsep jaringan mind mapping.", x: canvas.width/2, y: canvas.height/2, radius: 25, color: "#818cf8" },
+            { id: 2, label: "Pedagogi Dasar", desc: "Teori perkembangan kognitif Piaget & Vygotsky.", x: canvas.width/2 - 200, y: canvas.height/2 - 120, radius: 18, color: "#38bdf8" },
+            { id: 3, label: "Desain UbD", desc: "Alur mundur perencanaan instruksional.", x: canvas.width/2 + 220, y: canvas.height/2 - 100, radius: 18, color: "#38bdf8" },
+            { id: 4, label: "Informatika & Lab", desc: "Pair programming dan 4 pilar CT.", x: canvas.width/2 - 150, y: canvas.height/2 + 180, radius: 18, color: "#34d399" },
+            { id: 5, label: "Cognitive Load", desc: "John Sweller: Intrinsic, Extraneous, Germane Load.", x: canvas.width/2 + 180, y: canvas.height/2 + 150, radius: 18, color: "#34d399" }
+        ];
+
+        // Jalur Hubungan (Synapses / Axons)
+        const links = [
+            { source: 1, target: 2 },
+            { source: 1, target: 3 },
+            { source: 1, target: 4 },
+            { source: 1, target: 5 },
+            { source: 2, target: 4 },
+            { source: 3, target: 5 }
+        ];
+
+        let selectedNode = null;
+        let isDragging = false;
+        let pulseOffset = 0;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Gambar Garis Saraf (Synapse Axons)
+            pulseOffset += 0.5;
+            links.forEach(link => {
+                const src = nodes.find(n => n.id === link.source);
+                const tgt = nodes.find(n => n.id === link.target);
+
+                // Garis dasar
+                ctx.beginPath();
+                ctx.moveTo(src.x, src.y);
+                ctx.lineTo(tgt.x, tgt.y);
+                ctx.strokeStyle = "rgba(99, 102, 241, 0.25)";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Animasi Impuls Listrik (Synaptic Pulse)
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([6, 12]);
+                ctx.lineDashOffset = -pulseOffset;
+                ctx.moveTo(src.x, src.y);
+                ctx.lineTo(tgt.x, tgt.y);
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.8)";
+                ctx.lineWidth = 2;
+                ctx.shadowColor = "#38bdf8";
+                ctx.shadowBlur = 8;
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            // 2. Gambar Node Saraf (Neuron Soma & Nucleus)
+            nodes.forEach(node => {
+                // Outer Glow (Dendrite Ring)
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.radius + 6, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(99, 102, 241, 0.1)";
+                ctx.fill();
+
+                // Inner Body Circle
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+                ctx.fillStyle = "#020617";
+                ctx.strokeStyle = node.color;
+                ctx.lineWidth = 3;
+                ctx.shadowColor = node.color;
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.stroke();
+
+                // Inti Saraf (Nucleus)
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = node.color;
+                ctx.fill();
+
+                // Label Text
+                ctx.shadowBlur = 0;
+                ctx.font = "12px sans-serif";
+                ctx.fillStyle = "#f8fafc";
+                ctx.textAlign = "center";
+                ctx.fillText(node.label, node.x, node.y + node.radius + 16);
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        // Interaksi Mouse: Drag & Click
+        canvas.addEventListener("mousedown", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            nodes.forEach(node => {
+                const dist = Math.hypot(node.x - mouseX, node.y - mouseY);
+                if (dist < node.radius + 5) {
+                    selectedNode = node;
+                    isDragging = true;
+                    openDrawer(node);
+                }
+            });
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (isDragging && selectedNode) {
+                const rect = canvas.getBoundingClientRect();
+                selectedNode.x = e.clientX - rect.left;
+                selectedNode.y = e.clientY - rect.top;
+            }
+        });
+
+        canvas.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+        function openDrawer(node) {
+            document.getElementById("nodeTitle").innerText = node.label;
+            document.getElementById("nodeDesc").innerText = node.desc;
+            document.getElementById("infoDrawer").classList.remove("hidden");
+            document.getElementById("infoDrawer").classList.add("flex");
+        }
+
+        function closeDrawer() {
+            document.getElementById("infoDrawer").classList.add("hidden");
+        }
+
+        window.addEventListener("resize", () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        draw();
+    </script>
+</body>
+</html>

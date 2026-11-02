@@ -3,151 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Futuristic Knowledge Graph - Masteri Pedagogi PPG Informatika</title>
+    <title>Neural Network Pedagogi - PPG Prajabatan Informatika</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         code, pre { font-family: 'Fira Code', monospace; }
         
-        .futuristic-bg {
-            background-color: #030712;
+        .neural-bg {
+            background-color: #020617;
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1) 0%, transparent 70%),
-                linear-gradient(rgba(30, 41, 59, 0.4) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(30, 41, 59, 0.4) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
+                radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 75%),
+                radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
         }
 
-        .glow-node {
-            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
-            transition: transform 0.2s ease, filter 0.2s ease;
+        /* Synapse / Axon Glow Pulse */
+        .synapse-line {
+            stroke-dasharray: 4 8;
+            animation: neuralPulse 12s linear infinite;
         }
-        .glow-node:hover {
-            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.9));
+
+        @keyframes neuralPulse {
+            to { stroke-dashoffset: -360; }
+        }
+
+        /* Neuron Glow Effect */
+        .neuron-node {
+            filter: drop-shadow(0 0 12px rgba(129, 140, 248, 0.6));
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), filter 0.25s ease;
+        }
+        .neuron-node:hover {
+            filter: drop-shadow(0 0 24px rgba(129, 140, 248, 1));
             cursor: pointer;
         }
 
-        .pulse-line {
-            stroke-dasharray: 6 6;
-            animation: dash 20s linear infinite;
-        }
-
-        @keyframes dash {
-            to { stroke-dashoffset: -400; }
-        }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #030712; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #020617; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e1b4b; border-radius: 9999px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #312e81; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-full overflow-hidden flex flex-col futuristic-bg select-none">
+<body class="bg-slate-950 text-slate-100 h-full overflow-hidden flex flex-col neural-bg select-none">
 
-    <!-- Top Navigation Header -->
-    <header class="h-16 border-b border-cyan-500/20 bg-slate-950/90 backdrop-blur-md px-6 flex items-center justify-between z-30 shrink-0">
+    <!-- Top Neural Header -->
+    <header class="h-16 border-b border-indigo-500/20 bg-slate-950/90 backdrop-blur-md px-6 flex items-center justify-between z-30 shrink-0">
         <div class="flex items-center space-x-3.5">
-            <div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-                <i data-lucide="cpu" class="w-5 h-5"></i>
+            <div class="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.25)]">
+                <i data-lucide="network" class="w-5 h-5"></i>
             </div>
             <div>
                 <h1 class="font-orbitron font-bold text-slate-100 text-sm tracking-wide flex items-center gap-2">
-                    PEDAGOGY KNOWLEDGE MATRIX <span class="text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-mono">FIXED v2.1</span>
+                    NEURAL PEDAGOGY MAP <span class="text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-mono">SYNAPSE v3.0</span>
                 </h1>
-                <p class="text-xs text-slate-400">Jaring Konsep Interaktif Masteri PPG Prajabatan Informatika (Semester 1 & 2)</p>
+                <p class="text-xs text-slate-400">Jaringan Saraf Pikiran Interaktif Masteri PPG Prajabatan Informatika</p>
             </div>
         </div>
 
         <div class="flex items-center space-x-4">
             <div class="flex items-center gap-4 text-xs font-mono text-slate-400 border-r border-slate-800 pr-4">
-                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]"></span> Core Pedagogi</span>
-                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8]"></span> Asesmen & Model</span>
-                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span> Informatika & PTK</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_10px_#818cf8]"></span> Saraf Pusat (Core)</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#38bdf8]"></span> Synapse Kognitif</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"></span> Akson Informatika</span>
             </div>
 
-            <button onclick="zoomReset()" class="bg-slate-900 border border-cyan-500/30 text-cyan-300 px-3.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-cyan-500/20 transition flex items-center gap-1.5 shadow-[0_0_10px_rgba(6,182,212,0.1)]">
-                <i data-lucide="crosshair" class="w-3.5 h-3.5"></i> Reset Camera
+            <button onclick="zoomReset()" class="bg-slate-900 border border-indigo-500/30 text-indigo-300 px-3.5 py-1.5 rounded-xl text-xs font-semibold hover:bg-indigo-500/20 transition flex items-center gap-1.5 shadow-[0_0_12px_rgba(99,102,241,0.15)]">
+                <i data-lucide="scan" class="w-3.5 h-3.5"></i> Reset Focus
             </button>
         </div>
     </header>
 
-    <!-- Main Canvas Viewport -->
+    <!-- Main Neural Viewport -->
     <div class="flex-1 relative overflow-hidden" id="viewport">
         
-        <!-- Interactive Drawer / Modal (Z-Index Fixed) -->
-        <div id="nodeModal" class="absolute right-6 top-6 bottom-6 w-96 bg-slate-900/95 border border-cyan-500/40 rounded-2xl backdrop-blur-2xl p-6 z-50 transform translate-x-[115%] transition-transform duration-300 ease-out flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.9)]">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+        <!-- Synaptic Drawer / Modal -->
+        <div id="nodeModal" class="absolute right-6 top-6 bottom-6 w-96 bg-slate-950/95 border border-indigo-500/40 rounded-2xl backdrop-blur-2xl p-6 z-50 transform translate-x-[115%] transition-transform duration-300 ease-out flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.95)]">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-4 mb-4">
                 <div class="flex items-center gap-2">
-                    <span id="modalCategory" class="text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md uppercase">CORE CONCEPT</span>
-                    <span id="modalSks" class="text-[10px] font-mono text-slate-400">Semester 1 & 2</span>
+                    <span id="modalCategory" class="text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2.5 py-0.5 rounded-md uppercase">NEURON SIGNAL</span>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-100 p-1.5 rounded-lg hover:bg-slate-800 transition">
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-100 p-1.5 rounded-lg hover:bg-slate-900 transition">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-1">
-                <h2 id="modalTitle" class="font-orbitron font-bold text-lg text-slate-100 leading-snug">Nama Node Konsep</h2>
+                <h2 id="modalTitle" class="font-orbitron font-bold text-base text-slate-100 leading-snug">Nama Neuron</h2>
                 <div id="modalDescription" class="text-xs text-slate-300 leading-relaxed space-y-3">
                     <!-- Dynamic Info -->
                 </div>
             </div>
 
-            <div class="border-t border-slate-800 pt-4 mt-4 text-[11px] font-mono text-slate-500 flex justify-between">
+            <div class="border-t border-slate-800/80 pt-4 mt-4 text-[11px] font-mono text-slate-500 flex justify-between">
                 <span>PPG Prajabatan Informatika</span>
                 <span>Kemendikbudristek</span>
             </div>
         </div>
 
-        <!-- SVG Futuristic Graph Network with Pan/Zoom Container -->
+        <!-- SVG Neural Canvas -->
         <svg id="networkSvg" class="w-full h-full cursor-grab active:cursor-grabbing">
             <g id="graphGroup"></g>
         </svg>
     </div>
 
-    <!-- Interactive Logic & Fixed Graph Script -->
+    <!-- Neural Engine Script -->
     <script>
+        // Neural Nodes Network Structure
         const nodesData = [
-            // Center Master Node
-            { id: "root", label: "PPG INFORMATIKA", cat: "ROOT MODULE", x: 600, y: 350, r: 42, color: "#06b6d4",
-              desc: "Kurikulum Masteri 38 SKS PPG Prajabatan Informatika Semester 1 & 2. Mengintegrasikan pedagogi mendalam, teknologi abad 21, dan riset tindakan kelas." },
+            // Nucleus Core Neuron
+            { id: "root", label: "PPG INFORMATIKA", cat: "NUCLEUS CORE", x: 600, y: 350, r: 45, color: "#818cf8",
+              desc: "Pusat transmisi memori kognitif 38 SKS PPG Prajabatan Informatika (Semester 1 & 2). Menghubungkan teori perkembangan, desain instruksional, dan riset lab." },
 
-            // Main Category Nodes
-            { id: "cat-ppp", label: "Peserta Didik (PPP)", cat: "SEMESTER 1", x: 360, y: 200, r: 28, color: "#38bdf8",
-              desc: "Memahami profil keragaman murid, teori perkembangan kognitif, sosio-emosional, dan pendekatan instruksional adaptif (TaRL, CRT, Diferensiasi)." },
-            { id: "cat-fppn", label: "Filosofi KHD (FPPN)", cat: "SEMESTER 1", x: 840, y: 200, r: 28, color: "#38bdf8",
-              desc: "Landasan epistemologi Ki Hadjar Dewantara: Menuntun Kodrat Alam & Kodrat Zaman, Asas Trikon, Sistem Among, dan Growth Mindset." },
-            { id: "cat-pmad", label: "Desain UbD & Asesmen", cat: "SEMESTER 1", x: 300, y: 480, r: 28, color: "#818cf8",
-              desc: "Kerangka Understanding by Design (UbD / Backward Design), Taksonomi Bloom Revisi (C1-C6 HOTS), Taksonomi SOLO, dan UDL." },
-            { id: "cat-modern", label: "Teori Kognitif Modern", cat: "SEMESTER 2", x: 900, y: 480, r: 28, color: "#818cf8",
-              desc: "Cognitive Load Theory (John Sweller), Dual-Coding Theory (Allan Paivio), Andragogi vs Heutagogi, dan Teori Atribusi." },
-            { id: "cat-info", label: "Model & Lab Coding", cat: "SEMESTER 2", x: 600, y: 560, r: 28, color: "#34d399",
-              desc: "Pedagogi spesifik komputer: Pair Programming (Driver-Navigator), 4 Pilar Computational Thinking (CT), TPACK, dan SAMR Model." },
+            // Major Neural Clusters (Semester 1 & 2)
+            { id: "cat-ppp", label: "Peserta Didik (PPP)", cat: "NEURAL CLUSTER", x: 340, y: 180, r: 30, color: "#38bdf8",
+              desc: "Transmisi pemahaman tentang keragaman murid, teori kognitif (Piaget/Vygotsky), sosio-emosional (Erikson), moral (Kohlberg/Gilligan), TaRL, CRT, dan Diferensiasi." },
+            { id: "cat-fppn", label: "Filosofi KHD (FPPN)", cat: "NEURAL CLUSTER", x: 860, y: 180, r: 30, color: "#38bdf8",
+              desc: "Epistemologi Ki Hadjar Dewantara: Menuntun Kodrat Alam & Zaman, Asas Trikon, Sistem Among, Budi Pekerti, Neuroplastisitas, dan Growth Mindset." },
+            { id: "cat-pmad", label: "Desain UbD & Asesmen", cat: "NEURAL CLUSTER", x: 280, y: 490, r: 30, color: "#818cf8",
+              desc: "Pengolahan desain instruksional alur mundur Understanding by Design (UbD), Taksonomi Bloom Revisi HOTS (C1-C6), Taksonomi SOLO, dan Desain Universal (UDL)." },
+            { id: "cat-modern", label: "Teori Kognitif Modern", cat: "NEURAL CLUSTER", x: 920, y: 490, r: 30, color: "#818cf8",
+              desc: "Pemrosesan memori kerja: Cognitive Load Theory (John Sweller), Dual-Coding Theory (Allan Paivio), Andragogi, Heutagogi, dan Teori Atribusi." },
+            { id: "cat-info", label: "Model & Lab Coding", cat: "NEURAL CLUSTER", x: 600, y: 580, r: 30, color: "#34d399",
+              desc: "Synapse praktis komputer: Pair Programming (Driver-Navigator), 4 Pilar Computational Thinking (CT), TPACK, SAMR, dan PTK Spiral." },
 
-            // Leaf Nodes
-            { id: "piaget", label: "Piaget & Vygotsky", cat: "TEORI KOGNITIF", x: 180, y: 140, r: 20, color: "#38bdf8", parent: "cat-ppp",
-              desc: "<strong>Jean Piaget:</strong> Skema, Asimilasi, Akomodasi, Ekuilibrasi.<br><br><strong>Lev Vygotsky:</strong> Zone of Proximal Development (ZPD), Scaffolding, dan Fading bantuan." },
-            { id: "tarl", label: "TaRL & CRT", cat: "PENDEKATAN ADAPTIF", x: 180, y: 260, r: 20, color: "#38bdf8", parent: "cat-ppp",
-              desc: "<strong>TaRL (Teaching at the Right Level):</strong> Pengelompokan intervensi berbasis kemampuan kognitif faktual.<br><br><strong>CRT (Culturally Responsive Teaching):</strong> Mengintegrasikan budaya lokal murid." },
+            // Synaptic Dendrites / Sub-Neurons
+            { id: "piaget", label: "Piaget & Vygotsky", cat: "SYNAPSE DENDRIATE", x: 160, y: 120, r: 20, color: "#38bdf8",
+              desc: "<strong>Jean Piaget:</strong> Skema, Asimilasi, Akomodasi, Ekuilibrasi.<br><br><strong>Lev Vygotsky:</strong> Zone of Proximal Development (ZPD), Scaffolding, dan Fading." },
+            { id: "tarl", label: "TaRL & CRT", cat: "SYNAPSE DENDRIATE", x: 160, y: 250, r: 20, color: "#38bdf8",
+              desc: "<strong>Teaching at the Right Level (TaRL):</strong> Pengelompokan intervensi berbasis kemampuan kognitif faktual.<br><br><strong>Culturally Responsive Teaching (CRT):</strong> Mengintegrasikan kearifan lokal murid." },
 
-            { id: "ubd", label: "Backward Design (UbD)", cat: "KERANGKA KURIKULUM", x: 130, y: 440, r: 20, color: "#818cf8", parent: "cat-pmad",
-              desc: "Alur mundur 3 Tahap:<br>1. Menentukan Hasil Akhir (Tujuan)<br>2. Menentukan Bukti Asesmen<br>3. Merancang Kegiatan Belajar Instruksional." },
-            { id: "hots", label: "Bloom HOTS & SOLO", cat: "HIERARKI KOGNITIF", x: 150, y: 560, r: 20, color: "#818cf8", parent: "cat-pmad",
-              desc: "<strong>HOTS:</strong> C4 Analisis (Debugging), C5 Evaluasi (Algoritma), C6 Kreasi (Aplikasi Web).<br><br><strong>Taksonomi SOLO:</strong> Prastruktural hingga Extended Abstract." },
+            { id: "ubd", label: "Backward Design (UbD)", cat: "SYNAPSE DENDRIATE", x: 110, y: 440, r: 20, color: "#818cf8",
+              desc: "Alur mundur 3 Tahap:<br>1. Hasil Akhir (Tujuan)<br>2. Bukti Asesmen Formatif/Sumatif<br>3. Rancangan Aktivitas Belajar." },
+            { id: "hots", label: "Bloom HOTS & SOLO", cat: "SYNAPSE DENDRIATE", x: 130, y: 570, r: 20, color: "#818cf8",
+              desc: "<strong>Bloom HOTS:</strong> C4 Analisis (Debugging), C5 Evaluasi (Algoritma), C6 Kreasi (Aplikasi Web).<br><br><strong>Taksonomi SOLO:</strong> Prastruktural hingga Extended Abstract." },
 
-            { id: "clt", label: "Cognitive Load Theory", cat: "TEORI BEBAN MEMORI", x: 1050, y: 420, r: 20, color: "#818cf8", parent: "cat-modern",
-              desc: "<strong>Intrinsic Load:</strong> Kerumitan materi.<br><strong>Extraneous Load:</strong> Beban instruksi buruk (harus diminimalkan).<br><strong>Germane Load:</strong> Pembentukan skema baru." },
-            { id: "dualcoding", label: "Dual-Coding Theory", cat: "MULTIMEDIA LEARNING", x: 1070, y: 540, r: 20, color: "#818cf8", parent: "cat-modern",
-              desc: "Memproses informasi via 2 jalur independen (Verbal & Visual). Menghubungkan kode sintaksis dengan diagram alur Flowgorithm secara simultan." },
+            { id: "clt", label: "Cognitive Load Theory", cat: "SYNAPSE DENDRIATE", x: 1080, y: 430, r: 20, color: "#818cf8",
+              desc: "<strong>Intrinsic Load:</strong> Kerumitan bawaan.<br><strong>Extraneous Load:</strong> Beban instruksi buruk (harus diminimalkan).<br><strong>Germane Load:</strong> Pembentukan skema memori baru." },
+            { id: "dualcoding", label: "Dual-Coding Theory", cat: "SYNAPSE DENDRIATE", x: 1100, y: 560, r: 20, color: "#818cf8",
+              desc: "Memproses informasi via 2 saluran independen (Verbal & Visual). Menghubungkan sintaks kode dengan diagram alur Flowgorithm secara simultan." },
 
-            { id: "pair", label: "Pair Programming", cat: "LAB PEDAGOGY", x: 450, y: 670, r: 20, color: "#34d399", parent: "cat-info",
-              desc: "<strong>Driver:</strong> Mengetik kode & sintaksis.<br><strong>Navigator:</strong> Meninjau logika & arsitektur algoritma. Peran dipertukarkan secara berkala." },
-            { id: "ct", label: "4 Pilar CT", cat: "COMPUTATIONAL THINKING", x: 600, y: 700, r: 20, color: "#34d399", parent: "cat-info",
+            { id: "pair", label: "Pair Programming", cat: "AXON TERMINAL", x: 440, y: 690, r: 20, color: "#34d399",
+              desc: "<strong>Driver:</strong> Mengetik kode sintaksis.<br><strong>Navigator:</strong> Meninjau alur logika & arsitektur algoritma. Peran dipertukarkan secara berkala." },
+            { id: "ct", label: "4 Pilar CT", cat: "AXON TERMINAL", x: 600, y: 720, r: 20, color: "#34d399",
               desc: "1. Dekomposisi (memecah masalah)<br>2. Pengenalan Pola<br>3. Abstraksi (fokus inti)<br>4. Perancangan Algoritma." },
-            { id: "ptk", label: "PTK Spiral & Gibbs", cat: "RISET & REFLEKSI", x: 750, y: 670, r: 20, color: "#34d399", parent: "cat-info",
+            { id: "ptk", label: "PTK Spiral & Gibbs", cat: "AXON TERMINAL", x: 760, y: 690, r: 20, color: "#34d399",
               desc: "<strong>PTK Kemmis & McTaggart:</strong> Planning -> Acting & Observing -> Reflecting.<br><br><strong>Siklus Gibbs:</strong> Portofolio Digital Reflektif berbasis bukti karya." }
         ];
 
@@ -176,16 +176,16 @@
         let isPanning = false;
 
         document.addEventListener("DOMContentLoaded", () => {
-            renderNetwork();
+            renderNeuralNetwork();
             setupPanZoom();
             lucide.createIcons();
         });
 
-        function renderNetwork() {
+        function renderNeuralNetwork() {
             const group = document.getElementById("graphGroup");
             group.innerHTML = "";
 
-            // Render Connection Lines
+            // Render Synaptic Axon Connections (Lines)
             linksData.forEach(link => {
                 const src = nodesData.find(n => n.id === link.source);
                 const tgt = nodesData.find(n => n.id === link.target);
@@ -195,63 +195,69 @@
                 line.setAttribute("y1", src.y);
                 line.setAttribute("x2", tgt.x);
                 line.setAttribute("y2", tgt.y);
-                line.setAttribute("stroke", src.color || "#334155");
-                line.setAttribute("stroke-width", "1.5");
-                line.setAttribute("stroke-opacity", "0.45");
-                line.setAttribute("class", "pulse-line");
+                line.setAttribute("stroke", src.color || "#4f46e5");
+                line.setAttribute("stroke-width", "2");
+                line.setAttribute("stroke-opacity", "0.5");
+                line.setAttribute("class", "synapse-line");
                 group.appendChild(line);
             });
 
-            // Render Node Elements
+            // Render Neurons (Nodes)
             nodesData.forEach(node => {
                 const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                g.setAttribute("class", "glow-node");
+                g.setAttribute("class", "neuron-node");
                 g.onclick = (e) => {
                     e.stopPropagation();
                     openModal(node);
                 };
 
-                // Outer Dashed Ring
+                // Outer Dendrite Pulse Ring
                 const ring = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 ring.setAttribute("cx", node.x);
                 ring.setAttribute("cy", node.y);
-                ring.setAttribute("r", node.r + 5);
+                ring.setAttribute("r", node.r + 6);
                 ring.setAttribute("fill", "none");
                 ring.setAttribute("stroke", node.color);
                 ring.setAttribute("stroke-width", "1");
-                ring.setAttribute("stroke-dasharray", "3 3");
-                ring.setAttribute("stroke-opacity", "0.7");
+                ring.setAttribute("stroke-dasharray", "2 4");
+                ring.setAttribute("stroke-opacity", "0.8");
 
-                // Inner Main Circle Node
+                // Inner Soma Node
                 const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
                 circle.setAttribute("cx", node.x);
                 circle.setAttribute("cy", node.y);
                 circle.setAttribute("r", node.r);
-                circle.setAttribute("fill", "#030712");
+                circle.setAttribute("fill", "#020617");
                 circle.setAttribute("stroke", node.color);
                 circle.setAttribute("stroke-width", "2.5");
 
-                // Label Text Below Node
+                // Inner Nucleus Point
+                const corePoint = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                corePoint.setAttribute("cx", node.x);
+                corePoint.setAttribute("cy", node.y);
+                corePoint.setAttribute("r", node.r > 25 ? "6" : "3");
+                corePoint.setAttribute("fill", node.color);
+
+                // Neuron Title Label
                 const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
                 text.setAttribute("x", node.x);
                 text.setAttribute("y", node.y + node.r + 16);
                 text.setAttribute("text-anchor", "middle");
-                text.setAttribute("fill", "#f1f5f9");
+                text.setAttribute("fill", "#f8fafc");
                 text.setAttribute("font-size", "11");
                 text.setAttribute("font-weight", "600");
                 text.textContent = node.label;
 
                 g.appendChild(ring);
                 g.appendChild(circle);
+                g.appendChild(corePoint);
                 g.appendChild(text);
                 group.appendChild(g);
             });
         }
 
-        // Setup Interactive Pan & Zoom
         function setupPanZoom() {
             const svg = document.getElementById("networkSvg");
-            const group = document.getElementById("graphGroup");
 
             svg.onmousedown = (e) => {
                 if (e.target.tagName === "svg" || e.target.tagName === "line") {
