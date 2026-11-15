@@ -408,6 +408,22 @@ th{color:var(--accent)}
 @media(max-width:850px){.split.tf{gap:12px}.split.tf>div:first-child{display:contents}.split.tf>div:first-child>.tabs{order:0}}
 
 .scrollhint{text-align:center;margin:2px 0 0!important}
+/* Rangkuman: kartu istilah */
+.tgrp{margin-top:10px;border-left:5px solid var(--c);padding-left:10px}
+.tgrp h4{margin:0 0 6px;font-size:15px;color:var(--t)}
+.tcs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tcs.ex{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tc{display:block;width:100%;text-align:left;font:inherit;color:#172554;border:2px solid var(--c);background:var(--p);border-radius:12px;padding:9px 11px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.tc.static{cursor:default}
+.tc:not(.static):hover{transform:translateY(-1px)}
+.tc b{font-size:14.5px;color:var(--t)}
+.tc small{color:#64748B;font-size:12px;font-weight:700}
+.tc p{margin:3px 0 0;font-size:13px;line-height:1.4;color:#334155}
+.tc em{display:block;margin-top:3px;font-size:12px;line-height:1.35;color:#64748B;font-style:normal;font-weight:700}
+.tc.on{box-shadow:0 0 0 4px rgba(251,191,36,.65);background:#FFFBEB}
+@media(max-width:850px){.tcs,.tcs.ex{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.tcs,.tcs.ex{grid-template-columns:minmax(0,1fr)}}
+
 </style>
 </head>
 <body>
@@ -416,7 +432,7 @@ th{color:var(--accent)}
   <div class="brand">🌳 Petualangan <span>Tree</span></div>
   <div class="progress-wrap"><div class="progress" id="progress"></div></div>
   <div class="xp" id="xp">⭐ 0 XP</div>
-  <div class="counter" id="counter">1 / 15</div>
+  <div class="counter" id="counter">1 / 14</div>
 </header>
 
 <aside class="sidebar" id="sidebar" aria-label="Daftar slide">
@@ -618,7 +634,7 @@ render:()=>`
   <div class="eyebrow">Pertemuan 2 · Informatika SMP</div>
   <h1>Petualangan <span class="grad">Tree</span> 🌳</h1>
   <p class="lead">Dari akar sampai daun: kenali Struktur Data <b>Tree</b>, belajar membaca strukturnya, lalu susun sendiri dari kasus nyata.</p>
-  <div class="pills"><span class="pill">🌱 Kenali Tree</span><span class="pill">🔍 Baca Struktur</span><span class="pill">🃏 Kartu Istilah</span><span class="pill">🏆 Tantangan</span></div>
+  <div class="pills"><span class="pill">🌱 Kenali Tree</span><span class="pill">🔍 Baca Struktur</span><span class="pill">🗺️ Peta Konsep</span><span class="pill">🏆 Tantangan</span></div>
   <div class="story" style="margin:14px 0">🎯 <b>Misi hari ini:</b> menjadi <b>Detektif Tree</b> — mengenali istilah Tree, membaca gambarnya, lalu menyusun Tree dari cerita. Kumpulkan <b>XP</b> dan <b>lencana</b> di setiap aktivitas!</div>
   <button class="btn primary big" id="start">Mulai Petualangan →</button>
  </div>
@@ -887,25 +903,6 @@ init:()=>{
  paint();
 }});
 
-/* ---------- 8. Kartu Istilah ---------- */
-const CARDS=[
- ['🌱','Root','akar','Node paling atas, tidak punya parent. Contoh: <b>A</b>.'],
- ['🔵','Node','simpul','Setiap bulatan yang menyimpan data.'],
- ['🔗','Edge','garis','Hubungan antar-node. Jumlah edge = jumlah node − 1.'],
- ['👨','Parent','induk','Node yang punya anak. Contoh: <b>B</b> adalah parent dari E dan F.'],
- ['👶','Child','anak','Node turunan langsung dari parent. E dan F adalah child dari B.'],
- ['👫','Sibling','saudara','Node yang punya parent sama. E dan F bersaudara.'],
- ['🍃','Leaf','daun','Node tanpa anak. Contoh: C, E, G, H, I.'],
- ['🪜','Level','tingkat','Jarak node dari Root (Root = Level 0).'],
- ['🌿','Subtree','sub-pohon','Sebuah node beserta semua keturunannya.']];
-slides.push({title:'Kartu Istilah Tree',short:'🃏 Kartu Istilah',key:'cards',
-render:()=>`
-<div class="eyebrow">09 · Rangkuman Istilah</div>
-<h2>🃏 Kartu Istilah Tree</h2>
-<p class="lead2">Ketuk tiap kartu untuk membaca artinya. Buka <b>semua 9 kartu</b> untuk mendapat XP! <span class="pillx" id="cardCnt" style="background:#F3E8FF;color:#5B21B6;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:800">0 / 9</span></p>
-<div class="grid3x">${CARDS.map(c=>`<div class="fc"><div class="fc-in"><div class="fc-f"><span class="e">${c[0]}</span><b>${c[1]}</b><small>${c[2]}</small></div><div class="fc-b"><b>${c[1]}</b>${c[3]}</div></div></div>`).join('')}</div>`,
-init:()=>{const seen=new Set();$$('.fc').forEach((c,i)=>c.onclick=()=>{c.classList.toggle('flipped');seen.add(i);$('#cardCnt').textContent=seen.size+' / 9';if(seen.size===9)award('cards',10,'Semua kartu istilah dibuka')})}});
-
 /* ---------- 9. Membaca Tree langkah demi langkah ---------- */
 slides.push({title:'Membaca Struktur Tree Langkah demi Langkah',short:'👓 Membaca Tree',
 render:()=>`
@@ -1147,33 +1144,54 @@ init:()=>{
  draw();bank();
 }});
 
-/* ---------- 13. Rangkuman: peta konsep ---------- */
-const CM=[
- ['blue','🧱 Komponen',[['Root','Node paling atas; tidak punya parent.'],['Node','Setiap simpul yang menyimpan data.'],['Edge','Garis penghubung antar-node. Jumlah edge = jumlah node − 1.'],['Leaf','Node tanpa anak (ujung cabang).']]],
- ['purple','👪 Hubungan',[['Parent','Node yang punya anak (induk).'],['Child','Node turunan langsung dari parent.'],['Sibling','Node-node yang punya parent yang sama.']]],
- ['green','📏 Ukuran & Bagian',[['Level','Jarak node dari Root; Root berada di Level 0.'],['Subtree','Sebuah node beserta semua keturunannya.']]],
- ['pink','🌍 Contoh Nyata',[['Organisasi sekolah','Kepala sekolah → wakil → guru dan staf.'],['Folder komputer','Drive → folder → file.'],['Menu aplikasi','Menu utama → sub-menu.'],['Silsilah keluarga','Kakek → anak → cucu.']]]];
-slides.push({title:'Rangkuman: Peta Konsep Tree',short:'🗺️ Rangkuman',key:'map',
+/* ---------- 8. Rangkuman: peta konsep + kartu istilah (satu slide) ---------- */
+const TG=[
+ {id:'g1',label:'🧱 Komponen',cls:'child',br:'br-blue',terms:[
+  ['root','🌱','Root','akar','Node paling atas; tidak punya parent.','Contoh: A'],
+  ['node','🔵','Node','simpul','Setiap bulatan yang menyimpan data.','Contoh: 9 node, yaitu A sampai I'],
+  ['edge','🔗','Edge','garis','Garis penghubung antar-node. Jumlah edge = jumlah node − 1.','Contoh: 9 node → 8 edge'],
+  ['leaf','🍃','Leaf','daun','Node tanpa anak (ujung cabang).','Contoh: C, E, G, H, I']]},
+ {id:'g2',label:'👪 Hubungan',cls:'parent',br:'br-purple',terms:[
+  ['parent','👨','Parent','induk','Node yang punya anak.','Contoh: B adalah parent dari E dan F'],
+  ['child','👶','Child','anak','Node turunan langsung dari parent.','Contoh: E dan F adalah child dari B'],
+  ['sibling','👫','Sibling','saudara','Node-node yang punya parent yang sama.','Contoh: E dan F bersaudara']]},
+ {id:'g3',label:'📏 Ukuran',cls:'leaf',br:'br-green',terms:[
+  ['level','🪜','Level','tingkat','Jarak node dari Root. Root berada di Level 0.','Contoh: A = Level 0; B, C, D = Level 1'],
+  ['subtree','🌿','Subtree','sub-pohon','Sebuah node beserta semua keturunannya.','Contoh: Subtree D = {D, G}']]}];
+const REALEX=[['🏫','Sekolah','Kepala sekolah → wakil → guru dan staf'],['📁','Folder','Drive → folder → file'],['📱','Menu aplikasi','Menu utama → sub-menu'],['👨‍👩‍👧','Silsilah keluarga','Kakek → anak → cucu']];
+slides.push({title:'Rangkuman: Peta Konsep dan Kartu Istilah',short:'🗺️ Rangkuman',key:'map',
 render:()=>`
-<div class="eyebrow">14 · Rangkuman</div>
-<h2>🗺️ Peta Konsep Tree</h2>
-<p class="lead2">Ketuk tiap istilah untuk mengingat artinya. Jelajahi semuanya untuk XP tambahan!</p>
-<div class="cmt"><div class="cmt-root">🌳 TREE</div>
- <div class="cmt-row">${CM.map((b,bi)=>`<div class="cmt-br br-${b[0]}"><h4>${b[1]}</h4><div class="chips">${b[2].map((c,ci)=>`<button class="chip" data-b="${bi}" data-c="${ci}">${c[0]}</button>`).join('')}</div></div>`).join('')}</div>
- <div class="cmt-info" id="cmInfo">👆 Ketuk salah satu istilah di atas.</div>
-</div>
-<div class="highlight" style="margin-top:14px">🌳 <b>Inti Tree:</b> struktur data non-linear berjenjang — ada satu <b>Root</b>, setiap node (selain Root) punya tepat satu <b>Parent</b>, dan tidak ada putaran.</div>`,
+<div class="eyebrow">08 · Rangkuman</div>
+<h2>🗺️ Rangkuman: Peta Konsep &amp; Kartu Istilah</h2>
+<p class="lead2" style="font-size:16px;margin-bottom:6px">Semua istilah Tree ada di sini. Ketuk <b>node</b> pada peta atau <b>kartu</b> di bawahnya untuk saling menyorot. <span class="tag gray" id="cmCnt">Node 0/9 · Kartu 0/9</span></p>
+<div class="panel soft" style="padding:10px"><div id="cmView"></div>
+ <div class="row" style="margin-top:6px"><button class="btn sm toggle" id="cmLv" aria-pressed="false">🪜 Tampilkan Level</button></div></div>
+${TG.map(g=>`<div class="tgrp ${g.br}"><h4>${g.label}</h4><div class="tcs">${g.terms.map(t=>`<button class="tc ${g.br}" data-id="${t[0]}"><b>${t[1]} ${t[2]}</b> <small>${t[3]}</small><p>${t[4]}</p><em>${t[5]}</em></button>`).join('')}</div></div>`).join('')}
+<div class="tgrp br-pink"><h4>🌍 Contoh Tree di sekitar kita</h4><div class="tcs ex">${REALEX.map(r=>`<div class="tc static br-pink"><b>${r[0]} ${r[1]}</b><p>${r[2]}</p></div>`).join('')}</div></div>
+<div class="highlight" style="margin:10px 0 0;padding:10px 14px;font-size:15px">🌳 <b>Inti Tree:</b> struktur data non-linear berjenjang — satu <b>Root</b>, setiap node (selain Root) punya tepat satu <b>Parent</b>, dan tidak ada putaran.</div>`,
 init:()=>{
- const seen=new Set();const total=CM.reduce((a,b)=>a+b[2].length,0);
- $$('.cmt .chip').forEach(c=>c.onclick=()=>{
-  $$('.cmt .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');
-  const t=CM[+c.dataset.b][2][+c.dataset.c];$('#cmInfo').innerHTML=`<b>${t[0]}</b> — ${t[1]}`;
-  seen.add(c.dataset.b+'-'+c.dataset.c);if(seen.size===total)award('map',5,'Peta konsep dijelajahi');
- });
+ const root=T('r',TG.map(g=>T(g.id,g.terms.map(t=>T(t[0],[],t[2])),g.label)),'🌳 TREE');
+ const v=TreeView($('#cmView'),root,{shape:'pill',levelH:70,gap:6,scale:1.05,minRatio:.8,bands:true,padY:26});
+ v.bands([]);v.clickable(true);v.mark('r','root');
+ TG.forEach(g=>{v.mark(g.id,g.cls);g.terms.forEach(t=>v.mark(t[0],g.cls))});
+ const cards=$$('.tc[data-id]'),seenN=new Set(),seenC=new Set();let lv=false;
+ const count=()=>{$('#cmCnt').textContent='Node '+seenN.size+'/9 · Kartu '+seenC.size+'/9'};
+ const focus=(id,from)=>{
+  v.clearCls('sel');v.mark(id,'sel');
+  cards.forEach(c=>c.classList.toggle('on',c.dataset.id===id));
+  const c=cards.find(x=>x.dataset.id===id);
+  if(from==='node'&&c)c.scrollIntoView({behavior:'smooth',block:'nearest'});
+  if(c){(from==='node'?seenN:seenC).add(id);count();
+   if(seenN.size===9)award('map',5,'Peta konsep dijelajahi');
+   if(seenC.size===9)award('cards',10,'Semua kartu istilah dibuka')}
+ };
+ v.onNode=id=>focus(id,'node');
+ cards.forEach(c=>c.onclick=()=>focus(c.dataset.id,'card'));
+ $('#cmLv').onclick=()=>{lv=!lv;v.bands(lv?v.L.bands:[]);$('#cmLv').setAttribute('aria-pressed',String(lv));$('#cmLv').textContent=lv?'🙈 Sembunyikan Level':'🪜 Tampilkan Level'};
 }});
 
 /* ---------- 14. Penutup: lencana ---------- */
-const BADGES=[['why','why','⚡','Pencari Cepat','Mengapa Tree'],['cards','cards','🃏','Kolektor Istilah','Kartu Istilah'],['real','real','🌍','Pemburu Tree Nyata','Tree Nyata'],['challenge','challenge','🏫','Arsitek Sekolah','Tantangan Kasus'],['challengeQ','challenge','🧠','Analis Tree','Analisis Tantangan'],['map','map','🗺️','Penjelajah Peta','Rangkuman']];
+const BADGES=[['why','why','⚡','Pencari Cepat','Mengapa Tree'],['cards','map','🃏','Kolektor Istilah','Rangkuman'],['real','real','🌍','Pemburu Tree Nyata','Tree Nyata'],['challenge','challenge','🏫','Arsitek Sekolah','Tantangan Kasus'],['challengeQ','challenge','🧠','Analis Tree','Analisis Tantangan'],['map','map','🗺️','Penjelajah Peta','Rangkuman']];
 const CHECK=['Menjelaskan apa itu Tree dan mengapa Tree digunakan','Menyebutkan Root, Node, Edge, dan Leaf','Menentukan Parent, Child, dan Sibling','Menentukan Level dan mengenali Subtree','Membaca struktur Tree dari sebuah gambar','Menyusun Tree berdasarkan sebuah kasus','Memberi contoh Tree dalam kehidupan sehari-hari'];
 slides.push({title:'Selesai: Lencana dan Refleksi',short:'🏆 Selesai',
 render:()=>{
