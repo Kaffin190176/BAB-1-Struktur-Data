@@ -416,7 +416,7 @@ th{color:var(--accent)}
   <div class="brand">🌳 Petualangan <span>Tree</span></div>
   <div class="progress-wrap"><div class="progress" id="progress"></div></div>
   <div class="xp" id="xp">⭐ 0 XP</div>
-  <div class="counter" id="counter">1 / 14</div>
+  <div class="counter" id="counter">1 / 15</div>
 </header>
 
 <aside class="sidebar" id="sidebar" aria-label="Daftar slide">
@@ -663,10 +663,25 @@ init:()=>{
  });
 }});
 
+/* ---------- Tujuan Pembelajaran ---------- */
+slides.push({title:'Tujuan Pembelajaran',short:'🎯 Tujuan',
+render:()=>`
+<div class="eyebrow">03 · Tujuan Pembelajaran</div>
+<h2>🎯 Tujuan Pembelajaran</h2>
+<p class="lead2">Setelah petualangan ini, kamu dapat:</p>
+<div class="cards">
+ <div class="card"><div class="icon">📘</div><h3>1. Menjelaskan</h3>
+  <p style="font-size:15.5px;line-height:1.6">Tree sebagai struktur data <b>non-linear berjenjang</b> beserta ciri-cirinya, dan menyebutkan arti <b>Root, Node, Edge, Leaf, Parent, Child, Sibling, Level,</b> dan <b>Subtree</b> dengan tepat.</p></div>
+ <div class="card"><div class="icon">🔍</div><h3>2. Menentukan</h3>
+  <p style="font-size:15.5px;line-height:1.6">Istilah-istilah Tree pada sebuah gambar dengan <b>teliti</b> dan <b>bernalar kritis</b>.</p></div>
+ <div class="card"><div class="icon">🏗️</div><h3>3. Menyusun &amp; Menganalisis</h3>
+  <p style="font-size:15.5px;line-height:1.6">Menyusun Tree dari sebuah kasus, serta <b>menganalisis dan mengevaluasi</b> pernyataan tentang Tree.</p></div>
+</div>`});
+
 /* ---------- 3. Apa itu Tree? ---------- */
 slides.push({title:'Apa Itu Tree?',short:'🌱 Apa Itu Tree?',
 render:()=>`
-<div class="eyebrow">03 · Pengenalan Tree</div>
+<div class="eyebrow">04 · Pengenalan Tree</div>
 <h2>🌱 Apa Itu Tree?</h2>
 <div class="split">
  <div>
@@ -712,7 +727,7 @@ init:()=>{
 const RS=T('S',[T('K7',[T('7A'),T('7B'),T('7C')],'Kelas 7'),T('K8',[T('8A'),T('8B'),T('8C')],'Kelas 8'),T('K9',[T('9A'),T('9B'),T('9C')],'Kelas 9')],'Sekolah');
 slides.push({title:'Mengapa Tree Digunakan?',short:'⚡ Mengapa Tree?',key:'why',
 render:()=>`
-<div class="eyebrow">04 · Pengenalan Tree</div>
+<div class="eyebrow">05 · Pengenalan Tree</div>
 <h2>⚡ Mengapa Tree Digunakan?</h2>
 <div class="split">
  <div>
@@ -772,7 +787,7 @@ const listTxt=a=>a.length?a.join(', '):'<i>tidak ada</i>';
 /* ---------- 5. Istilah 1 ---------- */
 slides.push({title:'Istilah Tree (1): Root, Node, Edge, Leaf',short:'📚 Istilah 1',
 render:()=>`
-<div class="eyebrow">05 · Istilah dalam Tree</div>
+<div class="eyebrow">06 · Istilah dalam Tree</div>
 <h2>📚 Istilah 1: Root, Node, Edge, Leaf</h2>
 <div class="split even tf">
  <div>
@@ -806,7 +821,7 @@ init:()=>{
 /* ---------- 6. Istilah 2 ---------- */
 slides.push({title:'Istilah Tree (2): Parent, Child, Sibling',short:'👪 Istilah 2',
 render:()=>`
-<div class="eyebrow">06 · Istilah dalam Tree</div>
+<div class="eyebrow">07 · Istilah dalam Tree</div>
 <h2>👪 Istilah 2: Parent, Child, Sibling</h2>
 <div class="split even tf">
  <div>
@@ -834,7 +849,7 @@ init:()=>{
 /* ---------- 7. Istilah 3 ---------- */
 slides.push({title:'Istilah Tree (3): Level dan Subtree',short:'🪜 Istilah 3',
 render:()=>`
-<div class="eyebrow">07 · Istilah dalam Tree</div>
+<div class="eyebrow">08 · Istilah dalam Tree</div>
 <h2>🪜 Istilah 3: Level dan Subtree</h2>
 <div class="split even tf">
  <div>
@@ -885,7 +900,7 @@ const CARDS=[
  ['🌿','Subtree','sub-pohon','Sebuah node beserta semua keturunannya.']];
 slides.push({title:'Kartu Istilah Tree',short:'🃏 Kartu Istilah',key:'cards',
 render:()=>`
-<div class="eyebrow">08 · Rangkuman Istilah</div>
+<div class="eyebrow">09 · Rangkuman Istilah</div>
 <h2>🃏 Kartu Istilah Tree</h2>
 <p class="lead2">Ketuk tiap kartu untuk membaca artinya. Buka <b>semua 9 kartu</b> untuk mendapat XP! <span class="pillx" id="cardCnt" style="background:#F3E8FF;color:#5B21B6;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:800">0 / 9</span></p>
 <div class="grid3x">${CARDS.map(c=>`<div class="fc"><div class="fc-in"><div class="fc-f"><span class="e">${c[0]}</span><b>${c[1]}</b><small>${c[2]}</small></div><div class="fc-b"><b>${c[1]}</b>${c[3]}</div></div></div>`).join('')}</div>`,
@@ -894,7 +909,7 @@ init:()=>{const seen=new Set();$$('.fc').forEach((c,i)=>c.onclick=()=>{c.classLi
 /* ---------- 9. Membaca Tree langkah demi langkah ---------- */
 slides.push({title:'Membaca Struktur Tree Langkah demi Langkah',short:'👓 Membaca Tree',
 render:()=>`
-<div class="eyebrow">09 · Membaca Struktur Tree</div>
+<div class="eyebrow">10 · Membaca Struktur Tree</div>
 <h2>👓 Membaca Tree, Langkah demi Langkah</h2>
 <div class="split even tf">
  <div>
@@ -931,7 +946,7 @@ const INSP=T('P',[T('Q',[T('S'),T('T',[T('W'),T('X')]),T('U')]),T('R',[T('V',[T(
 const II=indexTree(INSP);
 slides.push({title:'Inspeksi Node',short:'🪪 Kartu Node',
 render:()=>`
-<div class="eyebrow">10 · Membaca Struktur Tree</div>
+<div class="eyebrow">11 · Membaca Struktur Tree</div>
 <h2>🪪 Kartu Data Node</h2>
 <div class="tabs" id="inTabs"><button class="tab on" data-m="card">🔍 Inspeksi Node</button><button class="tab" data-m="guess">🎲 Tebak Node</button></div>
 <div class="split even tf">
@@ -1001,7 +1016,7 @@ const REAL=[
   map:'Root = Kakek · Sibling = Aku & Adik, Ayah & Paman · Leaf = Aku, Adik, Sepupu'}];
 slides.push({title:'Tree dalam Kehidupan Nyata',short:'🌍 Tree Nyata',key:'real',
 render:()=>`
-<div class="eyebrow">11 · Tree dalam Kehidupan Nyata</div>
+<div class="eyebrow">12 · Tree dalam Kehidupan Nyata</div>
 <h2>🌍 Tree dalam Kehidupan Nyata</h2>
 <div class="tabs" id="rlTabs">${REAL.map((r,i)=>`<button class="tab" data-i="${i}">${r.tab}</button>`).join('')}</div>
 <div class="split even tf">
@@ -1042,7 +1057,7 @@ const SCH_PAR={ks:null,wk:'ks',ws:'ks',tu:'ks',gm:'wk',gi:'wk',os:'ws',wl:'ws',s
 const flat=s=>s.replace('\n',' ');
 slides.push({title:'Tantangan Kasus: Struktur Sekolah',short:'🏫 Tantangan Kasus',key:'challenge',
 render:()=>`
-<div class="eyebrow">12 · Tantangan Kasus</div>
+<div class="eyebrow">13 · Tantangan Kasus</div>
 <h2>🏫 Tantangan: Bangun Tree Sekolah</h2>
 <div class="story"><b>Kasus:</b> Sebuah sekolah memiliki Kepala Sekolah, kemudian Wakil Kepala Sekolah, Guru, dan beberapa bagian di bawahnya. Buatlah struktur Tree berdasarkan hubungan berikut:
  <ul style="margin:6px 0 0;padding-left:20px;line-height:1.75">
@@ -1140,7 +1155,7 @@ const CM=[
  ['pink','🌍 Contoh Nyata',[['Organisasi sekolah','Kepala sekolah → wakil → guru dan staf.'],['Folder komputer','Drive → folder → file.'],['Menu aplikasi','Menu utama → sub-menu.'],['Silsilah keluarga','Kakek → anak → cucu.']]]];
 slides.push({title:'Rangkuman: Peta Konsep Tree',short:'🗺️ Rangkuman',key:'map',
 render:()=>`
-<div class="eyebrow">13 · Rangkuman</div>
+<div class="eyebrow">14 · Rangkuman</div>
 <h2>🗺️ Peta Konsep Tree</h2>
 <p class="lead2">Ketuk tiap istilah untuk mengingat artinya. Jelajahi semuanya untuk XP tambahan!</p>
 <div class="cmt"><div class="cmt-root">🌳 TREE</div>
@@ -1165,7 +1180,7 @@ render:()=>{
  const got=BADGES.filter(b=>S.done[b[0]]).length;
  const lv=S.xp>=70?['🏆','Penjaga Hutan Tree']:S.xp>=50?['🌳','Pohon Rindang']:S.xp>=25?['🌿','Pohon Muda']:['🌱','Tunas Tree'];
  return `
-<div class="center"><div class="eyebrow">14 · Penutup</div><div style="font-size:64px">${lv[0]}</div><h2 style="margin-bottom:4px">Petualangan Tree Selesai!</h2>
+<div class="center"><div class="eyebrow">15 · Penutup</div><div style="font-size:64px">${lv[0]}</div><h2 style="margin-bottom:4px">Petualangan Tree Selesai!</h2>
 <p class="lead2" style="margin:0">Levelmu: <b>${lv[1]}</b> · <b>⭐ ${S.xp} XP</b> · Lencana: <b>${got} / ${BADGES.length}</b></p></div>
 <div class="badges">${BADGES.map(b=>`<div class="bdg ${S.done[b[0]]?'got':''}" data-go="${b[1]}"><div class="e">${b[2]}</div><b>${b[3]}</b><small>${S.done[b[0]]?'Diperoleh ✓':b[4]+' — ketuk untuk menuju ke sana'}</small></div>`).join('')}</div>
 <div class="grid2" style="align-items:start"><div><h3>✅ Aku sudah bisa…</h3><div id="chk">${CHECK.map((c,i)=>`<div class="check" data-i="${i}"><i>✓</i><span>${c}</span></div>`).join('')}</div></div>
@@ -1210,6 +1225,9 @@ function render(){
  clearTimers();
  const s=slides[current];
  slideEl.innerHTML='<div class="slide-inner">'+s.render()+'</div>';
+ /* nomor label otomatis mengikuti urutan slide */
+ const eb=slideEl.querySelector('.eyebrow');
+ if(eb)eb.textContent=eb.textContent.replace(/^\d+/,String(current+1).padStart(2,'0'));
  progress.style.width=((current+1)/slides.length*100)+'%';
  counter.textContent=(current+1)+' / '+slides.length;
  footerInfo.textContent=s.title;
